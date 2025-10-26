@@ -8,6 +8,8 @@ export interface ShopProps {
   grabbed: Grabbed | null;
   onGrabShopItem: (item: ShopCatalogItem, r: number, c: number) => void;
   onSellGrabbed: () => void;
+  onBackToMap: () => void;
+  currentCity: string;
 }
 
 /**
@@ -22,6 +24,8 @@ export default function Shop({
   grabbed,
   onGrabShopItem,
   onSellGrabbed,
+  onBackToMap,
+  currentCity,
 }: ShopProps) {
   return (
     <div
@@ -34,8 +38,16 @@ export default function Shop({
         }
       }}
     >
-      <div className='text-lg font-semibold mb-2'>Shop</div>
-      <div className='mb-4'>Gold: {gold}</div>
+      <div className='flex flex-col items-center w-full mb-4'>
+        <button
+          onClick={onBackToMap}
+          className='mb-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors'
+        >
+          Back to Map
+        </button>
+        <div className='text-lg font-semibold'>Shop - {currentCity}</div>
+        <div className='mt-2'>Gold: {gold}</div>
+      </div>
 
       {/* Shopartikel */}
       <div className='flex flex-col space-y-2 w-full items-center'>

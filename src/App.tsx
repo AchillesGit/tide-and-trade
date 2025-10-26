@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ItemGrid from "./components/ItemGrid";
 import Shop from "./components/Shop";
+import WorldMap from "./components/WorldMap";
 
 /** Grid dimensions */
 const rows = 10;
@@ -165,6 +166,7 @@ export default function App() {
   const [items, setItems] = useState<GridItem[]>(initialItems);
   const [grabbed, setGrabbed] = useState<Grabbed | null>(null);
   const [gold, setGold] = useState<number>(20);
+  const [currentCity, setCurrentCity] = useState<string | null>(null);
 
   /**
    * Stück aus dem Grid aufnehmen. r/c sind die Koordinaten des
@@ -281,39 +283,46 @@ export default function App() {
     });
   }
 
+  const handleCitySelect = (city: string) => {
+    setCurrentCity(city);
+  };
+
+  const handleBackToMap = () => {
+    setCurrentCity(null);
+  };
+
   return (
     <div className='p-4'>
-      <h1 className='text-center text-2xl font-semibold mb-2'>
-        Item Management Game
-      </h1>
-      <p className='text-center mb-4'>
-        Klicke auf eine Form, um sie aufzunehmen. Bewege die Maus über das
-        Raster und klicke, um sie zu platzieren. Klicke mit der rechten
-        Maustaste während des Aufnehmens, um sie zu rotieren. Kaufe zusätzliche
-        Formen im Shop und verkaufe deine Stücke zurück, um Gold zu verdienen.
-      </p>
-      <div className='flex'>
-        <div className='grow'>
-          <ItemGrid
-            rows={rows}
-            cols={cols}
-            shapes={shapes}
-            items={items}
-            grabbed={grabbed}
-            onGrab={handleGrab}
-            onPlaceGrabbed={handlePlaceGrabbed}
-            onRotateGrabbed={handleRotateGrabbed}
-          />
-        </div>
-        <Shop
-          shopItems={shopItems}
-          shapes={shapes}
-          gold={gold}
-          grabbed={grabbed}
-          onGrabShopItem={handleGrabShopItem}
-          onSellGrabbed={handleSellGrabbed}
-        />
-      </div>
+      {currentCity === null ? (
+        <WorldMap onCitySelect={handleCitySelect} />
+      ) : (
+        <>
+          <div className='flex'>
+            <div className='grow'>
+              <ItemGrid
+                rows={rows}
+                cols={cols}
+                shapes={shapes}
+                items={items}
+                grabbed={grabbed}
+                onGrab={handleGrab}
+                onPlaceGrabbed={handlePlaceGrabbed}
+                onRotateGrabbed={handleRotateGrabbed}
+              />
+            </div>
+            <Shop
+              shopItems={shopItems}
+              shapes={shapes}
+              gold={gold}
+              grabbed={grabbed}
+              onGrabShopItem={handleGrabShopItem}
+              onSellGrabbed={handleSellGrabbed}
+              onBackToMap={handleBackToMap}
+              currentCity={currentCity}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }
