@@ -283,18 +283,10 @@ export default function App() {
     });
   }
 
-  const handleCitySelect = (city: string) => {
-    setCurrentCity(city);
-  };
-
-  const handleBackToMap = () => {
-    setCurrentCity(null);
-  };
-
   return (
     <div className='p-4'>
       {currentCity === null ? (
-        <WorldMap onCitySelect={handleCitySelect} />
+        <WorldMap onCitySelect={setCurrentCity} />
       ) : (
         <>
           <div className='flex'>
@@ -317,7 +309,7 @@ export default function App() {
               grabbed={grabbed}
               onGrabShopItem={handleGrabShopItem}
               onSellGrabbed={handleSellGrabbed}
-              onBackToMap={handleBackToMap}
+              onBackToMap={() => setCurrentCity(null)}
               currentCity={currentCity}
             />
           </div>

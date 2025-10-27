@@ -1,9 +1,17 @@
 /**
+ * A single Tetris‑style piece. When disabled (grabbed != null),
+ * pointer events are turned off so grid hover works over other pieces.
+ * Clicking a cell reports its row/col to the parent via onClick(r,c).
+ */
+import React from "react";
+import type { GridItem, ShapeCoord } from "../App";
+
+/**
  * Helper to rotate an array of [row, col] coordinates by 90° steps,
  * then normalise them so the smallest row/col is zero.
  */
-function rotateCoords(coords, orientation) {
-  let rotated = coords.map(([r, c]) => [r, c]);
+function rotateCoords(coords: ShapeCoord[], orientation: number): ShapeCoord[] {
+  let rotated: ShapeCoord[] = coords.map(([r, c]) => [r, c]);
   for (let i = 0; i < orientation; i++) {
     rotated = rotated.map(([r, c]) => [c, -r]);
     const minR = Math.min(...rotated.map(([r]) => r));
@@ -11,6 +19,13 @@ function rotateCoords(coords, orientation) {
     rotated = rotated.map(([r, c]) => [r - minR, c - minC]);
   }
   return rotated;
+}
+
+interface TetrisItemProps {
+  item: GridItem;
+  shapeCoords: ShapeCoord[];
+  onClick?: (r: number, c: number) => void;
+  disabled?: boolean;
 }
 
 /**
@@ -23,7 +38,7 @@ export default function TetrisItem({
   shapeCoords,
   onClick,
   disabled = false,
-}) {
+}: TetrisItemProps) {
   const { row, col, color, orientation = 0 } = item;
 
   // rotate shape by the item's orientation
@@ -31,7 +46,7 @@ export default function TetrisItem({
   const rows = Math.max(...rotatedCoords.map(([r]) => r)) + 1;
   const cols = Math.max(...rotatedCoords.map(([, c]) => c)) + 1;
 
-  const containerStyle = {
+  const containerStyle: React.CSSProperties = {
     position: "absolute",
     top: `calc(var(--cell-size) * ${row})`,
     left: `calc(var(--cell-size) * ${col})`,
@@ -58,7 +73,7 @@ export default function TetrisItem({
             width: "100%",
             height: "100%",
           }}
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
             // stop propagation and call onClick with cell coords
             e.stopPropagation();
             if (e.button === 0 && typeof onClick === "function" && !disabled) {
