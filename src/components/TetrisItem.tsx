@@ -26,6 +26,7 @@ interface TetrisItemProps {
   shapeCoords: ShapeCoord[];
   onClick?: (r: number, c: number) => void;
   disabled?: boolean;
+  opacity?: number;
 }
 
 /**
@@ -38,6 +39,7 @@ export default function TetrisItem({
   shapeCoords,
   onClick,
   disabled = false,
+  opacity = 1,
 }: TetrisItemProps) {
   const { row, col, color, orientation = 0 } = item;
 
@@ -58,6 +60,7 @@ export default function TetrisItem({
     zIndex: 10,
     cursor: "grab",
     pointerEvents: disabled ? "none" : "auto",
+    opacity: opacity,
   };
 
   return (

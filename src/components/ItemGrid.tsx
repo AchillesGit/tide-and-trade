@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { MouseEvent } from "react";
 import TetrisItem from "./TetrisItem";
 import type { ShapeMap, GridItem, Grabbed, Orientation } from "../App"; // adjust the import path if your types live elsewhere
 
@@ -59,6 +60,11 @@ export default function ItemGrid({
   onPlaceGrabbed,
   onRotateGrabbed,
 }: ItemGridProps) {
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const [floatCell, setFloatCell] = useState<{
+    row: number;
+    col: number;
+  } | null>(null);
   const [preview, setPreview] = useState<PreviewState>({
     cells: [],
     valid: false,
@@ -118,6 +124,28 @@ export default function ItemGrid({
     setLastHover({ row, col });
   }
 
+  // Track mouse position inside the grid to render the floating piece.
+  function handleMouseMove(e: MouseEvent) {
+    if (!gridRef.current) return;
+    const rect = gridRef.current.getBoundingClientRect();
+    const cellSize = rect.width / cols;
+    const rowFloat = (e.clientY - rect.top) / cellSize;
+    const colFloat = (e.clientX - rect.left) / cellSize;
+    if (!grabbed) {
+      setFloatCell(null);
+      return;
+    }
+    setFloatCell({ row: rowFloat, col: colFloat });
+    // update integer preview as before
+    handleCellEnter(Math.floor(rowFloat), Math.floor(colFloat));
+  }
+
+  function handleMouseLeave() {
+    setFloatCell(null);
+    setPreview({ cells: [], valid: false });
+    setLastHover(null);
+  }
+
   // Place grabbed piece on click if preview is valid
   function handleCellClick(row: number, col: number): void {
     if (grabbed && preview.valid) {
@@ -139,7 +167,10 @@ export default function ItemGrid({
       }}
     >
       <div
+        ref={gridRef}
         className='relative grid bg-gray-50 border-2 border-gray-400 [--cell-size:36px]'
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
         style={{
           gridTemplateRows: `repeat(${rows}, var(--cell-size, 36px))`,
           gridTemplateColumns: `repeat(${cols}, var(--cell-size, 36px))`,
@@ -175,6 +206,33 @@ export default function ItemGrid({
             onClick={(r: number, c: number) => onGrab(item.id, r, c)}
           />
         ))}
+
+        {/* floating piece follows the cursor while grabbed */}
+        {grabbed && floatCell
+          ? (() => {
+              const offset = grabbed.offset ?? { r: 0, c: 0 };
+              const placeRow = floatCell.row - offset.r;
+              const placeCol = floatCell.col - offset.c;
+              const floatingItem: GridItem = {
+                id: -999,
+                shape: grabbed.shape,
+                row: placeRow,
+                col: placeCol,
+                color: grabbed.color,
+                orientation: (grabbed.orientation ?? 0) as any,
+                price: grabbed.price ?? 0,
+              };
+              return (
+                <TetrisItem
+                  key='__floating__'
+                  item={floatingItem}
+                  shapeCoords={shapes[grabbed.shape]}
+                  disabled={true}
+                  opacity={preview.valid ? 1 : 0.35}
+                />
+              );
+            })()
+          : null}
       </div>
     </div>
   );
