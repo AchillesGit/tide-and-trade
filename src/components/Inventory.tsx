@@ -34,7 +34,7 @@ export default function Inventory() {
   }, []);
 
   return (
-    <div>
+    <div className={`${grabbedItem ? "cursor-grabbing" : "cursor-default"}`}>
       <h2>Inventory</h2>
       <div
         className='grid'
@@ -62,7 +62,7 @@ export default function Inventory() {
                   <img
                     src={item.image}
                     alt={item.name}
-                    className='absolute cursor-pointer'
+                    className='absolute cursor-grab'
                     style={{ rotate: `${item.direction}deg` }}
                     onClick={(e) => {
                       e.stopPropagation();
