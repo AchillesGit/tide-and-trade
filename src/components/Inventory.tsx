@@ -1,7 +1,8 @@
 import useInventoryStore from "../store/inventoryStore";
 
 export default function Inventory() {
-  const { itemRegistry, rows, cols } = useInventoryStore();
+  const { itemRegistry, rows, cols, grabItem, releaseItem } =
+    useInventoryStore();
 
   return (
     <div>
@@ -15,15 +16,26 @@ export default function Inventory() {
             const item = itemRegistry.find(
               (ir) => ir.position.row === row && ir.position.col === col
             )?.item;
-            console.log(JSON.stringify(item));
-
             return (
               <div
                 key={`${row}-${col}`}
                 className='border border-gray-300 w-[50px] h-[50px] flex items-center justify-center'
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  releaseItem({ row, col });
+                }}
               >
                 {item ? (
-                  <img src={item.image} alt={item.name} className='absolute' />
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className='absolute'
+                    draggable
+                    onDragStart={() => {
+                      grabItem(item.id);
+                    }}
+                  />
                 ) : null}
               </div>
             );
