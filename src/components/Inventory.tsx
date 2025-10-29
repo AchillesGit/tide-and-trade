@@ -30,23 +30,18 @@ export default function Inventory() {
                   <img
                     src={item.image}
                     alt={item.name}
-                    className='absolute'
+                    className='absolute cursor-grab'
                     draggable
                     onDragStart={(e) => {
-                      grabItem(item.id);
-                      // Helper to drag the image always from center
-                      const img = e.currentTarget as HTMLImageElement;
-                      const dragIcon = img.cloneNode(true) as HTMLImageElement;
-                      dragIcon.style.position = "absolute";
-                      dragIcon.style.top = "-9999px";
-                      dragIcon.style.left = "-9999px";
-                      document.body.appendChild(dragIcon);
-                      e.dataTransfer?.setDragImage(
-                        dragIcon,
-                        dragIcon.width / 2,
-                        dragIcon.height / 2
+                      e.dataTransfer.setDragImage(
+                        e.currentTarget,
+                        e.currentTarget.clientWidth / 2,
+                        e.currentTarget.clientHeight / 2
                       );
-                      setTimeout(() => document.body.removeChild(dragIcon), 0);
+
+                      requestAnimationFrame(() => {
+                        grabItem(item.id);
+                      });
                     }}
                   />
                 ) : null}
