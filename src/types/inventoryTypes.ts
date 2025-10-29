@@ -3,6 +3,7 @@ export interface Item {
   name: string;
   space: number[][];
   image: string;
+  direction: number;
 }
 
 export interface ItemRegistry {
@@ -14,3 +15,5 @@ export interface Position {
   row: number;
   col: number;
 }
+
+export type Direction = "left" | "right";

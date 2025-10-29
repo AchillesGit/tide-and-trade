@@ -1,4 +1,5 @@
 import useInventoryStore from "../store/inventoryStore";
+import type { Direction } from "../types/inventoryTypes";
 
 export function getInventoryAsTwoDArray(): number[][] {
   const inventory = useInventoryStore.getState().itemRegistry;
@@ -52,4 +53,25 @@ export function isPositionValid(newPosition: {
     }
   }
   return true;
+}
+
+export function rotateMatrix(
+  matrix: number[][],
+  direction: Direction
+): number[][] {
+  const rows = matrix.length;
+  const cols = matrix[0].length;
+  const rotated: number[][] = Array.from({ length: cols }, () =>
+    Array.from({ length: rows }, () => 0)
+  );
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (direction === "right") {
+        rotated[c][rows - 1 - r] = matrix[r][c];
+      } else {
+        rotated[cols - 1 - c][r] = matrix[r][c];
+      }
+    }
+  }
+  return rotated;
 }

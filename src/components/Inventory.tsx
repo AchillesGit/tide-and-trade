@@ -1,8 +1,37 @@
 import useInventoryStore from "../store/inventoryStore";
+import { useState, useEffect } from "react";
 
 export default function Inventory() {
-  const { itemRegistry, inventoryGrid, grabItem, releaseItem } =
-    useInventoryStore();
+  const {
+    itemRegistry,
+    inventoryGrid,
+    grabItem,
+    releaseItem,
+    grabbedItem,
+    rotateItem,
+  } = useInventoryStore();
+
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const cursorHandler = (e: MouseEvent) =>
+      setCursorPos({ x: e.clientX, y: e.clientY });
+    const wheelHandler = (e: WheelEvent) => {
+      if (e.deltaY < 0) {
+        rotateItem("left");
+      } else {
+        rotateItem("right");
+      }
+    };
+
+    window.addEventListener("mousemove", cursorHandler);
+    window.addEventListener("wheel", wheelHandler);
+
+    return () => {
+      window.removeEventListener("mousemove", cursorHandler);
+      window.removeEventListener("wheel", wheelHandler);
+    };
+  }, []);
 
   return (
     <div>
@@ -23,28 +52,21 @@ export default function Inventory() {
               <div
                 key={`${rowIndex}-${colIndex}`}
                 className='border border-gray-300 w-[50px] h-[50px] flex items-center justify-center'
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  releaseItem({ row: rowIndex, col: colIndex });
+                onClick={() => {
+                  if (grabbedItem) {
+                    releaseItem({ row: rowIndex, col: colIndex });
+                  }
                 }}
               >
                 {item ? (
                   <img
                     src={item.image}
                     alt={item.name}
-                    className='absolute cursor-grab'
-                    draggable
-                    onDragStart={(e) => {
-                      e.dataTransfer.setDragImage(
-                        e.currentTarget,
-                        e.currentTarget.clientWidth / 2,
-                        e.currentTarget.clientHeight / 2
-                      );
-
-                      requestAnimationFrame(() => {
-                        grabItem(item.id);
-                      });
+                    className='absolute cursor-pointer'
+                    style={{ rotate: `${item.direction}deg` }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      grabItem(item.id);
                     }}
                   />
                 ) : null}
@@ -53,6 +75,19 @@ export default function Inventory() {
           })
         )}
       </div>
+
+      {grabbedItem && (
+        <img
+          src={grabbedItem.item.image}
+          alt={grabbedItem.item.name}
+          className='pointer-events-none fixed opacity-80 transform -translate-x-1/2 -translate-y-1/2'
+          style={{
+            top: cursorPos.y,
+            left: cursorPos.x,
+            rotate: `${grabbedItem.item.direction}deg`,
+          }}
+        />
+      )}
     </div>
   );
 }

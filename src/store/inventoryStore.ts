@@ -1,6 +1,10 @@
 import { create } from "zustand";
-import { isPositionValid } from "../util/gridHelper";
-import type { ItemRegistry, Position } from "../types/inventoryTypes";
+import { isPositionValid, rotateMatrix } from "../util/gridHelper";
+import type {
+  Direction,
+  ItemRegistry,
+  Position,
+} from "../types/inventoryTypes";
 import { mockInventoryGrid, mockItemRegistry } from "../mock/inventoryMockData";
 
 interface InventoryState {
@@ -10,6 +14,7 @@ interface InventoryState {
   grabItem: (itemId: string) => void;
   releaseItem: (position: Position) => void;
   addItem: (item: ItemRegistry) => void;
+  rotateItem: (direction: Direction) => void;
 }
 
 const useInventoryStore = create<InventoryState>((set) => ({
@@ -27,6 +32,30 @@ const useInventoryStore = create<InventoryState>((set) => ({
       grabbedItem: state.itemRegistry.find((ir) => ir.item.id === itemId),
       itemRegistry: state.itemRegistry.filter((ir) => ir.item.id !== itemId),
     })),
+
+  rotateItem: (direction: Direction) => {
+    set((state) => {
+      if (!state.grabbedItem) return {};
+      const rotatedSpace = rotateMatrix(
+        state.grabbedItem.item.space,
+        direction
+      );
+      const rotatedItem = {
+        ...state.grabbedItem,
+        item: {
+          ...state.grabbedItem.item,
+          space: rotatedSpace,
+          direction:
+            direction === "left"
+              ? (state.grabbedItem.item.direction + 270) % 360
+              : (state.grabbedItem.item.direction + 90) % 360,
+        },
+      };
+      return {
+        grabbedItem: rotatedItem,
+      };
+    });
+  },
 
   releaseItem: (newPosition: Position) =>
     set((state) => {

@@ -11,6 +11,7 @@ const mockItem: Item = {
     [0, 0, 0, 0, 0],
   ],
   image: "goods/wheat.png",
+  direction: 0,
 };
 
 const mockItem2: Item = {
@@ -24,6 +25,7 @@ const mockItem2: Item = {
     [0, 0, 0, 0, 0],
   ],
   image: "goods/wheat.png",
+  direction: 0,
 };
 
 export const mockItemRegistry: ItemRegistry[] = [
