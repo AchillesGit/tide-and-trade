@@ -1,7 +1,7 @@
 import useInventoryStore from "../store/inventoryStore";
 
 export default function Inventory() {
-  const { itemRegistry, rows, cols, grabItem, releaseItem } =
+  const { itemRegistry, inventoryGrid, grabItem, releaseItem } =
     useInventoryStore();
 
   return (
@@ -9,21 +9,24 @@ export default function Inventory() {
       <h2>Inventory</h2>
       <div
         className='grid'
-        style={{ gridTemplateColumns: `repeat(${cols}, 50px)` }}
+        style={{
+          gridTemplateColumns: `repeat(${inventoryGrid[0].length}, 50px)`,
+        }}
       >
-        {Array.from({ length: rows }).map((_, row) =>
-          Array.from({ length: cols }).map((_, col) => {
+        {inventoryGrid.map((row, rowIndex) =>
+          row.map((_, colIndex) => {
             const item = itemRegistry.find(
-              (ir) => ir.position.row === row && ir.position.col === col
+              (ir) =>
+                ir.position.row === rowIndex && ir.position.col === colIndex
             )?.item;
             return (
               <div
-                key={`${row}-${col}`}
+                key={`${rowIndex}-${colIndex}`}
                 className='border border-gray-300 w-[50px] h-[50px] flex items-center justify-center'
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
                   e.preventDefault();
-                  releaseItem({ row, col });
+                  releaseItem({ row: rowIndex, col: colIndex });
                 }}
               >
                 {item ? (
