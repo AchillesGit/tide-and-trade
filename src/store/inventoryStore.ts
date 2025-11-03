@@ -5,7 +5,10 @@ import type {
   ItemRegistry,
   Position,
 } from "../types/inventoryTypes";
-import { mockInventoryGrid, mockItemRegistry } from "../mock/inventoryMockData";
+import {
+  mockInventoryGrid,
+  mockInventoryItemRegistry,
+} from "../mock/inventoryMockData";
 
 interface InventoryState {
   inventoryGrid: number[][];
@@ -19,7 +22,7 @@ interface InventoryState {
 
 const useInventoryStore = create<InventoryState>((set) => ({
   inventoryGrid: mockInventoryGrid,
-  itemRegistry: mockItemRegistry,
+  itemRegistry: mockInventoryItemRegistry,
   grabbedItem: null,
 
   addItem: (item: ItemRegistry) =>

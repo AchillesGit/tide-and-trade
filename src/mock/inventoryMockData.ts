@@ -28,9 +28,14 @@ const mockItem2: Item = {
   direction: 0,
 };
 
-export const mockItemRegistry: ItemRegistry[] = [
+export const mockInventoryItemRegistry: ItemRegistry[] = [
   { item: mockItem, position: { row: 3, col: 3 } },
   { item: mockItem2, position: { row: 3, col: 5 } },
+];
+
+export const mockShopItemRegistry: ItemRegistry[] = [
+  { item: mockItem, position: { row: 1, col: 0 } },
+  { item: mockItem2, position: { row: 1, col: 1 } },
 ];
 
 export const mockInventoryGrid: number[][] = [
