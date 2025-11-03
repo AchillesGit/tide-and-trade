@@ -28,14 +28,42 @@ const mockItem2: Item = {
   direction: 0,
 };
 
+const mockItem3: Item = {
+  id: "item-003",
+  name: "rum",
+  space: [
+    [0, 0, 0, 0, 0],
+    [0, 0, 1, 1, 0],
+    [0, 0, 1, 1, 0],
+    [0, 0, 1, 1, 0],
+    [0, 0, 0, 0, 0],
+  ],
+  image: "goods/rum.png",
+  direction: 0,
+};
+
+const mockItem4: Item = {
+  id: "item-004",
+  name: "rum",
+  space: [
+    [0, 0, 0, 0, 0],
+    [0, 0, 1, 1, 0],
+    [0, 0, 1, 1, 0],
+    [0, 0, 1, 1, 0],
+    [0, 0, 0, 0, 0],
+  ],
+  image: "goods/rum.png",
+  direction: 0,
+};
+
 export const mockInventoryItemRegistry: ItemRegistry[] = [
   { item: mockItem, position: { row: 3, col: 3 } },
   { item: mockItem2, position: { row: 3, col: 5 } },
 ];
 
 export const mockShopItemRegistry: ItemRegistry[] = [
-  { item: mockItem, position: { row: 1, col: 0 } },
-  { item: mockItem2, position: { row: 1, col: 1 } },
+  { item: mockItem3, position: { row: 1, col: 0 } },
+  { item: mockItem4, position: { row: 1, col: 3 } },
 ];
 
 export const mockInventoryGrid: number[][] = [

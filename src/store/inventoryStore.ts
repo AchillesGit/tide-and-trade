@@ -14,9 +14,9 @@ interface InventoryState {
   inventoryGrid: number[][];
   itemRegistry: ItemRegistry[];
   grabbedItem: ItemRegistry | null;
+  setGrabbedItem: (item: ItemRegistry | null) => void;
   grabItem: (itemId: string) => void;
   releaseItem: (position: Position) => void;
-  addItem: (item: ItemRegistry) => void;
   rotateItem: (direction: Direction) => void;
 }
 
@@ -25,11 +25,7 @@ const useInventoryStore = create<InventoryState>((set) => ({
   itemRegistry: mockInventoryItemRegistry,
   grabbedItem: null,
 
-  addItem: (item: ItemRegistry) =>
-    set((state) => ({
-      itemRegistry: [...state.itemRegistry, item],
-    })),
-
+  setGrabbedItem: (item) => set({ grabbedItem: item }),
   grabItem: (itemId: string) =>
     set((state) => ({
       grabbedItem: state.itemRegistry.find((ir) => ir.item.id === itemId),

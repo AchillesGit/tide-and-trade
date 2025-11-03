@@ -4,6 +4,7 @@ import {
   mockInventoryGrid,
   mockShopItemRegistry,
 } from "../mock/inventoryMockData";
+import useInventoryStore from "./inventoryStore";
 
 interface ShopState {
   shopGrid: number[][];
@@ -12,15 +13,21 @@ interface ShopState {
   sellItem: (item: ItemRegistry) => void;
 }
 
-const useShopStore = create<ShopState>((set) => ({
+const useShopStore = create<ShopState>((set, get) => ({
   shopGrid: mockInventoryGrid,
   itemRegistry: mockShopItemRegistry,
 
-  buyItem: (itemId: string) =>
+  buyItem: (itemId: string) => {
+    const item = get().itemRegistry.find((ir) => ir.item.id === itemId);
+    if (!item) return;
     set((state) => ({
-      grabbedItem: state.itemRegistry.find((ir) => ir.item.id === itemId),
       itemRegistry: state.itemRegistry.filter((ir) => ir.item.id !== itemId),
-    })),
+    }));
+
+    const { setGrabbedItem } = useInventoryStore.getState();
+    setGrabbedItem(item);
+  },
+
   sellItem: (item: ItemRegistry) =>
     set((state) => ({
       itemRegistry: [...state.itemRegistry, item],
