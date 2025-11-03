@@ -51,7 +51,7 @@ export default function Inventory() {
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
-                className='border border-gray-300 w-[50px] h-[50px] flex items-center justify-center'
+                className='border border-gray-300 w-[50px] h-[50px]'
                 onClick={() => {
                   if (grabbedItem) {
                     releaseItem({ row: rowIndex, col: colIndex });

@@ -37,7 +37,7 @@ export default function Shop() {
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
-                className='border border-gray-300 w-[50px] h-[50px] flex items-center justify-center'
+                className='border border-gray-300 w-[50px] h-[50px]'
                 onClick={() => {
                   if (grabbedItem) {
                     // releaseItem({ row: rowIndex, col: colIndex });
@@ -61,19 +61,6 @@ export default function Shop() {
           })
         )}
       </div>
-
-      {grabbedItem && (
-        <img
-          src={grabbedItem.item.image}
-          alt={grabbedItem.item.name}
-          className='pointer-events-none fixed opacity-80 transform -translate-x-1/2 -translate-y-1/2'
-          style={{
-            top: cursorPos.y,
-            left: cursorPos.x,
-            rotate: `${grabbedItem.item.direction}deg`,
-          }}
-        />
-      )}
     </div>
   );
 }

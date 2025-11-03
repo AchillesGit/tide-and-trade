@@ -3,13 +3,7 @@ import type { Item, ItemRegistry } from "../types/inventoryTypes";
 const mockItem: Item = {
   id: "item-001",
   name: "wheat",
-  space: [
-    [0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0],
-  ],
+  space: [[1], [1], [1]],
   image: "goods/wheat.png",
   direction: 0,
 };
@@ -17,13 +11,7 @@ const mockItem: Item = {
 const mockItem2: Item = {
   id: "item-002",
   name: "wheat",
-  space: [
-    [0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0],
-  ],
+  space: [[1], [1], [1]],
   image: "goods/wheat.png",
   direction: 0,
 };
@@ -32,11 +20,9 @@ const mockItem3: Item = {
   id: "item-003",
   name: "rum",
   space: [
-    [0, 0, 0, 0, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 0, 0, 0],
+    [1, 1],
+    [1, 1],
+    [1, 1],
   ],
   image: "goods/rum.png",
   direction: 0,
@@ -46,11 +32,9 @@ const mockItem4: Item = {
   id: "item-004",
   name: "rum",
   space: [
-    [0, 0, 0, 0, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 0, 0, 0],
+    [1, 1],
+    [1, 1],
+    [1, 1],
   ],
   image: "goods/rum.png",
   direction: 0,
