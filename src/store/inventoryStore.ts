@@ -60,7 +60,9 @@ const useInventoryStore = create<InventoryState>((set) => ({
     set((state) => {
       if (!state.grabbedItem) return {};
 
-      if (!isPositionValid(newPosition)) {
+      if (
+        !isPositionValid(newPosition, state.inventoryGrid, state.grabbedItem)
+      ) {
         return {
           itemRegistry: [...state.itemRegistry, state.grabbedItem],
           grabbedItem: null,

@@ -1,16 +1,17 @@
-import useInventoryStore from "../store/inventoryStore";
-import type { Direction } from "../types/inventoryTypes";
+import type { Direction, ItemRegistry } from "../types/inventoryTypes";
 
-export function getInventoryAsTwoDArray(): number[][] {
-  const inventory = useInventoryStore.getState().itemRegistry;
-  const rows = useInventoryStore.getState().inventoryGrid.length;
-  const cols = useInventoryStore.getState().inventoryGrid[0].length;
+export function getInventoryAsTwoDArray(
+  itemRegistry: ItemRegistry[],
+  inventoryGrid: number[][]
+): number[][] {
+  const rows = inventoryGrid.length;
+  const cols = inventoryGrid[0].length;
 
   const grid: number[][] = Array.from({ length: rows }, () =>
     Array.from({ length: cols }, () => 0)
   );
 
-  inventory.forEach(({ item, position }) => {
+  itemRegistry.forEach(({ item, position }) => {
     item.space.forEach((row, rIdx) => {
       row.forEach((cell, cIdx) => {
         if (cell === 1) {
@@ -27,12 +28,15 @@ export function getInventoryAsTwoDArray(): number[][] {
   return grid;
 }
 
-export function isPositionValid(newPosition: {
-  row: number;
-  col: number;
-}): boolean {
-  const inventoryGrid = getInventoryAsTwoDArray();
-  const space = useInventoryStore.getState().grabbedItem?.item.space;
+export function isPositionValid(
+  newPosition: {
+    row: number;
+    col: number;
+  },
+  inventoryGrid: number[][],
+  grabbedItem?: ItemRegistry
+): boolean {
+  const space = grabbedItem?.item.space;
   if (!space) return false;
 
   for (let rIdx = 0; rIdx < space.length; rIdx++) {
