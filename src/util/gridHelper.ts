@@ -28,16 +28,36 @@ export function getInventoryAsTwoDArray(
   return grid;
 }
 
+export function fillInventoryGrid(
+  itemRegistry: ItemRegistry[],
+  inventoryGrid: number[][]
+): number[][] {
+  const updatedGrid = inventoryGrid.map((row) => [...row]);
+  itemRegistry.forEach(({ item, position }) => {
+    item.space.forEach((row, rIdx) => {
+      row.forEach((cell, cIdx) => {
+        if (cell === 1) {
+          const gridRow = position.row + rIdx;
+          const gridCol = position.col + cIdx;
+          if (gridRow < updatedGrid.length && gridCol < updatedGrid[0].length) {
+            updatedGrid[gridRow][gridCol] = 1;
+          }
+        }
+      });
+    });
+  });
+  return updatedGrid;
+}
+
 export function isPositionValid(
   newPosition: {
     row: number;
     col: number;
   },
   inventoryGrid: number[][],
-  grabbedItem?: ItemRegistry
+  grabbedItem: ItemRegistry
 ): boolean {
-  const space = grabbedItem?.item.space;
-  if (!space) return false;
+  const space = grabbedItem.item.space;
 
   for (let rIdx = 0; rIdx < space.length; rIdx++) {
     for (let cIdx = 0; cIdx < space[rIdx].length; cIdx++) {

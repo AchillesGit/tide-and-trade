@@ -24,8 +24,8 @@ const useShopStore = create<ShopState>((set, get) => ({
       itemRegistry: state.itemRegistry.filter((ir) => ir.item.id !== itemId),
     }));
 
-    const { setGrabbedItem } = useInventoryStore.getState();
-    setGrabbedItem(item);
+    const { grabItemFromShop } = useInventoryStore.getState();
+    grabItemFromShop(item);
   },
 
   sellItem: (item: ItemRegistry) =>

@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import { isPositionValid, rotateMatrix } from "../util/gridHelper";
+import {
+  fillInventoryGrid,
+  isPositionValid,
+  rotateMatrix,
+} from "../util/gridHelper";
 import type {
   Degree,
   Direction,
@@ -15,7 +19,8 @@ interface InventoryState {
   inventoryGrid: number[][];
   itemRegistry: ItemRegistry[];
   grabbedItem: ItemRegistry | null;
-  setGrabbedItem: (item: ItemRegistry | null) => void;
+  initialGrabbedItem: ItemRegistry | null;
+  grabItemFromShop: (item: ItemRegistry | null) => void;
   grabItem: (itemId: string) => void;
   releaseItem: (
     position: Position,
@@ -26,15 +31,22 @@ interface InventoryState {
 }
 
 const useInventoryStore = create<InventoryState>((set) => ({
-  inventoryGrid: mockInventoryGrid,
+  inventoryGrid: fillInventoryGrid(
+    mockInventoryItemRegistry,
+    mockInventoryGrid
+  ),
   itemRegistry: mockInventoryItemRegistry,
   grabbedItem: null,
+  initialGrabbedItem: null,
 
-  setGrabbedItem: (item) => set({ grabbedItem: item }),
+  grabItemFromShop: (item) => set({ grabbedItem: item }),
   grabItem: (itemId: string) =>
     set((state) => ({
       grabbedItem: state.itemRegistry.find((ir) => ir.item.id === itemId),
       itemRegistry: state.itemRegistry.filter((ir) => ir.item.id !== itemId),
+      initialGrabbedItem: state.itemRegistry.find(
+        (ir) => ir.item.id === itemId
+      ),
     })),
 
   rotateItem: (direction: Direction) => {
@@ -62,16 +74,7 @@ const useInventoryStore = create<InventoryState>((set) => ({
 
   releaseItem: (targetCell: Position, relativeX: number, relativeY: number) =>
     set((state) => {
-      if (!state.grabbedItem) return {};
-
-      if (
-        !isPositionValid(targetCell, state.inventoryGrid, state.grabbedItem)
-      ) {
-        return {
-          itemRegistry: [...state.itemRegistry, state.grabbedItem],
-          grabbedItem: null,
-        };
-      }
+      if (!state.grabbedItem || !state.initialGrabbedItem) return {};
 
       const itemHeight = state.grabbedItem.item.space.length;
       const itemWidth = state.grabbedItem.item.space[0].length;
@@ -85,6 +88,16 @@ const useInventoryStore = create<InventoryState>((set) => ({
         col: Math.floor(targetCell.col - itemWidth / 2) + 1,
       };
 
+      if (
+        !isPositionValid(newPosition, state.inventoryGrid, state.grabbedItem)
+      ) {
+        return {
+          itemRegistry: [...state.itemRegistry, state.initialGrabbedItem],
+          grabbedItem: null,
+          initialGrabbedItem: null,
+        };
+      }
+
       const releasedItem = {
         ...state.grabbedItem,
         position: newPosition,
@@ -93,9 +106,15 @@ const useInventoryStore = create<InventoryState>((set) => ({
         (ir) => ir.item.id !== state.grabbedItem?.item.id
       );
 
+      state.inventoryGrid = fillInventoryGrid(
+        filteredRegistry,
+        state.inventoryGrid
+      );
+
       return {
         itemRegistry: [...filteredRegistry, releasedItem],
         grabbedItem: null,
+        initialGrabbedItem: null,
       };
     }),
 }));
