@@ -44,8 +44,8 @@ const mockItem5: Item = {
   id: "item-005",
   name: "cocoa",
   space: [
-    [1, 1, 1],
-    [1, 1, 1],
+    [1, 1],
+    [1, 1],
   ],
   image: "goods/cocoa.png",
   direction: 0,

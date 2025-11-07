@@ -66,9 +66,16 @@ export default function Inventory() {
               <div
                 key={`${rowIndex}-${colIndex}`}
                 className='border border-gray-300 w-[50px] h-[50px]'
-                onClick={() => {
+                onClick={(e) => {
                   if (grabbedItem) {
-                    releaseItem({ row: rowIndex, col: colIndex });
+                    const bounds = e.currentTarget.getBoundingClientRect();
+                    const relativeX = e.clientX - bounds.left;
+                    const relativeY = e.clientY - bounds.top;
+                    releaseItem(
+                      { row: rowIndex, col: colIndex },
+                      relativeX,
+                      relativeY
+                    );
                   }
                 }}
               >

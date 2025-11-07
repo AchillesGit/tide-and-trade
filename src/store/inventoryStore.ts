@@ -17,7 +17,11 @@ interface InventoryState {
   grabbedItem: ItemRegistry | null;
   setGrabbedItem: (item: ItemRegistry | null) => void;
   grabItem: (itemId: string) => void;
-  releaseItem: (position: Position) => void;
+  releaseItem: (
+    position: Position,
+    relativeX: number,
+    relativeY: number
+  ) => void;
   rotateItem: (direction: Direction) => void;
 }
 
@@ -56,7 +60,7 @@ const useInventoryStore = create<InventoryState>((set) => ({
     });
   },
 
-  releaseItem: (targetCell: Position) =>
+  releaseItem: (targetCell: Position, relativeX: number, relativeY: number) =>
     set((state) => {
       if (!state.grabbedItem) return {};
 
@@ -71,6 +75,10 @@ const useInventoryStore = create<InventoryState>((set) => ({
 
       const itemHeight = state.grabbedItem.item.space.length;
       const itemWidth = state.grabbedItem.item.space[0].length;
+
+      /** Snap to grid  */
+      if (itemHeight % 2 === 0 && relativeY < 25) targetCell.row -= 1;
+      if (itemWidth % 2 === 0 && relativeX < 25) targetCell.col -= 1;
 
       const newPosition = {
         row: Math.floor(targetCell.row - itemHeight / 2) + 1,
