@@ -40,9 +40,21 @@ const mockItem4: Item = {
   direction: 0,
 };
 
+const mockItem5: Item = {
+  id: "item-005",
+  name: "cocoa",
+  space: [
+    [1, 1, 1],
+    [1, 1, 1],
+  ],
+  image: "goods/cocoa.png",
+  direction: 0,
+};
+
 export const mockInventoryItemRegistry: ItemRegistry[] = [
   { item: mockItem, position: { row: 3, col: 3 } },
   { item: mockItem2, position: { row: 3, col: 5 } },
+  { item: mockItem5, position: { row: 0, col: 0 } },
 ];
 
 export const mockShopItemRegistry: ItemRegistry[] = [

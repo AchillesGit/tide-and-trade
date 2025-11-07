@@ -72,7 +72,7 @@ export default function Inventory() {
                   }
                 }}
               >
-                {item ? (
+                {item && (
                   <img
                     src={item.image}
                     alt={item.name}
@@ -86,7 +86,7 @@ export default function Inventory() {
                       grabItem(item.id);
                     }}
                   />
-                ) : null}
+                )}
               </div>
             );
           })

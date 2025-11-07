@@ -84,6 +84,7 @@ const useInventoryStore = create<InventoryState>((set) => ({
       const filteredRegistry = state.itemRegistry.filter(
         (ir) => ir.item.id !== state.grabbedItem?.item.id
       );
+
       return {
         itemRegistry: [...filteredRegistry, releasedItem],
         grabbedItem: null,
