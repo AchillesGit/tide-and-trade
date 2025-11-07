@@ -3,8 +3,10 @@ export interface Item {
   name: string;
   space: number[][];
   image: string;
-  direction: number;
+  direction: Degree;
 }
+
+export type Degree = 90 | 180 | 270 | 0;
 
 export interface ItemRegistry {
   item: Item;

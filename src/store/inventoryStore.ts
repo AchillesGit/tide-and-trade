@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { isPositionValid, rotateMatrix } from "../util/gridHelper";
 import type {
+  Degree,
   Direction,
   ItemRegistry,
   Position,
@@ -44,10 +45,9 @@ const useInventoryStore = create<InventoryState>((set) => ({
         item: {
           ...state.grabbedItem.item,
           space: rotatedSpace,
-          direction:
-            direction === "left"
-              ? (state.grabbedItem.item.direction + 270) % 360
-              : (state.grabbedItem.item.direction + 90) % 360,
+          direction: (direction === "left"
+            ? (state.grabbedItem.item.direction + 270) % 360
+            : (state.grabbedItem.item.direction + 90) % 360) as Degree,
         },
       };
       return {
@@ -56,18 +56,26 @@ const useInventoryStore = create<InventoryState>((set) => ({
     });
   },
 
-  releaseItem: (newPosition: Position) =>
+  releaseItem: (targetCell: Position) =>
     set((state) => {
       if (!state.grabbedItem) return {};
 
       if (
-        !isPositionValid(newPosition, state.inventoryGrid, state.grabbedItem)
+        !isPositionValid(targetCell, state.inventoryGrid, state.grabbedItem)
       ) {
         return {
           itemRegistry: [...state.itemRegistry, state.grabbedItem],
           grabbedItem: null,
         };
       }
+
+      const itemHeight = state.grabbedItem.item.space.length;
+      const itemWidth = state.grabbedItem.item.space[0].length;
+
+      const newPosition = {
+        row: Math.floor(targetCell.row - itemHeight / 2) + 1,
+        col: Math.floor(targetCell.col - itemWidth / 2) + 1,
+      };
 
       const releasedItem = {
         ...state.grabbedItem,

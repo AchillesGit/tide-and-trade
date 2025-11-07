@@ -1,5 +1,6 @@
 import useInventoryStore from "../store/inventoryStore";
 import { useState, useEffect } from "react";
+import type { Degree } from "../types/inventoryTypes";
 
 export default function Inventory() {
   const {
@@ -33,6 +34,19 @@ export default function Inventory() {
     };
   }, []);
 
+  const getTransformForDirection = (deg: Degree) => {
+    switch (deg) {
+      case 90:
+        return "rotate(90deg) translateY(-100%)";
+      case 180:
+        return "rotate(180deg) translate(-100%, -100%)";
+      case 270:
+        return "rotate(270deg) translateX(-100%)";
+      default:
+        return `rotate(${deg}deg)`;
+    }
+  };
+
   return (
     <div className={`${grabbedItem ? "cursor-grabbing" : "cursor-default"}`}>
       <h2>Inventory</h2>
@@ -63,7 +77,10 @@ export default function Inventory() {
                     src={item.image}
                     alt={item.name}
                     className='absolute cursor-grab'
-                    style={{ rotate: `${item.direction}deg` }}
+                    style={{
+                      transformOrigin: "top left",
+                      transform: getTransformForDirection(item.direction),
+                    }}
                     onClick={(e) => {
                       e.stopPropagation();
                       grabItem(item.id);
