@@ -1,7 +1,7 @@
-import type { Direction, ItemRegistry } from "../types/inventoryTypes";
+import type { Direction, Item } from "../types/inventoryTypes";
 
 export function getInventoryAsTwoDArray(
-  itemRegistry: ItemRegistry[],
+  items: Item[],
   inventoryGrid: number[][]
 ): number[][] {
   const rows = inventoryGrid.length;
@@ -11,12 +11,12 @@ export function getInventoryAsTwoDArray(
     Array.from({ length: cols }, () => 0)
   );
 
-  itemRegistry.forEach(({ item, position }) => {
+  items.forEach((item) => {
     item.space.forEach((row, rIdx) => {
       row.forEach((cell, cIdx) => {
         if (cell === 1) {
-          const gridRow = position.row + rIdx;
-          const gridCol = position.col + cIdx;
+          const gridRow = item.position.row + rIdx;
+          const gridCol = item.position.col + cIdx;
           if (gridRow < rows && gridCol < cols) {
             grid[gridRow][gridCol] = 1;
           }
@@ -29,16 +29,16 @@ export function getInventoryAsTwoDArray(
 }
 
 export function fillInventoryGrid(
-  itemRegistry: ItemRegistry[],
+  items: Item[],
   inventoryGrid: number[][]
 ): number[][] {
   const updatedGrid = inventoryGrid.map((row) => [...row].map(() => 0));
-  itemRegistry.forEach(({ item, position }) => {
+  items.forEach((item) => {
     item.space.forEach((row, rIdx) => {
       row.forEach((cell, cIdx) => {
         if (cell === 1) {
-          const gridRow = position.row + rIdx;
-          const gridCol = position.col + cIdx;
+          const gridRow = item.position.row + rIdx;
+          const gridCol = item.position.col + cIdx;
           if (gridRow < updatedGrid.length && gridCol < updatedGrid[0].length) {
             updatedGrid[gridRow][gridCol] = 1;
           }
@@ -55,9 +55,9 @@ export function isPositionValid(
     col: number;
   },
   inventoryGrid: number[][],
-  grabbedItem: ItemRegistry
+  grabbedItem: Item
 ): boolean {
-  const space = grabbedItem.item.space;
+  const space = grabbedItem.space;
 
   for (let rIdx = 0; rIdx < space.length; rIdx++) {
     for (let cIdx = 0; cIdx < space[rIdx].length; cIdx++) {

@@ -4,7 +4,7 @@ import type { Degree } from "../types/inventoryTypes";
 
 export default function Inventory() {
   const {
-    itemRegistry,
+    items,
     inventoryGrid,
     grabItem,
     releaseItem,
@@ -58,10 +58,10 @@ export default function Inventory() {
       >
         {inventoryGrid.map((row, rowIndex) =>
           row.map((_, colIndex) => {
-            const item = itemRegistry.find(
+            const item = items.find(
               (ir) =>
                 ir.position.row === rowIndex && ir.position.col === colIndex
-            )?.item;
+            );
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
@@ -102,13 +102,13 @@ export default function Inventory() {
 
       {grabbedItem && (
         <img
-          src={grabbedItem.item.image}
-          alt={grabbedItem.item.name}
+          src={grabbedItem.image}
+          alt={grabbedItem.name}
           className='pointer-events-none fixed opacity-80 transform -translate-x-1/2 -translate-y-1/2'
           style={{
             top: cursorPos.y,
             left: cursorPos.x,
-            rotate: `${grabbedItem.item.direction}deg`,
+            rotate: `${grabbedItem.direction}deg`,
           }}
         />
       )}

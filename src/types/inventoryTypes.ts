@@ -4,14 +4,11 @@ export interface Item {
   space: number[][];
   image: string;
   direction: Degree;
+  position: Position;
+  belongsToShop: boolean;
 }
 
 export type Degree = 90 | 180 | 270 | 0;
-
-export interface ItemRegistry {
-  item: Item;
-  position: Position;
-}
 
 export interface Position {
   row: number;

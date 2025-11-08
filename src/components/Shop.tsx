@@ -33,7 +33,7 @@ export default function Shop() {
             const item = itemRegistry.find(
               (ir) =>
                 ir.position.row === rowIndex && ir.position.col === colIndex
-            )?.item;
+            );
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
