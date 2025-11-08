@@ -32,7 +32,7 @@ export function fillInventoryGrid(
   itemRegistry: ItemRegistry[],
   inventoryGrid: number[][]
 ): number[][] {
-  const updatedGrid = inventoryGrid.map((row) => [...row]);
+  const updatedGrid = inventoryGrid.map((row) => [...row].map(() => 0));
   itemRegistry.forEach(({ item, position }) => {
     item.space.forEach((row, rIdx) => {
       row.forEach((cell, cIdx) => {

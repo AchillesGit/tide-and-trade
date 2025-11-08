@@ -47,6 +47,10 @@ const useInventoryStore = create<InventoryState>((set) => ({
       initialGrabbedItem: state.itemRegistry.find(
         (ir) => ir.item.id === itemId
       ),
+      inventoryGrid: fillInventoryGrid(
+        state.itemRegistry.filter((ir) => ir.item.id !== itemId),
+        state.inventoryGrid
+      ),
     })),
 
   rotateItem: (direction: Direction) => {
@@ -102,17 +106,16 @@ const useInventoryStore = create<InventoryState>((set) => ({
         ...state.grabbedItem,
         position: newPosition,
       };
-      const filteredRegistry = state.itemRegistry.filter(
-        (ir) => ir.item.id !== state.grabbedItem?.item.id
-      );
+
+      const updatedRegistry = [...state.itemRegistry, releasedItem];
 
       state.inventoryGrid = fillInventoryGrid(
-        filteredRegistry,
+        updatedRegistry,
         state.inventoryGrid
       );
 
       return {
-        itemRegistry: [...filteredRegistry, releasedItem],
+        itemRegistry: [...updatedRegistry],
         grabbedItem: null,
         initialGrabbedItem: null,
       };
