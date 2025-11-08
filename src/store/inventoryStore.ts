@@ -41,7 +41,7 @@ const useInventoryStore = create<InventoryState>((set) => ({
   grabItem: (itemId: string) =>
     set((state) => ({
       grabbedItem: state.items.find((ir) => ir.id === itemId),
-      Item: state.items.filter((ir) => ir.id !== itemId),
+      items: state.items.filter((ir) => ir.id !== itemId),
       initialGrabbedItem: state.items.find((ir) => ir.id === itemId),
       inventoryGrid: fillInventoryGrid(
         state.items.filter((ir) => ir.id !== itemId),
@@ -87,13 +87,13 @@ const useInventoryStore = create<InventoryState>((set) => ({
       ) {
         if (state.grabbedItem.belongsToShop) {
           return {
-            Item: [...state.items],
+            items: [...state.items],
             grabbedItem: null,
             initialGrabbedItem: null,
           };
         } else {
           return {
-            Item: [...state.items, state.initialGrabbedItem],
+            items: [...state.items, state.initialGrabbedItem],
             grabbedItem: null,
             initialGrabbedItem: null,
           };
@@ -117,7 +117,7 @@ const useInventoryStore = create<InventoryState>((set) => ({
       );
 
       return {
-        Item: [...updatedRegistry],
+        items: [...updatedRegistry],
         grabbedItem: null,
         initialGrabbedItem: null,
       };
