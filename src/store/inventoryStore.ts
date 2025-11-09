@@ -1,19 +1,21 @@
 import { create } from "zustand";
+
+import {
+  mockInventoryGrid,
+  mockInventoryItems,
+} from "../mock/inventoryMockData";
 import {
   fillInventoryGrid,
   isPositionValid,
   rotateMatrix,
 } from "../util/gridHelper";
+
 import type {
   Degree,
   Direction,
   Item,
   Position,
 } from "../types/inventoryTypes";
-import {
-  mockInventoryGrid,
-  mockInventoryItems,
-} from "../mock/inventoryMockData";
 
 interface InventoryState {
   inventoryGrid: number[][];
@@ -25,7 +27,7 @@ interface InventoryState {
   releaseItem: (
     position: Position,
     relativeX: number,
-    relativeY: number
+    relativeY: number,
   ) => void;
   rotateItem: (direction: Direction) => void;
 }
@@ -45,7 +47,7 @@ const useInventoryStore = create<InventoryState>((set) => ({
       initialGrabbedItem: state.items.find((ir) => ir.id === itemId),
       inventoryGrid: fillInventoryGrid(
         state.items.filter((ir) => ir.id !== itemId),
-        state.inventoryGrid
+        state.inventoryGrid,
       ),
     })),
 
@@ -73,13 +75,15 @@ const useInventoryStore = create<InventoryState>((set) => ({
       const itemHeight = state.grabbedItem.space.length;
       const itemWidth = state.grabbedItem.space[0].length;
 
-      /** Snap to grid  */
-      if (itemHeight % 2 === 0 && relativeY < 25) targetCell.row -= 1;
-      if (itemWidth % 2 === 0 && relativeX < 25) targetCell.col -= 1;
+      /** Snap to grid */
+      const adjustedTarget = {
+        row: targetCell.row - (itemHeight % 2 === 0 && relativeY < 25 ? 1 : 0),
+        col: targetCell.col - (itemWidth % 2 === 0 && relativeX < 25 ? 1 : 0),
+      };
 
       const newPosition = {
-        row: Math.floor(targetCell.row - itemHeight / 2) + 1,
-        col: Math.floor(targetCell.col - itemWidth / 2) + 1,
+        row: Math.floor(adjustedTarget.row - itemHeight / 2) + 1,
+        col: Math.floor(adjustedTarget.col - itemWidth / 2) + 1,
       };
 
       if (
@@ -91,16 +95,12 @@ const useInventoryStore = create<InventoryState>((set) => ({
             grabbedItem: null,
             initialGrabbedItem: null,
           };
-        } else {
-          return {
-            items: [...state.items, state.initialGrabbedItem],
-            grabbedItem: null,
-            initialGrabbedItem: null,
-          };
         }
-      }
-
-      if (state.grabbedItem.belongsToShop) {
+        return {
+          items: [...state.items, state.initialGrabbedItem],
+          grabbedItem: null,
+          initialGrabbedItem: null,
+        };
       }
 
       const releasedItem: Item = {
@@ -110,14 +110,14 @@ const useInventoryStore = create<InventoryState>((set) => ({
       };
 
       const updatedRegistry = [...state.items, releasedItem];
-
-      state.inventoryGrid = fillInventoryGrid(
+      const updatedGrid = fillInventoryGrid(
         updatedRegistry,
-        state.inventoryGrid
+        state.inventoryGrid,
       );
 
       return {
         items: [...updatedRegistry],
+        inventoryGrid: updatedGrid,
         grabbedItem: null,
         initialGrabbedItem: null,
       };
