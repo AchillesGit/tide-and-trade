@@ -84,4 +84,10 @@ export default [
   ...typescriptConfig,
   // Prettier Config
   ...prettierConfig,
+  {
+    name: "custom/rules",
+    rules: {
+      "react/react-in-jsx-scope": "off",
+    },
+  },
 ];

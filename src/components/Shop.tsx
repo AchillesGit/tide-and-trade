@@ -1,8 +1,11 @@
+import { useEffect, useState } from "react";
+
 import useInventoryStore from "../store/inventoryStore";
-import { useState, useEffect } from "react";
 import useShopStore from "../store/shopStore";
 
-export default function Shop() {
+import type { FC } from "react";
+
+const Shop: FC = () => {
   const { itemRegistry, buyItem, sellItem, shopGrid } = useShopStore();
   const { grabbedItem } = useInventoryStore();
 
@@ -20,10 +23,10 @@ export default function Shop() {
   }, []);
 
   return (
-    <div className={`${grabbedItem ? "cursor-grabbing" : "cursor-default"}`}>
+    <div className={grabbedItem ? "cursor-grabbing" : "cursor-default"}>
       <h2>Shop</h2>
       <div
-        className='grid'
+        className="grid"
         style={{
           gridTemplateColumns: `repeat(${shopGrid[0].length}, 50px)`,
         }}
@@ -32,12 +35,14 @@ export default function Shop() {
           row.map((_, colIndex) => {
             const item = itemRegistry.find(
               (ir) =>
-                ir.position.row === rowIndex && ir.position.col === colIndex
+                ir.position.row === rowIndex && ir.position.col === colIndex,
             );
             return (
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
               <div
+                // eslint-disable-next-line react/no-array-index-key
                 key={`${rowIndex}-${colIndex}`}
-                className='border border-gray-300 w-[50px] h-[50px]'
+                className="border border-gray-300 w-[50px] h-[50px]"
                 onClick={() => {
                   if (grabbedItem) {
                     // releaseItem({ row: rowIndex, col: colIndex });
@@ -45,10 +50,11 @@ export default function Shop() {
                 }}
               >
                 {item ? (
+                  // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
                   <img
-                    src={item.image}
                     alt={item.name}
-                    className='absolute cursor-grab'
+                    className="absolute cursor-grab"
+                    src={item.image}
                     style={{ rotate: `${item.direction}deg` }}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -58,9 +64,11 @@ export default function Shop() {
                 ) : null}
               </div>
             );
-          })
+          }),
         )}
       </div>
     </div>
   );
-}
+};
+
+export default Shop;

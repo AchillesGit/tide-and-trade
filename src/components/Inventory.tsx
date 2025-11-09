@@ -1,8 +1,12 @@
+import { useEffect, useState } from "react";
+
 import useInventoryStore from "../store/inventoryStore";
-import { useState, useEffect } from "react";
+
+import type { FC } from "react";
+
 import type { Degree } from "../types/inventoryTypes";
 
-export default function Inventory() {
+const Inventory: FC = () => {
   const {
     items,
     inventoryGrid,
@@ -32,7 +36,7 @@ export default function Inventory() {
       window.removeEventListener("mousemove", cursorHandler);
       window.removeEventListener("wheel", wheelHandler);
     };
-  }, []);
+  }, [rotateItem]);
 
   const getTransformForDirection = (deg: Degree) => {
     switch (deg) {
@@ -48,10 +52,10 @@ export default function Inventory() {
   };
 
   return (
-    <div className={`${grabbedItem ? "cursor-grabbing" : "cursor-default"}`}>
+    <div className={grabbedItem ? "cursor-grabbing" : "cursor-default"}>
       <h2>Inventory</h2>
       <div
-        className='grid'
+        className="grid"
         style={{
           gridTemplateColumns: `repeat(${inventoryGrid[0].length}, 50px)`,
         }}
@@ -60,12 +64,14 @@ export default function Inventory() {
           row.map((_, colIndex) => {
             const item = items.find(
               (ir) =>
-                ir.position.row === rowIndex && ir.position.col === colIndex
+                ir.position.row === rowIndex && ir.position.col === colIndex,
             );
             return (
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
               <div
+                // eslint-disable-next-line react/no-array-index-key
                 key={`${rowIndex}-${colIndex}`}
-                className='border border-gray-300 w-[50px] h-[50px]'
+                className="border border-gray-300 w-[50px] h-[50px]"
                 onClick={(e) => {
                   if (grabbedItem) {
                     const bounds = e.currentTarget.getBoundingClientRect();
@@ -74,44 +80,47 @@ export default function Inventory() {
                     releaseItem(
                       { row: rowIndex, col: colIndex },
                       relativeX,
-                      relativeY
+                      relativeY,
                     );
                   }
                 }}
               >
-                {item && (
+                {item ? (
+                  // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
                   <img
-                    src={item.image}
                     alt={item.name}
-                    className='absolute cursor-grab'
-                    style={{
-                      transformOrigin: "top left",
-                      transform: getTransformForDirection(item.direction),
-                    }}
+                    className="absolute cursor-grab"
+                    src={item.image}
                     onClick={(e) => {
                       e.stopPropagation();
                       grabItem(item.id);
                     }}
+                    style={{
+                      transformOrigin: "top left",
+                      transform: getTransformForDirection(item.direction),
+                    }}
                   />
-                )}
+                ) : null}
               </div>
             );
-          })
+          }),
         )}
       </div>
 
-      {grabbedItem && (
+      {grabbedItem ? (
         <img
-          src={grabbedItem.image}
           alt={grabbedItem.name}
-          className='pointer-events-none fixed opacity-80 transform -translate-x-1/2 -translate-y-1/2'
+          className="pointer-events-none fixed opacity-80 transform -translate-x-1/2 -translate-y-1/2"
+          src={grabbedItem.image}
           style={{
             top: cursorPos.y,
             left: cursorPos.x,
             rotate: `${grabbedItem.direction}deg`,
           }}
         />
-      )}
+      ) : null}
     </div>
   );
-}
+};
+
+export default Inventory;

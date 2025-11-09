@@ -4,9 +4,9 @@ import Inventory from "./components/Inventory";
 import ResourcesBar from "./components/ResourcesBar";
 import Shop from "./components/Shop";
 
-import type { JSX } from "react";
+import type { FC } from "react";
 
-const App = (): JSX.Element => (
+const App: FC = () => (
   <React.Fragment>
     <ResourcesBar />
     <div className="flex gap-4">

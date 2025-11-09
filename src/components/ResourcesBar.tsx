@@ -1,7 +1,10 @@
 import useResourcesStore from "../store/resourcesStore";
 
-export default function ResourcesBar() {
+import type { FC } from "react";
+
+const ResourcesBar: FC = () => {
   const { gold } = useResourcesStore();
 
-  return <div className='flex gap-4'>{gold} Gold</div>;
-}
+  return <div className="flex gap-4">{gold} Gold</div>;
+};
+export default ResourcesBar;
