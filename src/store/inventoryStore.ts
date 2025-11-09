@@ -39,20 +39,27 @@ const useInventoryStore = create<InventoryState>((set) => ({
   initialGrabbedItem: null,
 
   grabItemFromShop: (item) =>
-    set({ grabbedItem: item, initialGrabbedItem: item }),
+    set(
+      (): Partial<InventoryState> => ({
+        grabbedItem: item,
+        initialGrabbedItem: item,
+      }),
+    ),
   grabItem: (itemId: string) =>
-    set((state) => ({
-      grabbedItem: state.items.find((ir) => ir.id === itemId),
-      items: state.items.filter((ir) => ir.id !== itemId),
-      initialGrabbedItem: state.items.find((ir) => ir.id === itemId),
-      inventoryGrid: fillInventoryGrid(
-        state.items.filter((ir) => ir.id !== itemId),
-        state.inventoryGrid,
-      ),
-    })),
+    set(
+      (state): Partial<InventoryState> => ({
+        grabbedItem: state.items.find((ir) => ir.id === itemId),
+        items: state.items.filter((ir) => ir.id !== itemId),
+        initialGrabbedItem: state.items.find((ir) => ir.id === itemId),
+        inventoryGrid: fillInventoryGrid(
+          state.items.filter((ir) => ir.id !== itemId),
+          state.inventoryGrid,
+        ),
+      }),
+    ),
 
   rotateItem: (direction: Direction) => {
-    set((state) => {
+    set((state): Partial<InventoryState> => {
       if (!state.grabbedItem) return {};
       const rotatedSpace = rotateMatrix(state.grabbedItem.space, direction);
       const rotatedItem = {
@@ -69,7 +76,7 @@ const useInventoryStore = create<InventoryState>((set) => ({
   },
 
   releaseItem: (targetCell: Position, relativeX: number, relativeY: number) =>
-    set((state) => {
+    set((state): Partial<InventoryState> => {
       if (!state.grabbedItem || !state.initialGrabbedItem) return {};
 
       const itemHeight = state.grabbedItem.space.length;

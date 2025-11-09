@@ -1,7 +1,9 @@
 import { create } from "zustand";
-import type { Item } from "../types/inventoryTypes";
-import { mockInventoryGrid, mockShopItems } from "../mock/inventoryMockData";
+
 import useInventoryStore from "./inventoryStore";
+import { mockInventoryGrid, mockShopItems } from "../mock/inventoryMockData";
+
+import type { Item } from "../types/inventoryTypes";
 
 interface ShopState {
   shopGrid: number[][];
@@ -26,9 +28,11 @@ const useShopStore = create<ShopState>((set, get) => ({
   },
 
   sellItem: (item: Item) =>
-    set((state) => ({
-      itemRegistry: [...state.itemRegistry, item],
-    })),
+    set(
+      (state): Partial<ShopState> => ({
+        itemRegistry: [...state.itemRegistry, item],
+      }),
+    ),
 }));
 
 export default useShopStore;

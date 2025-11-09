@@ -8,8 +8,10 @@ interface ResourcesState {
 
 const useResourcesStore = create<ResourcesState>((set) => ({
   gold: 1000,
-  addGold: (amount) => set((state) => ({ gold: state.gold + amount })),
-  removeGold: (amount) => set((state) => ({ gold: state.gold - amount })),
+  addGold: (amount) =>
+    set((state): Partial<ResourcesState> => ({ gold: state.gold + amount })),
+  removeGold: (amount) =>
+    set((state): Partial<ResourcesState> => ({ gold: state.gold - amount })),
 }));
 
 export default useResourcesStore;
