@@ -2,13 +2,13 @@ import type { Direction, Item } from "../types/inventoryTypes";
 
 export function getInventoryAsTwoDArray(
   items: Item[],
-  inventoryGrid: number[][]
+  inventoryGrid: number[][],
 ): number[][] {
   const rows = inventoryGrid.length;
   const cols = inventoryGrid[0].length;
 
   const grid: number[][] = Array.from({ length: rows }, () =>
-    Array.from({ length: cols }, () => 0)
+    Array.from({ length: cols }, () => 0),
   );
 
   items.forEach((item) => {
@@ -30,7 +30,7 @@ export function getInventoryAsTwoDArray(
 
 export function fillInventoryGrid(
   items: Item[],
-  inventoryGrid: number[][]
+  inventoryGrid: number[][],
 ): number[][] {
   const updatedGrid = inventoryGrid.map((row) => [...row].map(() => 0));
   items.forEach((item) => {
@@ -55,12 +55,12 @@ export function isPositionValid(
     col: number;
   },
   inventoryGrid: number[][],
-  grabbedItem: Item
+  grabbedItem: Item,
 ): boolean {
-  const space = grabbedItem.space;
+  const { space } = grabbedItem;
 
-  for (let rIdx = 0; rIdx < space.length; rIdx++) {
-    for (let cIdx = 0; cIdx < space[rIdx].length; cIdx++) {
+  for (let rIdx = 0; rIdx < space.length; rIdx += 1) {
+    for (let cIdx = 0; cIdx < space[rIdx].length; cIdx += 1) {
       if (space[rIdx][cIdx] === 1) {
         const gridRow = newPosition.row + rIdx;
         const gridCol = newPosition.col + cIdx;
@@ -81,15 +81,15 @@ export function isPositionValid(
 
 export function rotateMatrix(
   matrix: number[][],
-  direction: Direction
+  direction: Direction,
 ): number[][] {
   const rows = matrix.length;
   const cols = matrix[0].length;
   const rotated: number[][] = Array.from({ length: cols }, () =>
-    Array.from({ length: rows }, () => 0)
+    Array.from({ length: rows }, () => 0),
   );
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
+  for (let r = 0; r < rows; r += 1) {
+    for (let c = 0; c < cols; c += 1) {
       if (direction === "right") {
         rotated[c][rows - 1 - r] = matrix[r][c];
       } else {
