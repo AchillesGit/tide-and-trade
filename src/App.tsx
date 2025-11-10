@@ -9,6 +9,7 @@ import type { FC } from "react";
 
 const App: FC = () => {
   const { onRightClick } = useGameStore();
+
   useEffect(() => {
     const onContext = (e: MouseEvent) => {
       e.preventDefault();

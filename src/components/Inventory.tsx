@@ -18,7 +18,6 @@ const Inventory: FC = () => {
 
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
 
-  // TODO: Lift
   useEffect(() => {
     const cursorHandler = (e: MouseEvent) =>
       setCursorPos({ x: e.clientX, y: e.clientY });
