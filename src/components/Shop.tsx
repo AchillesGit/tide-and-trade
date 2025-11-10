@@ -1,26 +1,9 @@
-import { useEffect, useState } from "react";
-
-import useInventoryStore from "../store/inventoryStore";
-import useShopStore from "../store/shopStore";
+import { useGameStore } from "../store/gameStore";
 
 import type { FC } from "react";
 
 const Shop: FC = () => {
-  const { itemRegistry, buyItem, sellItem, shopGrid } = useShopStore();
-  const { grabbedItem } = useInventoryStore();
-
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const cursorHandler = (e: MouseEvent) =>
-      setCursorPos({ x: e.clientX, y: e.clientY });
-
-    window.addEventListener("mousemove", cursorHandler);
-
-    return () => {
-      window.removeEventListener("mousemove", cursorHandler);
-    };
-  }, []);
+  const { shopItems, shopGrid, grabbedItem, onRightClick } = useGameStore();
 
   return (
     <div className={grabbedItem ? "cursor-grabbing" : "cursor-default"}>
@@ -33,7 +16,7 @@ const Shop: FC = () => {
       >
         {shopGrid.map((row, rowIndex) =>
           row.map((_, colIndex) => {
-            const item = itemRegistry.find(
+            const item = shopItems.find(
               (ir) =>
                 ir.position.row === rowIndex && ir.position.col === colIndex,
             );
@@ -45,6 +28,7 @@ const Shop: FC = () => {
                 className="border border-gray-300 w-[50px] h-[50px]"
                 onClick={() => {
                   if (grabbedItem) {
+                    onRightClick();
                     // releaseItem({ row: rowIndex, col: colIndex });
                   }
                 }}
@@ -58,7 +42,7 @@ const Shop: FC = () => {
                     style={{ rotate: `${item.direction}deg` }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      buyItem(item.id);
+                      // buyItem(item.id);
                     }}
                   />
                 ) : null}

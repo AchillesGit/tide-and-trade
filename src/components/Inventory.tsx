@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import useInventoryStore from "../store/inventoryStore";
+import { useGameStore } from "../store/gameStore";
 
 import type { FC } from "react";
 
@@ -8,16 +8,17 @@ import type { Degree } from "../types/inventoryTypes";
 
 const Inventory: FC = () => {
   const {
-    items,
+    inventoryItems,
     inventoryGrid,
-    grabItem,
-    releaseItem,
+    onClickInventoryItem,
     grabbedItem,
     rotateItem,
-  } = useInventoryStore();
+    onClickInventoryCell,
+  } = useGameStore();
 
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
 
+  // TODO: Lift
   useEffect(() => {
     const cursorHandler = (e: MouseEvent) =>
       setCursorPos({ x: e.clientX, y: e.clientY });
@@ -62,7 +63,7 @@ const Inventory: FC = () => {
       >
         {inventoryGrid.map((row, rowIndex) =>
           row.map((_, colIndex) => {
-            const item = items.find(
+            const item = inventoryItems.find(
               (ir) =>
                 ir.position.row === rowIndex && ir.position.col === colIndex,
             );
@@ -77,7 +78,7 @@ const Inventory: FC = () => {
                     const bounds = e.currentTarget.getBoundingClientRect();
                     const relativeX = e.clientX - bounds.left;
                     const relativeY = e.clientY - bounds.top;
-                    releaseItem(
+                    onClickInventoryCell(
                       { row: rowIndex, col: colIndex },
                       relativeX,
                       relativeY,
@@ -93,7 +94,7 @@ const Inventory: FC = () => {
                     src={item.image}
                     onClick={(e) => {
                       e.stopPropagation();
-                      grabItem(item.id);
+                      onClickInventoryItem(item);
                     }}
                     style={{
                       transformOrigin: "top left",

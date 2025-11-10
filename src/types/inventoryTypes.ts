@@ -5,7 +5,7 @@ export interface Item {
   image: string;
   direction: Degree;
   position: Position;
-  belongsToShop: boolean;
+  origin: ItemOrigin;
 }
 
 export type Degree = 90 | 180 | 270 | 0;
@@ -16,3 +16,5 @@ export interface Position {
 }
 
 export type Direction = "left" | "right";
+
+export type ItemOrigin = "shop" | "inventory";
