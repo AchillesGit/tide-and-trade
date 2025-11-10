@@ -6,6 +6,7 @@ export interface Item {
   direction: Degree;
   position: Position;
   origin: ItemOrigin;
+  baseValue: number;
 }
 
 export type Degree = 90 | 180 | 270 | 0;

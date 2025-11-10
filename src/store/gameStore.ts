@@ -40,9 +40,11 @@ export const useGameStore = create<GameState>((...args) => ({
   },
 
   onClickShopItem: (item: Item) => {
-    const { setGrabbedItem, removeShopItem } = useGameStore.getState();
-    if (item) {
+    const { gold, setGrabbedItem, removeShopItem, removeGold } =
+      useGameStore.getState();
+    if (item && gold > item.baseValue) {
       setGrabbedItem({ ...item });
+      removeGold(item.baseValue);
     }
     removeShopItem(item.id);
   },

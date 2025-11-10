@@ -8,6 +8,7 @@ const mockItem: Item = {
   direction: 0,
   origin: "inventory",
   position: { row: 3, col: 3 },
+  baseValue: 50,
 };
 
 const mockItem2: Item = {
@@ -18,6 +19,7 @@ const mockItem2: Item = {
   direction: 0,
   origin: "inventory",
   position: { row: 3, col: 5 },
+  baseValue: 50,
 };
 
 const mockItem3: Item = {
@@ -32,6 +34,7 @@ const mockItem3: Item = {
   direction: 0,
   origin: "shop",
   position: { row: 1, col: 0 },
+  baseValue: 50,
 };
 
 const mockItem4: Item = {
@@ -46,6 +49,7 @@ const mockItem4: Item = {
   direction: 0,
   origin: "shop",
   position: { row: 1, col: 3 },
+  baseValue: 50,
 };
 
 const mockItem5: Item = {
@@ -59,6 +63,7 @@ const mockItem5: Item = {
   direction: 0,
   origin: "inventory",
   position: { row: 0, col: 0 },
+  baseValue: 50,
 };
 
 export const mockInventoryItems: Item[] = [
