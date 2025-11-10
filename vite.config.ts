@@ -5,7 +5,15 @@ import checker from "vite-plugin-checker";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), checker({ typescript: true })],
+  plugins: [
+    react(),
+    tailwindcss(),
+    checker({
+      typescript: {
+        tsconfigPath: "tsconfig.app.json",
+      },
+    }),
+  ],
   server: {
     host: true,
     port: 5173,
