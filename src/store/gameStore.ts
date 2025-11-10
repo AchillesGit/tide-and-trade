@@ -23,6 +23,7 @@ export type GameState = ShopState &
       relativeX: number,
       relativeY: number,
     ) => void;
+    onClickShopCell: () => void;
   };
 
 export const useGameStore = create<GameState>((...args) => ({
@@ -61,6 +62,14 @@ export const useGameStore = create<GameState>((...args) => ({
     );
 
     if (placementValid) setGrabbedItem(null);
+  },
+
+  onClickShopCell: () => {
+    const { grabbedItem, setGrabbedItem, addGold } = useGameStore.getState();
+    if (!grabbedItem) return;
+
+    addGold(grabbedItem.baseValue);
+    setGrabbedItem(null);
   },
 
   onRightClick: () => {
