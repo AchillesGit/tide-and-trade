@@ -16,6 +16,7 @@ export type GameState = ShopState &
   ResourceState &
   GrabbedItemState & {
     onClickInventoryItem: (item: Item) => void;
+    onClickShopItem: (item: Item) => void;
     onRightClick: () => void;
     onClickInventoryCell: (
       pos: Position,
@@ -36,6 +37,14 @@ export const useGameStore = create<GameState>((...args) => ({
       setGrabbedItem({ ...item });
     }
     removeInventoryItem(item.id);
+  },
+
+  onClickShopItem: (item: Item) => {
+    const { setGrabbedItem, removeShopItem } = useGameStore.getState();
+    if (item) {
+      setGrabbedItem({ ...item });
+    }
+    removeShopItem(item.id);
   },
 
   onClickInventoryCell: (targetCell, relativeX, relativeY) => {

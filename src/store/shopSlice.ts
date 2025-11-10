@@ -9,23 +9,27 @@ export interface ShopState {
   shopGrid: number[][];
   shopItems: Item[];
   addShopItem: (item: Item) => void;
-  removeItem: (itemId: string) => Item | null;
+  removeShopItem: (itemId: string) => void;
 }
 
-export const createShopSlice: StateCreator<ShopState> = (set, get) => ({
+export const createShopSlice: StateCreator<ShopState> = (set) => ({
   shopGrid: fillInventoryGrid(mockShopItems, mockShopGrid),
   shopItems: mockShopItems,
 
   addShopItem: (item) =>
-    set((state) => ({
-      shopItems: [...state.shopItems, item],
-    })),
+    set(
+      (state) =>
+        ({
+          shopItems: [...state.shopItems, item],
+        }) satisfies Partial<ShopState>,
+    ),
 
-  removeItem: (itemId) => {
-    const item = get().shopItems.find((it) => it.id === itemId) ?? null;
-    set((state) => ({
-      shopItems: state.shopItems.filter((it) => it.id !== itemId),
-    }));
-    return item;
+  removeShopItem: (itemId) => {
+    set(
+      (state) =>
+        ({
+          shopItems: state.shopItems.filter((it) => it.id !== itemId),
+        }) satisfies Partial<ShopState>,
+    );
   },
 });
