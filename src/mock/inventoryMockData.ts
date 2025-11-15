@@ -9,6 +9,16 @@ const mockItem: Item = {
   origin: "inventory",
   position: { row: 3, col: 3 },
   baseValue: 50,
+  rarity: 1,
+  level: 1,
+  categories: [],
+  firepower: [],
+  attackSpeed: [],
+  criticalChance: [],
+  criticalDamage: [],
+  evasionChance: [],
+  shipHpIncrease: [],
+  armor: [],
 };
 
 const mockItem2: Item = {
@@ -20,6 +30,16 @@ const mockItem2: Item = {
   origin: "inventory",
   position: { row: 3, col: 5 },
   baseValue: 50,
+  rarity: 1,
+  level: 1,
+  categories: [],
+  firepower: [],
+  attackSpeed: [],
+  criticalChance: [],
+  criticalDamage: [],
+  evasionChance: [],
+  shipHpIncrease: [],
+  armor: [],
 };
 
 const mockItem3: Item = {
@@ -35,6 +55,16 @@ const mockItem3: Item = {
   origin: "shop",
   position: { row: 1, col: 0 },
   baseValue: 50,
+  rarity: 1,
+  level: 1,
+  categories: [],
+  firepower: [],
+  attackSpeed: [],
+  criticalChance: [],
+  criticalDamage: [],
+  evasionChance: [],
+  shipHpIncrease: [],
+  armor: [],
 };
 
 const mockItem4: Item = {
@@ -50,6 +80,16 @@ const mockItem4: Item = {
   origin: "shop",
   position: { row: 1, col: 3 },
   baseValue: 50,
+  rarity: 1,
+  level: 1,
+  categories: [],
+  firepower: [],
+  attackSpeed: [],
+  criticalChance: [],
+  criticalDamage: [],
+  evasionChance: [],
+  shipHpIncrease: [],
+  armor: [],
 };
 
 const mockItem5: Item = {
@@ -64,6 +104,16 @@ const mockItem5: Item = {
   origin: "inventory",
   position: { row: 0, col: 0 },
   baseValue: 50,
+  rarity: 1,
+  level: 1,
+  categories: [],
+  firepower: [],
+  attackSpeed: [],
+  criticalChance: [],
+  criticalDamage: [],
+  evasionChance: [],
+  shipHpIncrease: [],
+  armor: [],
 };
 
 export const mockInventoryItems: Item[] = [
