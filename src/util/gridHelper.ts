@@ -1,5 +1,12 @@
 import type { Direction, Item } from "../types/inventoryTypes";
 
+/**
+ * Build a clean 2D occupancy grid from a list of items.
+ *
+ * @param items - Items to render onto the grid
+ * @param inventoryGrid - Base grid shape (used only for dimensions)
+ * @returns A new 2D array: 1 = occupied, 0 = empty
+ */
 export function getInventoryAsTwoDArray(
   items: Item[],
   inventoryGrid: number[][],
@@ -28,6 +35,13 @@ export function getInventoryAsTwoDArray(
   return grid;
 }
 
+/**
+ * Rebuild the inventory grid with all items placed in their positions.
+ *
+ * @param items - Items to apply to the grid
+ * @param inventoryGrid - Template grid used for dimensions
+ * @returns Updated 2D occupancy grid
+ */
 export function fillInventoryGrid(
   items: Item[],
   inventoryGrid: number[][],
@@ -49,6 +63,14 @@ export function fillInventoryGrid(
   return updatedGrid;
 }
 
+/**
+ * Validate whether an item can be placed at a specific grid position.
+ *
+ * @param newPosition - Top-left grid coordinates where the item would be placed
+ * @param inventoryGrid - The current occupancy grid
+ * @param grabbedItem - The item being checked for placement
+ * @returns True if item fits inside bounds and doesn't overlap
+ */
 export function isPositionValid(
   newPosition: {
     row: number;
@@ -79,6 +101,13 @@ export function isPositionValid(
   return true;
 }
 
+/**
+ * Rotate a 2D matrix 90° left or right.
+ *
+ * @param matrix - Original matrix (item space)
+ * @param direction - Rotation direction ("left" or "right")
+ * @returns New rotated matrix
+ */
 export function rotateMatrix(
   matrix: number[][],
   direction: Direction,

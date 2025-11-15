@@ -6,6 +6,15 @@ import type { FC } from "react";
 
 import type { Degree } from "../types/inventoryTypes";
 
+/**
+ * Inventory UI component showing the grid, items, and drag/rotate interactions.
+ * Handles:
+ * - Displaying the player's inventory grid
+ * - Clicking items to pick them up
+ * - Clicking empty cells to place items
+ * - Rotating items via mouse wheel
+ * - Rendering dragged item under cursor
+ */
 const Inventory: FC = () => {
   const {
     inventoryItems,
@@ -19,8 +28,18 @@ const Inventory: FC = () => {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    /**
+     * Tracks the cursor position and handles mouse wheel item rotation.
+     *
+     * @param e - Mouse move / wheel event
+     */
     const cursorHandler = (e: MouseEvent) =>
       setCursorPos({ x: e.clientX, y: e.clientY });
+    /**
+     * Rotates the grabbed item when scrolling the mouse wheel.
+     *
+     * @param e - Wheel event
+     */
     const wheelHandler = (e: WheelEvent) => {
       if (e.deltaY < 0) {
         rotateItem("left");
@@ -38,6 +57,12 @@ const Inventory: FC = () => {
     };
   }, [rotateItem]);
 
+  /**
+   * Returns the CSS transform string for a given rotation angle.
+   *
+   * @param deg - Direction angle in degrees
+   * @returns CSS transform string for proper rotation origin alignment
+   */
   const getTransformForDirection = (deg: Degree) => {
     switch (deg) {
       case 90:
