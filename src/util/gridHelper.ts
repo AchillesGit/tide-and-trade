@@ -1,4 +1,6 @@
-import type { Direction, Item } from "../types/inventoryTypes";
+import { resolveItem } from "./itemHelper";
+
+import type { Direction, Item, ItemInstance } from "../types/inventoryTypes";
 
 /**
  * Build a clean 2D occupancy grid from a list of items.
@@ -43,16 +45,17 @@ export function getInventoryAsTwoDArray(
  * @returns Updated 2D occupancy grid
  */
 export function fillInventoryGrid(
-  items: Item[],
+  items: ItemInstance[],
   inventoryGrid: number[][],
 ): number[][] {
   const updatedGrid = inventoryGrid.map((row) => [...row].map(() => 0));
   items.forEach((item) => {
-    item.space.forEach((row, rIdx) => {
+    const resolvedItem = resolveItem(item);
+    resolvedItem.space.forEach((row, rIdx) => {
       row.forEach((cell, cIdx) => {
         if (cell === 1) {
-          const gridRow = item.position.row + rIdx;
-          const gridCol = item.position.col + cIdx;
+          const gridRow = resolvedItem.position.row + rIdx;
+          const gridCol = resolvedItem.position.col + cIdx;
           if (gridRow < updatedGrid.length && gridCol < updatedGrid[0].length) {
             updatedGrid[gridRow][gridCol] = 1;
           }

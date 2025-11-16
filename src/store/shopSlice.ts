@@ -3,14 +3,14 @@ import { fillInventoryGrid } from "../util/gridHelper";
 
 import type { StateCreator } from "zustand";
 
-import type { Item } from "../types/inventoryTypes";
+import type { Item, ItemInstance } from "../types/inventoryTypes";
 
 /** Zustand slice for managing shop inventory and grid layout. */
 export interface ShopState {
   /** 2D grid representing shop item placement */
   shopGrid: number[][];
   /** All items currently sold in the shop */
-  shopItems: Item[];
+  shopItems: ItemInstance[];
   /**
    * Add a new item to the shop.
    * @param item - Item to add
@@ -40,7 +40,7 @@ export const createShopSlice: StateCreator<ShopState> = (set) => ({
     set(
       (state) =>
         ({
-          shopItems: state.shopItems.filter((it) => it.id !== itemId),
+          shopItems: state.shopItems.filter((it) => it.instanceId !== itemId),
         }) satisfies Partial<ShopState>,
     );
   },

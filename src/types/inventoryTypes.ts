@@ -1,53 +1,51 @@
-/**
- * Rarity of an item. 1 = common, 5 = extremely rare.
- */
+/** Rarity of an item. 1 = common, 5 = extremely rare. */
 export type ItemRarity = 1 | 2 | 3 | 4 | 5;
 
-/**
- * Merge level of an item. 1 = base, 5 = max.
- */
+/** Merge level of an item. 1 = base, 5 = max. */
 export type ItemLevel = 1 | 2 | 3 | 4 | 5;
 
-/**
- * Item categories. Extend as needed.
- */
+/** Item categories. Extend as needed. */
 export type ItemCategory = "weapon" | "commodity";
 
+/** Allowed rotation angles in degrees */
+export type Degree = 0 | 90 | 180 | 270;
+
+/** A grid position (row/column index) */
+export interface Position {
+  row: number;
+  col: number;
+}
+
+/** Rotation direction for an item */
+export type Direction = "left" | "right";
+
+/** Origin source of an item */
+export type ItemOrigin = "shop" | "inventory";
+
 /**
- * Represents an item that can exist in the shop or inventory.
+ * A blueprint defines the static properties of an item.
+ * These never change per instance.
  */
-export interface Item {
-  /** Unique item identifier */
+export interface ItemBlueprint {
+  /** Unique blueprint ID (e.g. "cannonBasic") */
   id: string;
 
-  /** Display name of the item */
+  /** Display name */
   name: string;
 
-  /** 2D matrix representing the item's footprint on the grid. 1 = occupied cell, 0 = empty. */
+  /** 2D footprint matrix */
   space: number[][];
 
   /** Asset path */
   image: string;
 
-  /** Current rotation angle of the item */
-  direction: Degree;
-
-  /** Top-left position of the item inside the grid */
-  position: Position;
-
-  /** Where the item originated from (shop or inventory) */
-  origin: ItemOrigin;
-
-  /** Base gold value (buy/sell price) */
+  /** Base gold value */
   baseValue: number;
 
-  /** How rare this item is (1–5) */
+  /** Rarity (1–5) */
   rarity: ItemRarity;
 
-  /** Merge level of the item (1–5) */
-  level: ItemLevel;
-
-  /** One or more categories this item belongs to */
+  /** One or more categories */
   categories: ItemCategory[];
 
   /** Firepower per level. Index corresponds to level - 1 (e.g. index 0 = level 1, index 4 = level 5). */
@@ -72,17 +70,29 @@ export interface Item {
   armor: number[];
 }
 
-/** Allowed rotation angles in degrees */
-export type Degree = 0 | 90 | 180 | 270;
+/**
+ * A runtime instance of an item.
+ * Contains dynamic data such as position, rotation, level, and a unique instance ID.
+ */
+export interface ItemInstance {
+  /** Unique ID for this specific instance */
+  instanceId: string;
 
-/** A grid position (row/column index) */
-export interface Position {
-  row: number;
-  col: number;
+  /** Reference to the blueprint ID */
+  blueprintId: string;
+
+  /** Rotation */
+  direction: Degree;
+
+  /** Grid position */
+  position: Position;
+
+  /** Origin: shop/inventory */
+  origin: ItemOrigin;
+
+  /** Merge level (1–5) */
+  level: ItemLevel;
 }
 
-/** Rotation direction for an item */
-export type Direction = "left" | "right";
-
-/** Origin source of an item */
-export type ItemOrigin = "shop" | "inventory";
+/** Fully resolved item for usage in UI / logic. Combines blueprint data and instance data. */
+export type Item = ItemBlueprint & ItemInstance;

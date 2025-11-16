@@ -48,7 +48,6 @@ export type GameState = ShopState &
       relativeX: number,
       relativeY: number,
     ) => void;
-
     /**
      * When clicking on a shop cell:
      * sell the grabbed item back to the shop.
@@ -68,7 +67,7 @@ export const useGameStore = create<GameState>((...args) => ({
     if (item) {
       setGrabbedItem({ ...item });
     }
-    removeInventoryItem(item.id);
+    removeInventoryItem(item.instanceId);
   },
 
   onClickShopItem: (item: Item) => {
@@ -78,7 +77,7 @@ export const useGameStore = create<GameState>((...args) => ({
       setGrabbedItem({ ...item });
       removeGold(item.baseValue);
     }
-    removeShopItem(item.id);
+    removeShopItem(item.instanceId);
   },
 
   onClickInventoryCell: (targetCell, relativeX, relativeY) => {
