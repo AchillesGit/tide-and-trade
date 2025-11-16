@@ -48,7 +48,6 @@ export type GameState = ShopState &
       relativeX: number,
       relativeY: number,
     ) => void;
-
     /**
      * When clicking on a shop cell:
      * sell the grabbed item back to the shop.
