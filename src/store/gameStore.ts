@@ -68,7 +68,7 @@ export const useGameStore = create<GameState>((...args) => ({
     if (item) {
       setGrabbedItem({ ...item });
     }
-    removeInventoryItem(item.id);
+    removeInventoryItem(item.instanceId);
   },
 
   onClickShopItem: (item: Item) => {
@@ -78,7 +78,7 @@ export const useGameStore = create<GameState>((...args) => ({
       setGrabbedItem({ ...item });
       removeGold(item.baseValue);
     }
-    removeShopItem(item.id);
+    removeShopItem(item.instanceId);
   },
 
   onClickInventoryCell: (targetCell, relativeX, relativeY) => {
