@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useGameStore } from "../store/gameStore";
+import { resolveItem } from "../util/itemHelper";
 
 import type { FC } from "react";
 
@@ -86,49 +87,55 @@ const Inventory: FC = () => {
         }}
       >
         {inventoryGrid.map((row, rowIndex) =>
-          row.map((_, colIndex) => {
-            const item = inventoryItems.find(
-              (ir) =>
-                ir.position.row === rowIndex && ir.position.col === colIndex,
-            );
-            return (
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-              <div
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${rowIndex}-${colIndex}`}
-                className="border border-gray-300 w-[50px] h-[50px]"
-                onClick={(e) => {
-                  if (grabbedItem) {
-                    const bounds = e.currentTarget.getBoundingClientRect();
-                    const relativeX = e.clientX - bounds.left;
-                    const relativeY = e.clientY - bounds.top;
-                    onClickInventoryCell(
-                      { row: rowIndex, col: colIndex },
-                      relativeX,
-                      relativeY,
-                    );
-                  }
-                }}
-              >
-                {item ? (
+          row.map((_, colIndex) => (
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+            <div
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${rowIndex}-${colIndex}`}
+              className="border border-gray-300 w-[50px] h-[50px]"
+              onClick={(e) => {
+                if (grabbedItem) {
+                  const bounds = e.currentTarget.getBoundingClientRect();
+                  const relativeX = e.clientX - bounds.left;
+                  const relativeY = e.clientY - bounds.top;
+                  onClickInventoryCell(
+                    { row: rowIndex, col: colIndex },
+                    relativeX,
+                    relativeY,
+                  );
+                }
+              }}
+            >
+              {(() => {
+                const item = inventoryItems.find(
+                  (ir) =>
+                    ir.position.row === rowIndex &&
+                    ir.position.col === colIndex,
+                );
+
+                if (!item) return null;
+
+                const resolvedItem = resolveItem(item);
+
+                return (
                   // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
                   <img
-                    alt={item.name}
+                    alt={resolvedItem.name}
                     className="absolute cursor-grab"
-                    src={item.image}
+                    src={resolvedItem.image}
                     onClick={(e) => {
                       e.stopPropagation();
-                      onClickInventoryItem(item);
+                      onClickInventoryItem(resolvedItem);
                     }}
                     style={{
                       transformOrigin: "top left",
                       transform: getTransformForDirection(item.direction),
                     }}
                   />
-                ) : null}
-              </div>
-            );
-          }),
+                );
+              })()}
+            </div>
+          )),
         )}
       </div>
 

@@ -6,14 +6,14 @@ import { fillInventoryGrid, isPositionValid } from "../util/gridHelper";
 
 import type { StateCreator } from "zustand";
 
-import type { Item, Position } from "../types/inventoryTypes";
+import type { Item, ItemInstance, Position } from "../types/inventoryTypes";
 
 /** Zustand slice state for managing the inventory grid and items. */
 export interface InventoryState {
   /** 2D grid representing occupied (item ID) or empty (0) cells */
   inventoryGrid: number[][];
   /** All items currently stored in the inventory */
-  inventoryItems: Item[];
+  inventoryItems: ItemInstance[];
   /**
    * Remove an item from inventory by its ID.
    * @param itemId - Target item identifier
@@ -64,7 +64,9 @@ export const createInventorySlice: StateCreator<InventoryState> = (
     ),
 
   removeInventoryItem: (itemId) => {
-    const filteredItems = get().inventoryItems.filter((i) => i.id !== itemId);
+    const filteredItems = get().inventoryItems.filter(
+      (i) => i.instanceId !== itemId,
+    );
     set(
       (state) =>
         ({
