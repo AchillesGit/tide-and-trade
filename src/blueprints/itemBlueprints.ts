@@ -21,7 +21,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     name: "Basic Cannon",
     space: [
       [1, 1],
-      [1, 0],
+      [0, 1],
     ],
     image: "items/cannon.png",
     baseValue: 150,
