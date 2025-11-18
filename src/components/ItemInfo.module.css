@@ -1,0 +1,62 @@
+.container {
+    position: relative;
+    min-width: 240px;
+    max-width: 320px;
+    background-color: #1f2937;
+    color: white;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 2px solid transparent;
+}
+
+.nameContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.goldValue {
+    font-size: 16px;
+    color: #facc15;
+    /* Goldfarbe */
+}
+
+.categoryContainer {
+    display: flex;
+    justify-content: space-between;
+    /* Kategorie links, Sterne rechts */
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.category {
+    font-size: 13px;
+    color: #d1d5db;
+}
+
+.stars {
+    font-size: 16px;
+    color: #facc15;
+}
+
+.valuesGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 8px;
+}
+
+.label {
+    color: #9ca3af;
+}
+
+.value {
+    text-align: right;
+}
