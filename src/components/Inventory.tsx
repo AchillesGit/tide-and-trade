@@ -7,6 +7,7 @@ import type { FC } from "react";
 
 import type { Degree, Item } from "../types/inventoryTypes";
 import ItemInfo from "./ItemInfo";
+import StatsSumInfo from "./StatsSumInfo";
 
 /**
  * Inventory UI component showing the grid, items, and drag/rotate interactions.
@@ -148,18 +149,6 @@ const Inventory: FC = () => {
         )}
       </div>
 
-      {hoveredItem && (
-        <div
-          className="fixed bg-black text-white p-2 rounded shadow-xl z-50 pointer-events-none"
-          style={{
-            top: cursorPos.y + 15,
-            left: cursorPos.x + 15,
-          }}
-        >
-          <ItemInfo {...hoveredItem} />
-        </div>
-      )}
-
       {grabbedItem ? (
         <img
           alt={grabbedItem.name}
@@ -172,6 +161,13 @@ const Inventory: FC = () => {
           }}
         />
       ) : null}
+
+      <div className="display: flex gap-2 margin-top: 2rem height: auto">
+        <StatsSumInfo />
+        {hoveredItem && (<ItemInfo  {...hoveredItem} />)}
+
+      </div>
+
     </div>
   );
 };
