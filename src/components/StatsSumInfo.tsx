@@ -1,80 +1,52 @@
-import { formatGold, formatNumber, formatPercent } from "../util/formatHelper";
-import type { ItemInstance } from "../types/inventoryTypes";
-import styles from "./ItemInfo.module.css";
 import { useGameStore } from "../store/gameStore";
-import ItemBlueprints from "../blueprints/itemBlueprints";
+import {
+  formatGold,
+  formatNumber,
+  formatPercent,
+  sumInventoryStats,
+} from "../util/formatHelper";
 
+import type { FC } from "react";
 
-const sumInventoryStats = (items: ItemInstance[]) => {
-    return items.reduce(
-        (sum, instance) => {
-            const blueprint = ItemBlueprints[instance.blueprintId];
-            if (!blueprint) return sum;
+const StatsSumInfo: FC = () => {
+  const { inventoryItems } = useGameStore();
+  const ship = sumInventoryStats(inventoryItems);
 
-            const lvl = instance.level;
+  return (
+    <div className="relative min-w-60 max-w-[320px] bg-gray-800 text-white rounded-[10px] p-3 shadow-md border-2 border-transparent">
+      {/* name + gold */}
+      <div className="flex justify-between items-baseline mb-1.5">
+        <h1 className="text-xl font-bold">{ship.name}</h1>
+        <span className="text-base text-yellow-400">
+          {formatGold(ship.gold)}
+        </span>
+      </div>
 
-            sum.gold += blueprint.baseValue ?? 0;
-            sum.armor += blueprint.armor?.[lvl] ?? 0;
-            sum.attackSpeed += blueprint.attackSpeed?.[lvl] ?? 0;
-            sum.criticalChance += blueprint.criticalChance?.[lvl] ?? 0;
-            sum.criticalDamage += blueprint.criticalDamage?.[lvl] ?? 0;
-            sum.evasionChance += blueprint.evasionChance?.[lvl] ?? 0;
-            sum.firepower += blueprint.firepower?.[lvl] ?? 0;
-            sum.hp += blueprint.shipHpIncrease?.[lvl] ?? 0;
+      {/* value sums */}
+      <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+        <span className="text-gray-400">Armor:</span>
+        <span className="text-right">{formatNumber(ship.armor)}</span>
 
-            return sum;
-        },
-        {
-            gold: 0,
-            armor: 0,
-            attackSpeed: 0,
-            criticalChance: 0,
-            criticalDamage: 0,
-            evasionChance: 0,
-            firepower: 0,
-            hp: 0,
-        }
-    );
+        <span className="text-gray-400">Attack Speed:</span>
+        <span className="text-right">{formatNumber(ship.attackSpeed)}</span>
+
+        <span className="text-gray-400">Critical Chance:</span>
+        <span className="text-right">{formatPercent(ship.criticalChance)}</span>
+
+        <span className="text-gray-400">Critical Damage:</span>
+        <span className="text-right">{formatPercent(ship.criticalDamage)}</span>
+
+        <span className="text-gray-400">Evasion Chance:</span>
+        <span className="text-right">{formatPercent(ship.evasionChance)}</span>
+
+        <span className="text-gray-400">Firepower:</span>
+        <span className="text-right">{formatNumber(ship.firepower)}</span>
+
+        <span className="text-gray-400">Ship HP +:</span>
+        <span className="text-right">{formatNumber(ship.currentHp)}</span>
+      </div>
+    </div>
+  );
 };
 
-const StatsSumInfo = () => {
-
-    const { inventoryItems } = useGameStore();
-    const totals = sumInventoryStats(inventoryItems);
-
-    return (
-        <div className={styles.container}>
-
-            {/* Name + Gold */}
-            <div className={styles.nameContainer}>
-                <h1 className={styles.title}>{"BATTLEREINER"}</h1>
-                <span className={styles.goldValue}>{formatGold(totals.gold)}</span>
-            </div>
-
-            {/* Werte */}
-            <div className={styles.valuesGrid}>
-                <span className={styles.label}>Armor:</span>
-                <span className={styles.value}>{formatNumber(totals.armor)}</span>
-
-                <span className={styles.label}>Attack Speed:</span>
-                <span className={styles.value}>{formatNumber(totals.attackSpeed)}</span>
-
-                <span className={styles.label}>Critical Chance:</span>
-                <span className={styles.value}>{formatPercent(totals.criticalChance)}</span>
-
-                <span className={styles.label}>Critical Damage:</span>
-                <span className={styles.value}>{formatPercent(totals.criticalDamage)}</span>
-
-                <span className={styles.label}>Evasion Chance:</span>
-                <span className={styles.value}>{formatPercent(totals.evasionChance)}</span>
-
-                <span className={styles.label}>Firepower:</span>
-                <span className={styles.value}>{formatNumber(totals.firepower)}</span>
-
-                <span className={styles.label}>Ship HP +:</span>
-                <span className={styles.value}>{formatNumber(totals.hp)}</span>
-            </div>
-        </div>
-    );
-};
 export default StatsSumInfo;
