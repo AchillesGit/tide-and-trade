@@ -1,68 +1,77 @@
-import styles from "./ItemInfo.module.css";
-import type { Item } from "../types/inventoryTypes";
-import { formatGold, formatNumber, formatPercent } from "../util/formatHelper";
+import { useGameStore } from "../store/gameStore";
+import {
+  formatGold,
+  formatNumber,
+  formatPercent,
+  getStars,
+} from "../util/formatHelper";
 
-// Hilfsfunktion: CSS-Klasse für Seltenheit
-const getRarityClass = (rarity: number) => {
-    switch (rarity) {
-        case 1: return styles.common;
-        case 2: return styles.uncommon;
-        case 3: return styles.rare;
-        case 4: return styles.epic;
-        case 5: return styles.legendary;
-        default: return "";
-    }
-};
+import type { FC } from "react";
 
-// Sterne-Anzeige für das Item-Level
-const getStars = (level: number) => {
-    const maxStars = 5;
-    const filledStars = Array(level).fill("★");
-    const emptyStars = Array(maxStars - level).fill("☆");
-    return filledStars.concat(emptyStars).join(" ");
-};
+const ItemInfo: FC = () => {
+  const { hoveredItem } = useGameStore();
 
-const ItemInfo = (item: Item) => {
-    return (
-        <div className={`${styles.container} ${getRarityClass(item.rarity)}`}>
+  if (!hoveredItem) return null;
 
-            {/* Name + Gold */}
-            <div className={styles.nameContainer}>
-                <h1 className={styles.title}>{item.name}</h1>
-                <span className={styles.goldValue}>{formatGold(item.baseValue)}</span>
-            </div>
+  return (
+    <div className="relative min-w-60 max-w-[320px] bg-gray-800 text-white rounded-[10px] p-3 shadow-md border-2 border-transparent">
+      {/* name + gold */}
+      <div className="flex justify-between items-baseline mb-1.5">
+        <h1 className="text-xl font-bold">{hoveredItem.name}</h1>
+        <span className="text-base text-yellow-400">
+          {formatGold(hoveredItem.baseValue)}
+        </span>
+      </div>
 
-            {/* Kategorie + Sterne */}
-            <div className={styles.categoryContainer}>
-                <span className={styles.category}>{item.categories}</span>
-                <span className={styles.stars}>{getStars(item.level)}</span>
-            </div>
+      {/* category + stars */}
+      <div className="flex justify-between items-center gap-1.5 mb-2">
+        <span className="text-[13px] text-gray-300">
+          {hoveredItem.categories}
+        </span>
+        <span className="text-base text-yellow-400">
+          {getStars(hoveredItem.level)}
+        </span>
+      </div>
 
-            {/* Werte */}
-            <div className={styles.valuesGrid}>
-                <span className={styles.label}>Armor:</span>
-                <span className={styles.value}>{formatNumber(item.armor[item.level])}</span>
+      {/* item values */}
+      <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+        <span className="text-gray-400">Armor:</span>
+        <span className="text-right">
+          {formatNumber(hoveredItem.armor[hoveredItem.level])}
+        </span>
 
-                <span className={styles.label}>Attack Speed:</span>
-                <span className={styles.value}>{formatNumber(item.attackSpeed[item.level])}</span>
+        <span className="text-gray-400">Attack Speed:</span>
+        <span className="text-right">
+          {formatNumber(hoveredItem.attackSpeed[hoveredItem.level])}
+        </span>
 
-                <span className={styles.label}>Critical Chance:</span>
-                <span className={styles.value}>{formatPercent(item.criticalChance[item.level])}</span>
+        <span className="text-gray-400">Critical Chance:</span>
+        <span className="text-right">
+          {formatPercent(hoveredItem.criticalChance[hoveredItem.level])}
+        </span>
 
-                <span className={styles.label}>Critical Damage:</span>
-                <span className={styles.value}>{formatPercent(item.criticalDamage[item.level])}</span>
+        <span className="text-gray-400">Critical Damage:</span>
+        <span className="text-right">
+          {formatPercent(hoveredItem.criticalDamage[hoveredItem.level])}
+        </span>
 
-                <span className={styles.label}>Evasion Chance:</span>
-                <span className={styles.value}>{formatPercent(item.evasionChance[item.level])}</span>
+        <span className="text-gray-400">Evasion Chance:</span>
+        <span className="text-right">
+          {formatPercent(hoveredItem.evasionChance[hoveredItem.level])}
+        </span>
 
-                <span className={styles.label}>Firepower:</span>
-                <span className={styles.value}>{formatNumber(item.firepower[item.level])}</span>
+        <span className="text-gray-400">Firepower:</span>
+        <span className="text-right">
+          {formatNumber(hoveredItem.firepower[hoveredItem.level])}
+        </span>
 
-                <span className={styles.label}>Ship HP +:</span>
-                <span className={styles.value}>{formatNumber(item.shipHpIncrease[item.level])}</span>
-            </div>
-        </div>
-    );
+        <span className="text-gray-400">Ship HP +:</span>
+        <span className="text-right">
+          {formatNumber(hoveredItem.shipHpIncrease[hoveredItem.level])}
+        </span>
+      </div>
+    </div>
+  );
 };
 
 export default ItemInfo;

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
+import ItemInfo from "./ItemInfo";
+import StatsSumInfo from "./StatsSumInfo";
 import { useGameStore } from "../store/gameStore";
 import { resolveItem } from "../util/itemHelper";
 
 import type { FC } from "react";
 
-import type { Degree, Item } from "../types/inventoryTypes";
-import ItemInfo from "./ItemInfo";
-import StatsSumInfo from "./StatsSumInfo";
+import type { Degree } from "../types/inventoryTypes";
 
 /**
  * Inventory UI component showing the grid, items, and drag/rotate interactions.
@@ -22,15 +22,15 @@ const Inventory: FC = () => {
   const {
     inventoryItems,
     inventoryGrid,
+    hoveredItem,
     onClickInventoryItem,
     grabbedItem,
     rotateItem,
     onClickInventoryCell,
+    setHoveredItem,
   } = useGameStore();
 
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-  const [hoveredItem, setHoveredItem] = useState<Item | null>(null);
-
 
   useEffect(() => {
     /**
@@ -126,14 +126,14 @@ const Inventory: FC = () => {
                   <img
                     alt={resolvedItem.name}
                     className="absolute cursor-grab"
+                    onMouseEnter={() => setHoveredItem(resolvedItem)}
+                    onMouseLeave={() => setHoveredItem(null)}
                     src={resolvedItem.image}
                     onClick={(e) => {
-                      setHoveredItem(null)
+                      setHoveredItem(null);
                       e.stopPropagation();
                       onClickInventoryItem(resolvedItem);
                     }}
-                    onMouseEnter={() => setHoveredItem(resolvedItem)}
-                    onMouseLeave={() => setHoveredItem(null)}
                     onMouseMove={(e) => {
                       setCursorPos({ x: e.clientX, y: e.clientY });
                     }}
@@ -164,10 +164,8 @@ const Inventory: FC = () => {
 
       <div className="display: flex gap-2 margin-top: 2rem height: auto">
         <StatsSumInfo />
-        {hoveredItem && (<ItemInfo  {...hoveredItem} />)}
-
+        {hoveredItem ? <ItemInfo /> : null}
       </div>
-
     </div>
   );
 };

@@ -1,11 +1,13 @@
 import { create } from "zustand";
 
 import { createGrabbedItemSlice } from "./grabbedItemSlice";
+import { createHoveredItemSlice } from "./hoveredItemSlice";
 import { createInventorySlice } from "./inventorySlice";
 import { createResourceSlice } from "./resourcesSlice";
 import { createShopSlice } from "./shopSlice";
 
 import type { GrabbedItemState } from "./grabbedItemSlice";
+import type { HoveredItemState } from "./hoveredItemSlice";
 import type { InventoryState } from "./inventorySlice";
 import type { ResourceState } from "./resourcesSlice";
 import type { ShopState } from "./shopSlice";
@@ -18,7 +20,8 @@ import type { Item, Position } from "../types/inventoryTypes";
 export type GameState = ShopState &
   InventoryState &
   ResourceState &
-  GrabbedItemState & {
+  GrabbedItemState &
+  HoveredItemState & {
     /**
      * When clicking an item inside inventory:
      * pick it up and remove it from inventory.
@@ -61,6 +64,7 @@ export const useGameStore = create<GameState>((...args) => ({
   ...createInventorySlice(...args),
   ...createResourceSlice(...args),
   ...createGrabbedItemSlice(...args),
+  ...createHoveredItemSlice(...args),
 
   onClickInventoryItem: (item: Item) => {
     const { removeInventoryItem, setGrabbedItem } = useGameStore.getState();
