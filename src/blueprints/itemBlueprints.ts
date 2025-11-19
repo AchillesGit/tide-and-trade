@@ -72,6 +72,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     shipHpIncrease: [0, 0, 0, 0, 0],
     armor: [0, 0, 1, 1, 2],
   },
+
   wheat: {
     id: "wheat",
     name: "Wheat",
