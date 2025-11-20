@@ -29,13 +29,6 @@ export type GameState = ShopState &
      * @param item - Inventory item that was clicked
      */
     onClickInventoryItem: (item: Item) => void;
-    /**
-     * When clicking an item inside the shop:
-     * buy the item if enough gold, then pick it up.
-     *
-     * @param item - Shop item that was clicked
-     */
-    onClickShopItem: (item: Item) => void;
     /** Handle right-click: return grabbed item to its original source. */
     onRightClick: () => void;
     /**
@@ -51,11 +44,6 @@ export type GameState = ShopState &
       relativeX: number,
       relativeY: number,
     ) => void;
-    /**
-     * When clicking on a shop cell:
-     * sell the grabbed item back to the shop.
-     */
-    onClickShopCell: () => void;
   };
 
 /** Main Zustand store combining all slices and high-level click handlers. */
@@ -74,16 +62,6 @@ export const useGameStore = create<GameState>((...args) => ({
     removeInventoryItem(item.instanceId);
   },
 
-  onClickShopItem: (item: Item) => {
-    const { gold, setGrabbedItem, removeShopItem, removeGold } =
-      useGameStore.getState();
-    if (item && gold > item.baseValue) {
-      setGrabbedItem({ ...item });
-      removeGold(item.baseValue);
-    }
-    removeShopItem(item.instanceId);
-  },
-
   onClickInventoryCell: (targetCell, relativeX, relativeY) => {
     const { grabbedItem, storeItem, setGrabbedItem } = useGameStore.getState();
     if (!grabbedItem) return;
@@ -96,14 +74,6 @@ export const useGameStore = create<GameState>((...args) => ({
     );
 
     if (placementValid) setGrabbedItem(null);
-  },
-
-  onClickShopCell: () => {
-    const { grabbedItem, setGrabbedItem, addGold } = useGameStore.getState();
-    if (!grabbedItem) return;
-
-    addGold(grabbedItem.baseValue);
-    setGrabbedItem(null);
   },
 
   onRightClick: () => {

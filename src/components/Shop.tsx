@@ -4,9 +4,18 @@ import { resolveItem } from "../util/itemHelper";
 
 import type { FC } from "react";
 
+import type { Item } from "../types/inventoryTypes";
+
 const Shop: FC = () => {
-  const { shopItems, generateShopItems, setHoveredItem, gold, removeGold } =
-    useGameStore();
+  const {
+    shopItems,
+    generateShopItems,
+    setHoveredItem,
+    gold,
+    removeGold,
+    setGrabbedItem,
+    removeShopItem,
+  } = useGameStore();
 
   if (shopItems.length === 0) {
     generateShopItems(5);
@@ -20,19 +29,32 @@ const Shop: FC = () => {
     }
   };
 
+  /** Purchases the item: deducts its cost, grabs it, and removes it from the shop. */
+  const buyShopItem = (item: Item) => {
+    if (gold > item.baseValue) {
+      setGrabbedItem({ ...item });
+      removeGold(item.baseValue);
+      removeShopItem(item.instanceId);
+    }
+  };
+
   const resolvedShopItems = shopItems.map((i) => resolveItem(i));
 
   return (
     <div>
       {resolvedShopItems.map((item) => (
-        <div
+        <button
           key={item.instanceId}
-          className="border p-2 cursor-pointer flex items-center gap-2"
+          className="border p-2 cursor-pointer flex items-center gap-2 w-full"
+          type="button"
+          onClick={() => {
+            buyShopItem(item);
+          }}
           onMouseEnter={() => {
             setHoveredItem(item);
           }}
           onMouseLeave={() => {
-            setHoveredItem(null);
+            setHoveredItem(item);
           }}
         >
           <div>
@@ -42,7 +64,7 @@ const Shop: FC = () => {
             </span>
           </div>
           <img alt={item.blueprintId} className="h-10" src={item.image} />
-        </div>
+        </button>
       ))}
       <button
         className="border p-1 cursor-pointer"
