@@ -11,7 +11,7 @@ import type { HoveredItemState } from "./hoveredItemSlice";
 import type { InventoryState } from "./inventorySlice";
 import type { ResourceState } from "./resourcesSlice";
 import type { ShopState } from "./shopSlice";
-import type { Item, Position } from "../types/inventoryTypes";
+import type { Item, ItemLevel, Position } from "../types/inventoryTypes";
 
 /**
  * Combined game state including inventory, shop, resources,
@@ -66,12 +66,66 @@ export const useGameStore = create<GameState>((...args) => ({
   ...createGrabbedItemSlice(...args),
   ...createHoveredItemSlice(...args),
 
-  onClickInventoryItem: (item: Item) => {
-    const { removeInventoryItem, setGrabbedItem } = useGameStore.getState();
-    if (item) {
-      setGrabbedItem({ ...item });
+  onClickInventoryItem: (clickedItem: Item) => {
+    const {
+      grabbedItem,
+      setGrabbedItem,
+      removeInventoryItem,
+      addInventoryItem,
+    } = useGameStore.getState();
+
+    // Kein Item gegrabbt → Angeclicktes grabben
+    if (!grabbedItem) {
+      setGrabbedItem({ ...clickedItem });
+      removeInventoryItem(clickedItem.instanceId);
+      return;
     }
-    removeInventoryItem(item.instanceId);
+
+    // Gleiches Item angeklickt → nichts tun
+    if (grabbedItem.instanceId === clickedItem.instanceId) return;
+
+    // Gleiche Blueprint → MERGE
+    if (grabbedItem.blueprintId === clickedItem.blueprintId) {
+      const newLevel = Math.min(clickedItem.level + 1, 5) as ItemLevel;
+
+      const mergedItem: Item = {
+        ...clickedItem,
+        instanceId: crypto.randomUUID(),
+        level: newLevel,
+      };
+
+      // beide Items entfernen
+      removeInventoryItem(grabbedItem.instanceId);
+      removeInventoryItem(clickedItem.instanceId);
+
+      // neues einsetzen
+      addInventoryItem(mergedItem);
+
+      setGrabbedItem(null);
+      return;
+    }
+
+    //  Unterschiedliche Blueprint → SWAP + grabbed tauschen
+    // TODO: Das passt noch nicht -> schauen, ob das Item da auch rein passt
+    // Positionen merken
+    const posGrabbed = grabbedItem.position;
+    const posClicked = clickedItem.position;
+
+    // remove beide
+    removeInventoryItem(grabbedItem.instanceId);
+    removeInventoryItem(clickedItem.instanceId);
+
+    // grabbedItem ins Inventar setzen an Position des geklickten
+    addInventoryItem({
+      ...grabbedItem,
+      position: posClicked,
+    });
+
+    // geklicktes Item in die Hand nehmen (grabbed)
+    setGrabbedItem({
+      ...clickedItem,
+      position: posGrabbed,
+    });
   },
 
   onClickShopItem: (item: Item) => {
