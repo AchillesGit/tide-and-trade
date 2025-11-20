@@ -52,7 +52,7 @@ const ItemInfo: FC = () => {
 
         <span className="text-gray-400">Critical Damage:</span>
         <span className="text-right">
-          {formatPercent(hoveredItem.criticalDamage[hoveredItem.level])}
+          {formatNumber(hoveredItem.criticalDamage[hoveredItem.level])}
         </span>
 
         <span className="text-gray-400">Evasion Chance:</span>
