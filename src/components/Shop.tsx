@@ -18,7 +18,7 @@ const Shop: FC = () => {
       {resolvedShopItems.map((item) => (
         <div
           key={item.blueprintId}
-          className="border p-2"
+          className="border p-2 cursor-pointer flex items-center gap-2"
           onMouseEnter={() => {
             setHoveredItem(item);
           }}
@@ -26,11 +26,13 @@ const Shop: FC = () => {
             setHoveredItem(null);
           }}
         >
-          <div>{item.blueprintId}</div>
-          <span className="text-base text-yellow-600">
-            {formatGold(item.baseValue)}
-          </span>
-          <img alt={item.blueprintId} className="h-8" src={item.image} />
+          <div>
+            <div>{item.name}</div>
+            <span className="text-base text-yellow-600">
+              {formatGold(item.baseValue)}
+            </span>
+          </div>
+          <img alt={item.blueprintId} className="h-10" src={item.image} />
         </div>
       ))}
     </div>
