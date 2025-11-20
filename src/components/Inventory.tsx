@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import ItemInfo from "./ItemInfo";
+import StatsSumInfo from "./StatsSumInfo";
 import { useGameStore } from "../store/gameStore";
 import { resolveItem } from "../util/itemHelper";
 
@@ -20,10 +22,12 @@ const Inventory: FC = () => {
   const {
     inventoryItems,
     inventoryGrid,
+    hoveredItem,
     onClickInventoryItem,
     grabbedItem,
     rotateItem,
     onClickInventoryCell,
+    setHoveredItem,
   } = useGameStore();
 
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
@@ -122,10 +126,16 @@ const Inventory: FC = () => {
                   <img
                     alt={resolvedItem.name}
                     className="absolute cursor-grab"
+                    onMouseEnter={() => setHoveredItem(resolvedItem)}
+                    onMouseLeave={() => setHoveredItem(null)}
                     src={resolvedItem.image}
                     onClick={(e) => {
+                      setHoveredItem(null);
                       e.stopPropagation();
                       onClickInventoryItem(resolvedItem);
+                    }}
+                    onMouseMove={(e) => {
+                      setCursorPos({ x: e.clientX, y: e.clientY });
                     }}
                     style={{
                       transformOrigin: "top left",
@@ -151,6 +161,11 @@ const Inventory: FC = () => {
           }}
         />
       ) : null}
+
+      <div className="display: flex gap-2 margin-top: 2rem height: auto">
+        <StatsSumInfo />
+        {hoveredItem ? <ItemInfo /> : null}
+      </div>
     </div>
   );
 };
