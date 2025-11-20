@@ -5,11 +5,20 @@ import { resolveItem } from "../util/itemHelper";
 import type { FC } from "react";
 
 const Shop: FC = () => {
-  const { shopItems, generateShopItems, setHoveredItem } = useGameStore();
+  const { shopItems, generateShopItems, setHoveredItem, gold, removeGold } =
+    useGameStore();
 
   if (shopItems.length === 0) {
     generateShopItems(5);
   }
+
+  /** Deducts 100 gold and regenerates 5 shop items if the player has enough gold. */
+  const refreshShopItems = () => {
+    if (gold >= 5) {
+      removeGold(100);
+      generateShopItems(5);
+    }
+  };
 
   const resolvedShopItems = shopItems.map((i) => resolveItem(i));
 
@@ -17,7 +26,7 @@ const Shop: FC = () => {
     <div>
       {resolvedShopItems.map((item) => (
         <div
-          key={item.blueprintId}
+          key={item.instanceId}
           className="border p-2 cursor-pointer flex items-center gap-2"
           onMouseEnter={() => {
             setHoveredItem(item);
@@ -35,6 +44,16 @@ const Shop: FC = () => {
           <img alt={item.blueprintId} className="h-10" src={item.image} />
         </div>
       ))}
+      <button
+        className="border p-1 cursor-pointer"
+        type="button"
+        onClick={() => {
+          refreshShopItems();
+        }}
+      >
+        Refresh{" "}
+        <span className="text-base text-yellow-600">{formatGold(100)}</span>
+      </button>
     </div>
   );
 };
