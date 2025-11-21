@@ -49,6 +49,14 @@ export const mockInventoryItems: ItemInstance[] = [
     position: { row: 6, col: 0 },
     level: 1,
   },
+  {
+    instanceId: "mock-inv-007",
+    blueprintId: "heavyCannon",
+    direction: 0,
+    origin: "inventory",
+    position: { row: 6, col: 6 },
+    level: 1,
+  },
 ];
 
 export const mockShopItems: ItemInstance[] = [
