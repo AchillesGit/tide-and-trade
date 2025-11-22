@@ -34,12 +34,18 @@ export const useGameStore = create<GameState>((...args) => ({
   ...createHoveredItemSlice(...args),
 
   onRightClick: () => {
-    const { initialGrab, addInventoryItem, addShopItem, setGrabbedItem } =
-      useGameStore.getState();
+    const {
+      initialGrab,
+      addInventoryItem,
+      addShopItem,
+      setGrabbedItem,
+      addGold,
+    } = useGameStore.getState();
     if (initialGrab?.origin === "inventory") {
       addInventoryItem(initialGrab);
     } else if (initialGrab?.origin === "shop") {
       addShopItem(initialGrab);
+      addGold(initialGrab.baseValue);
     }
     setGrabbedItem(null);
   },

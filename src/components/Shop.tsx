@@ -31,7 +31,7 @@ const Shop: FC = () => {
 
   /** Purchases the item: deducts its cost, grabs it, and removes it from the shop. */
   const buyShopItem = (item: Item) => {
-    if (gold > item.baseValue) {
+    if (gold >= item.baseValue) {
       setGrabbedItem({ ...item });
       removeGold(item.baseValue);
       removeShopItem(item.instanceId);
