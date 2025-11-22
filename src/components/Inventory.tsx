@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
-
 import ItemInfo from "./ItemInfo";
 import StatsSumInfo from "./StatsSumInfo";
+import useInventory from "../hooks/useInventory";
 import { useGameStore } from "../store/gameStore";
 import { resolveItem } from "../util/itemHelper";
 
 import type { FC } from "react";
-
-import type { Degree } from "../types/inventoryTypes";
 
 /**
  * Inventory UI component showing the grid, items, and drag/rotate interactions.
@@ -23,63 +20,12 @@ const Inventory: FC = () => {
     inventoryItems,
     inventoryGrid,
     hoveredItem,
-    onClickInventoryItem,
     grabbedItem,
-    rotateItem,
-    onClickInventoryCell,
     setHoveredItem,
   } = useGameStore();
 
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    /**
-     * Tracks the cursor position and handles mouse wheel item rotation.
-     *
-     * @param e - Mouse move / wheel event
-     */
-    const cursorHandler = (e: MouseEvent) =>
-      setCursorPos({ x: e.clientX, y: e.clientY });
-    /**
-     * Rotates the grabbed item when scrolling the mouse wheel.
-     *
-     * @param e - Wheel event
-     */
-    const wheelHandler = (e: WheelEvent) => {
-      if (e.deltaY < 0) {
-        rotateItem("left");
-      } else {
-        rotateItem("right");
-      }
-    };
-
-    window.addEventListener("mousemove", cursorHandler);
-    window.addEventListener("wheel", wheelHandler);
-
-    return () => {
-      window.removeEventListener("mousemove", cursorHandler);
-      window.removeEventListener("wheel", wheelHandler);
-    };
-  }, [rotateItem]);
-
-  /**
-   * Returns the CSS transform string for a given rotation angle.
-   *
-   * @param deg - Direction angle in degrees
-   * @returns CSS transform string for proper rotation origin alignment
-   */
-  const getTransformForDirection = (deg: Degree) => {
-    switch (deg) {
-      case 90:
-        return "rotate(90deg) translateY(-100%)";
-      case 180:
-        return "rotate(180deg) translate(-100%, -100%)";
-      case 270:
-        return "rotate(270deg) translateX(-100%)";
-      default:
-        return `rotate(${deg}deg)`;
-    }
-  };
+  const { clickCell, clickItem, cursorPos, getTransformForDirection } =
+    useInventory();
 
   return (
     <div
@@ -104,7 +50,7 @@ const Inventory: FC = () => {
                   const bounds = e.currentTarget.getBoundingClientRect();
                   const relativeX = e.clientX - bounds.left;
                   const relativeY = e.clientY - bounds.top;
-                  onClickInventoryCell(
+                  clickCell(
                     { row: rowIndex, col: colIndex },
                     relativeX,
                     relativeY,
@@ -134,10 +80,7 @@ const Inventory: FC = () => {
                     onClick={(e) => {
                       setHoveredItem(null);
                       e.stopPropagation();
-                      onClickInventoryItem(resolvedItem);
-                    }}
-                    onMouseMove={(e) => {
-                      setCursorPos({ x: e.clientX, y: e.clientY });
+                      clickItem(resolvedItem);
                     }}
                     style={{
                       transformOrigin: "top left",

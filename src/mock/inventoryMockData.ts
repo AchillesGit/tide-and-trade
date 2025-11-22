@@ -59,39 +59,7 @@ export const mockInventoryItems: ItemInstance[] = [
   },
 ];
 
-export const mockShopItems: ItemInstance[] = [
-  {
-    instanceId: "mock-shop-001",
-    blueprintId: "rum",
-    direction: 0,
-    origin: "shop",
-    position: { row: 1, col: 0 },
-    level: 1,
-  },
-  {
-    instanceId: "mock-shop-002",
-    blueprintId: "rum",
-    direction: 0,
-    origin: "shop",
-    position: { row: 1, col: 3 },
-    level: 1,
-  },
-];
-
 export const mockInventoryGrid: number[][] = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-];
-
-export const mockShopGrid: number[][] = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

@@ -25,7 +25,7 @@ const App: FC = () => {
   return (
     <React.Fragment>
       <ResourcesBar />
-      <div className="flex gap-4">
+      <div className="flex justify-between">
         <Inventory />
         <Shop />
       </div>
