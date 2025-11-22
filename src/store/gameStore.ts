@@ -118,9 +118,6 @@ export const useGameStore = create<GameState>((...args) => ({
     removeInventoryItem(clickedItem.instanceId);
 
     let placementValid;
-    console.log("placementValid", placementValid);
-    console.log("posclicked", clickedItem.position);
-    console.log("space clicked", clickedItem.space);
 
     const itemH = clickedItem.space.length;
     const itemW = clickedItem.space[0].length;
