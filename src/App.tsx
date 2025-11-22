@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 
+import { Route, Routes } from "react-router-dom";
+
 import Inventory from "./components/Inventory";
+import Map from "./components/Map";
 import ResourcesBar from "./components/ResourcesBar";
 import Shop from "./components/Shop";
 import { useGameStore } from "./store/gameStore";
@@ -15,20 +18,27 @@ const App: FC = () => {
       e.preventDefault();
       onRightClick();
     };
-    document.addEventListener("contextmenu", onContext, { capture: true });
-    return () =>
-      document.removeEventListener("contextmenu", onContext, {
-        capture: true,
-      } as AddEventListenerOptions);
+
+    document.addEventListener("contextmenu", onContext, true);
+    return () => document.removeEventListener("contextmenu", onContext, true);
   }, [onRightClick]);
 
   return (
     <React.Fragment>
       <ResourcesBar />
-      <div className="flex justify-between">
-        <Inventory />
-        <Shop />
-      </div>
+
+      <Routes>
+        <Route element={<Map />} path="/" />
+        <Route
+          path="/shop"
+          element={
+            <div className="flex justify-between">
+              <Inventory />
+              <Shop />
+            </div>
+          }
+        />
+      </Routes>
     </React.Fragment>
   );
 };
