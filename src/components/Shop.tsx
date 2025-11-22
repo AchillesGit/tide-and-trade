@@ -41,7 +41,7 @@ const Shop: FC = () => {
   const resolvedShopItems = shopItems.map((i) => resolveItem(i));
 
   return (
-    <div className="bg-gray-800 text-white rounded-md p-3 shadow-md border-2 border-transparent">
+    <div className="bg-gray-800 text-white rounded-md p-3 shadow-md border-2 border-transparent min-w-72">
       {/* header */}
       <div className="flex justify-between items-baseline mb-2">
         <h1 className="text-lg font-bold">Shop</h1>
