@@ -54,7 +54,7 @@ const Shop: FC = () => {
             setHoveredItem(item);
           }}
           onMouseLeave={() => {
-            setHoveredItem(item);
+            setHoveredItem(null);
           }}
         >
           <div>
