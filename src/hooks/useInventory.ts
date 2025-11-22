@@ -103,7 +103,7 @@ const useInventory = (): UseInventoryReturn => {
       return;
     }
 
-    // Clicking the same item again → do nothing
+    // Clicking the same item again → do nothing (should not happen)
     if (grabbedItem.instanceId === clickedItem.instanceId) return;
 
     // Same blueprint, level and level under 5 → merge
