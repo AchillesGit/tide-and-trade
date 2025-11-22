@@ -11,7 +11,6 @@ import type { HoveredItemState } from "./hoveredItemSlice";
 import type { InventoryState } from "./inventorySlice";
 import type { ResourceState } from "./resourcesSlice";
 import type { ShopState } from "./shopSlice";
-import type { Item, Position } from "../types/inventoryTypes";
 
 /**
  * Combined game state including inventory, shop, resources,
@@ -22,28 +21,8 @@ export type GameState = ShopState &
   ResourceState &
   GrabbedItemState &
   HoveredItemState & {
-    /**
-     * When clicking an item inside inventory:
-     * pick it up and remove it from inventory.
-     *
-     * @param item - Inventory item that was clicked
-     */
-    onClickInventoryItem: (item: Item) => void;
     /** Handle right-click: return grabbed item to its original source. */
     onRightClick: () => void;
-    /**
-     * When clicking a cell in the inventory grid:
-     * attempt to place the grabbed item.
-     *
-     * @param pos - Target inventory cell position
-     * @param relativeX - Pointer offset within the cell (0–50)
-     * @param relativeY - Pointer offset within the cell (0–50)
-     */
-    onClickInventoryCell: (
-      pos: Position,
-      relativeX: number,
-      relativeY: number,
-    ) => void;
   };
 
 /** Main Zustand store combining all slices and high-level click handlers. */
@@ -53,28 +32,6 @@ export const useGameStore = create<GameState>((...args) => ({
   ...createResourceSlice(...args),
   ...createGrabbedItemSlice(...args),
   ...createHoveredItemSlice(...args),
-
-  onClickInventoryItem: (item: Item) => {
-    const { removeInventoryItem, setGrabbedItem } = useGameStore.getState();
-    if (item) {
-      setGrabbedItem({ ...item });
-    }
-    removeInventoryItem(item.instanceId);
-  },
-
-  onClickInventoryCell: (targetCell, relativeX, relativeY) => {
-    const { grabbedItem, storeItem, setGrabbedItem } = useGameStore.getState();
-    if (!grabbedItem) return;
-
-    const placementValid = storeItem(
-      grabbedItem,
-      targetCell,
-      relativeX,
-      relativeY,
-    );
-
-    if (placementValid) setGrabbedItem(null);
-  },
 
   onRightClick: () => {
     const { initialGrab, addInventoryItem, addShopItem, setGrabbedItem } =
