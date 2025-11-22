@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import { create } from "zustand";
 
 import { createGrabbedItemSlice } from "./grabbedItemSlice";
@@ -72,6 +73,7 @@ export const useGameStore = create<GameState>((...args) => ({
       setGrabbedItem,
       removeInventoryItem,
       addInventoryItem,
+      storeItem,
     } = useGameStore.getState();
 
     // Kein Item gegrabbt → Angeclicktes grabben
@@ -115,17 +117,42 @@ export const useGameStore = create<GameState>((...args) => ({
     removeInventoryItem(grabbedItem.instanceId);
     removeInventoryItem(clickedItem.instanceId);
 
-    // grabbedItem ins Inventar setzen an Position des geklickten
-    addInventoryItem({
-      ...grabbedItem,
-      position: posClicked,
-    });
+    let placementValid;
+    console.log("placementValid", placementValid);
+    console.log("posclicked", clickedItem.position);
+    console.log("space clicked", clickedItem.space);
 
-    // geklicktes Item in die Hand nehmen (grabbed)
-    setGrabbedItem({
-      ...clickedItem,
-      position: posGrabbed,
-    });
+    const itemH = clickedItem.space.length;
+    const itemW = clickedItem.space[0].length;
+    const occupiedCells: Position[] = [];
+
+    for (let r = 0; r < itemH; r++) {
+      for (let c = 0; c < itemW; c++) {
+        if (clickedItem.space[r][c] === 1) {
+          occupiedCells.push({
+            row: posClicked.row + r,
+            col: posClicked.col + c,
+          });
+        }
+      }
+    }
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const cell of occupiedCells) {
+      placementValid = storeItem(grabbedItem, cell, 0, 0);
+      if (placementValid) break;
+    }
+
+    if (!placementValid) {
+      addInventoryItem(clickedItem);
+    }
+
+    if (placementValid) {
+      setGrabbedItem({
+        ...clickedItem,
+        position: posGrabbed,
+      });
+    }
   },
 
   onClickShopItem: (item: Item) => {
