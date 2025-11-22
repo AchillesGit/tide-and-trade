@@ -82,7 +82,9 @@ const Inventory: FC = () => {
   };
 
   return (
-    <div className={grabbedItem ? "cursor-grabbing" : "cursor-default"}>
+    <div
+      className={`h-screen ${grabbedItem ? "cursor-grabbing" : "cursor-default"}`}
+    >
       <h2>Inventory</h2>
       <div
         className="grid"
@@ -162,7 +164,7 @@ const Inventory: FC = () => {
         />
       ) : null}
 
-      <div className="display: flex gap-2 margin-top: 2rem height: auto">
+      <div className="flex gap-2 mt-10">
         <StatsSumInfo />
         {hoveredItem ? <ItemInfo /> : null}
       </div>
