@@ -28,9 +28,7 @@ const Inventory: FC = () => {
     useInventory();
 
   return (
-    <div
-      className={`h-screen ${grabbedItem ? "cursor-grabbing" : "cursor-default"}`}
-    >
+    <div className={grabbedItem ? "cursor-grabbing" : "cursor-default"}>
       <h2>Inventory</h2>
       <div
         className="grid"
