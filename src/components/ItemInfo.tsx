@@ -37,37 +37,37 @@ const ItemInfo: FC = () => {
       <div className="grid grid-cols-2 gap-x-2 gap-y-1">
         <span className="text-gray-400">Armor:</span>
         <span className="text-right">
-          {formatNumber(hoveredItem.armor[hoveredItem.level])}
+          {formatNumber(hoveredItem.armor[hoveredItem.level - 1])}
         </span>
 
         <span className="text-gray-400">Attack Speed:</span>
         <span className="text-right">
-          {formatNumber(hoveredItem.attackSpeed[hoveredItem.level])}
+          {formatNumber(hoveredItem.attackSpeed[hoveredItem.level - 1])}
         </span>
 
         <span className="text-gray-400">Critical Chance:</span>
         <span className="text-right">
-          {formatPercent(hoveredItem.criticalChance[hoveredItem.level])}
+          {formatPercent(hoveredItem.criticalChance[hoveredItem.level - 1])}
         </span>
 
         <span className="text-gray-400">Critical Damage:</span>
         <span className="text-right">
-          {formatNumber(hoveredItem.criticalDamage[hoveredItem.level])}
+          {formatNumber(hoveredItem.criticalDamage[hoveredItem.level - 1])}
         </span>
 
         <span className="text-gray-400">Evasion Chance:</span>
         <span className="text-right">
-          {formatPercent(hoveredItem.evasionChance[hoveredItem.level])}
+          {formatPercent(hoveredItem.evasionChance[hoveredItem.level - 1])}
         </span>
 
         <span className="text-gray-400">Firepower:</span>
         <span className="text-right">
-          {formatNumber(hoveredItem.firepower[hoveredItem.level])}
+          {formatNumber(hoveredItem.firepower[hoveredItem.level - 1])}
         </span>
 
         <span className="text-gray-400">Ship HP +:</span>
         <span className="text-right">
-          {formatNumber(hoveredItem.shipHpIncrease[hoveredItem.level])}
+          {formatNumber(hoveredItem.shipHpIncrease[hoveredItem.level - 1])}
         </span>
       </div>
     </div>
