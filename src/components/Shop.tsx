@@ -23,7 +23,7 @@ const Shop: FC = () => {
 
   /** Deducts 100 gold and regenerates 5 shop items if the player has enough gold. */
   const refreshShopItems = () => {
-    if (gold >= 5) {
+    if (gold >= 100) {
       removeGold(100);
       generateShopItems(5);
     }
