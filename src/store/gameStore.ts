@@ -1,4 +1,3 @@
-/* eslint-disable no-plusplus */
 import { create } from "zustand";
 
 import { createGrabbedItemSlice } from "./grabbedItemSlice";

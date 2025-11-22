@@ -96,18 +96,22 @@ const useInventory = (): UseInventoryReturn => {
   };
 
   const clickItem = (clickedItem: Item) => {
-    // Kein Item gegrabbt → Angeclicktes grabben
+    // No item grabbed → grab the clicked item
     if (!grabbedItem) {
       setGrabbedItem({ ...clickedItem });
       removeInventoryItem(clickedItem.instanceId);
       return;
     }
 
-    // Gleiches Item angeklickt → nichts tun
+    // Clicking the same item again → do nothing
     if (grabbedItem.instanceId === clickedItem.instanceId) return;
 
-    // Gleiche Blueprint → MERGE
-    if (grabbedItem.blueprintId === clickedItem.blueprintId) {
+    // Same blueprint, level and level under 5 → merge
+    if (
+      grabbedItem.blueprintId === clickedItem.blueprintId &&
+      grabbedItem.level === clickedItem.level &&
+      grabbedItem.level < 5
+    ) {
       const newLevel = Math.min(clickedItem.level + 1, 5) as ItemLevel;
 
       const mergedItem: Item = {
@@ -116,24 +120,21 @@ const useInventory = (): UseInventoryReturn => {
         level: newLevel,
       };
 
-      // beide Items entfernen
+      // Remove both items
       removeInventoryItem(grabbedItem.instanceId);
       removeInventoryItem(clickedItem.instanceId);
 
-      // neues einsetzen
+      // Insert merged item
       addInventoryItem(mergedItem);
 
       setGrabbedItem(null);
       return;
     }
 
-    //  Unterschiedliche Blueprint → SWAP + grabbed tauschen
-    // TODO: Das passt noch nicht -> schauen, ob das Item da auch rein passt
-    // Positionen merken
+    // Different blueprint → try SWAP
     const posGrabbed = grabbedItem.position;
     const posClicked = clickedItem.position;
 
-    // remove beide
     removeInventoryItem(grabbedItem.instanceId);
     removeInventoryItem(clickedItem.instanceId);
 
@@ -143,10 +144,8 @@ const useInventory = (): UseInventoryReturn => {
     const itemW = clickedItem.space[0].length;
     const occupiedCells: Position[] = [];
 
-    // eslint-disable-next-line no-plusplus
-    for (let r = 0; r < itemH; r++) {
-      // eslint-disable-next-line no-plusplus
-      for (let c = 0; c < itemW; c++) {
+    for (let r = 0; r < itemH; r += 1) {
+      for (let c = 0; c < itemW; c += 1) {
         if (clickedItem.space[r][c] === 1) {
           occupiedCells.push({
             row: posClicked.row + r,
@@ -164,9 +163,7 @@ const useInventory = (): UseInventoryReturn => {
 
     if (!placementValid) {
       addInventoryItem(clickedItem);
-    }
-
-    if (placementValid) {
+    } else {
       setGrabbedItem({
         ...clickedItem,
         position: posGrabbed,
