@@ -7,10 +7,10 @@ const levels = 6;
 const maxNodesPerLevel = 5;
 
 /** Total width (in px) of the map layout. */
-const width = 600;
+const width = window.innerWidth;
 
 /** Total height (in px) of the map layout. */
-const height = 800;
+const height = window.innerHeight;
 
 /** Chance (0–1) that a node branches into two nodes on the next level. */
 const chanceForTwoNodes = 0.35;
@@ -37,10 +37,10 @@ const createNode = (
   );
   if (existing) return existing;
 
-  // Compute horizontal spacing and coordinates.
-  const xSpacing = width / (nodesInLevel + 1);
-  const x = xSpacing * (positionIndex + 1);
-  const y = (height / (levels + 1)) * (levelIndex + 1);
+  // Compute vertical spacing (positions within a level) and coordinates.
+  const ySpacing = height / (nodesInLevel + 1);
+  const y = ySpacing * (positionIndex + 1);
+  const x = (width / (levels + 1)) * (levelIndex + 1);
 
   const node: Node = {
     id: crypto.randomUUID(),

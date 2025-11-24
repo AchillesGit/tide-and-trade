@@ -28,11 +28,7 @@ const Map: FC = () => {
   }
 
   return (
-    <svg
-      height={800}
-      style={{ border: "1px solid #ccc", background: "#fafafa" }}
-      width={600}
-    >
+    <svg height={window.innerHeight} width={window.innerWidth}>
       {/* Render edges as lines */}
       {mapData.edges.map((edge) => {
         const fromNode = mapData.levels.flat().find((n) => n.id === edge.from);
