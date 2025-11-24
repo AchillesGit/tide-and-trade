@@ -10,9 +10,11 @@ import { useEffect, useState } from "react";
 // </button>;
 //   const navigate = useNavigate();
 
+import generateMap from "../util/mapHelper";
+
 import type { FC } from "react";
+
 import type { MapData } from "../types/mapTypes";
-import { generateMap } from "../util/mapHelper";
 
 const Map: FC = () => {
   const [mapData, setMapData] = useState<MapData | null>(null);
