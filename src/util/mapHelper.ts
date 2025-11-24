@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 import { nodeTypes } from "../types/mapTypes";
 
 import type { Edge, MapData, Node, NodeType } from "../types/mapTypes";
@@ -179,5 +180,51 @@ function generateMap(): MapData {
 
   return { levels: levelsData, edges };
 }
+
+/**
+ * Deterministic hash in range [0,1] for stable pseudo-randomness per edge.
+ */
+export const hash01 = (str: string): number => {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i += 1) {
+    h ^= str.charCodeAt(i);
+    h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+  }
+  return (h >>> 0) / 4294967295;
+};
+
+/**
+ * Creates a slightly curved cubic bezier path between two nodes.
+ * This gives a "treasure map" feel instead of a straight line.
+ */
+export const edgePath = (
+  a: Pick<Node, "x" | "y">,
+  b: Pick<Node, "x" | "y">,
+  seed: string,
+): string => {
+  const r1 = hash01(`${seed}-a`);
+  const r2 = hash01(`${seed}-b`);
+
+  const mx = (a.x + b.x) / 2;
+  const my = (a.y + b.y) / 2;
+
+  // Normal vector to the line (used for sideways wiggle)
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const nx = -dy / len;
+  const ny = dx / len;
+
+  // Curve strength (8–18 px)
+  const bend = 8 + r1 * 10;
+  const cx = mx + nx * bend;
+  const cy = my + ny * bend;
+
+  // Secondary subtle bend for a more organic look
+  const cx2 = mx - nx * (bend * (0.5 + r2));
+  const cy2 = my - ny * (bend * (0.5 + r2));
+
+  return `M ${a.x} ${a.y} C ${cx} ${cy}, ${cx2} ${cy2}, ${b.x} ${b.y}`;
+};
 
 export default generateMap;

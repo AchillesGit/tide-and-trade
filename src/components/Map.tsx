@@ -17,6 +17,7 @@ import {
 } from "react-icons/gi";
 
 import { useGameStore } from "../store/gameStore";
+import { edgePath, hash01 } from "../util/mapHelper";
 
 import type { FC } from "react";
 
@@ -34,15 +35,23 @@ const Map: FC = () => {
         const fromNode = mapData.levels.flat().find((n) => n.id === edge.from);
         const toNode = mapData.levels.flat().find((n) => n.id === edge.to);
         if (!fromNode || !toNode) return null;
+
+        const seed = `${edge.from}-${edge.to}`;
+        const r = hash01(seed);
+
+        const dashOffset = Math.round(r * 20);
+
         return (
-          <line
-            key={`${edge.from}-${edge.to}`}
-            stroke="#888"
-            strokeWidth={1}
-            x1={fromNode.x}
-            x2={toNode.x}
-            y1={fromNode.y}
-            y2={toNode.y}
+          <path
+            key={seed}
+            d={edgePath(fromNode, toNode, seed)}
+            fill="none"
+            opacity={0.9}
+            stroke="#6b6b6b"
+            strokeDasharray="5 10"
+            strokeDashoffset={dashOffset}
+            strokeLinecap="round"
+            strokeWidth={2}
           />
         );
       })}
