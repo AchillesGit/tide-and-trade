@@ -1,4 +1,6 @@
-import type { Edge, MapData, Node } from "../types/mapTypes";
+import { nodeTypes } from "../types/mapTypes";
+
+import type { Edge, MapData, Node, NodeType } from "../types/mapTypes";
 
 /** Number of vertical levels in the generated map. */
 const levels = 6;
@@ -19,6 +21,16 @@ const chanceForTwoNodes = 0.35;
 const xPositionVariation = 120;
 
 /**
+ * Returns a random NodeType from the predefined `nodeTypes` array.
+ *
+ * @returns A randomly selected NodeType.
+ */
+function getRandomNodeType(): NodeType {
+  const index = Math.floor(Math.random() * nodeTypes.length);
+  return nodeTypes[index];
+}
+
+/**
  * Creates a node at a specified level and position. If the node already exists (same level + position),
  * the existing node is returned instead of creating a new one.
  *
@@ -33,6 +45,7 @@ const createNode = (
   levelIndex: number,
   positionIndex: number,
   nodesInLevel: number,
+  nodeType?: NodeType,
 ): Node => {
   // Check if we already created this node for the level/position.
   const existing = nodes.find(
@@ -53,6 +66,7 @@ const createNode = (
     position: positionIndex,
     x,
     y,
+    nodeType: nodeType ?? getRandomNodeType(),
   };
 
   nodes.push(node);
@@ -81,6 +95,7 @@ function generateMap(): MapData {
         lvl,
         Math.floor(maxNodesPerLevel / 2),
         maxNodesPerLevel,
+        "battle",
       );
       createNode(nodes, lvl, maxNodesPerLevel - 1, maxNodesPerLevel);
     } else if (lvl === levels - 1) {
@@ -90,6 +105,7 @@ function generateMap(): MapData {
         lvl,
         Math.floor(maxNodesPerLevel / 2),
         maxNodesPerLevel,
+        "boss",
       );
 
       // Connect all nodes from the previous level to this final node.

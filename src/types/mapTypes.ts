@@ -10,7 +10,15 @@ export interface Node {
   x: number;
   /** Y-coordinate of the node in the visual layout. */
   y: number;
+  /** Type of encounter this node represents. */
+  nodeType: NodeType;
 }
+
+/** Type of encounter on the map. */
+export type NodeType = "shop" | "battle" | "treasure" | "shipyard" | "boss";
+
+/** List of all possible node encounter types that can appear on the map (boss is excluded). */
+export const nodeTypes: NodeType[] = ["shop", "battle", "treasure", "shipyard"];
 
 /**
  * Represents a directed connection between two nodes.

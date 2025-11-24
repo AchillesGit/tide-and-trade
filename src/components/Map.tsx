@@ -60,7 +60,7 @@ const Map: FC = () => {
                 x={node.x}
                 y={node.y + 5}
               >
-                Hi
+                {node.nodeType}
               </text>
             </g>
           ))}
