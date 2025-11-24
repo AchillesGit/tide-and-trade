@@ -11,18 +11,10 @@ import { useEffect, useState } from "react";
 //   const navigate = useNavigate();
 
 import type { FC } from "react";
+import type { Edge, MapData, Node } from "../types/mapTypes";
 
 const Map: FC = () => {
-  const [mapData, setMapData] = useState<{
-    levels: {
-      id: number;
-      level: number;
-      position: number;
-      x: number;
-      y: number;
-    }[][];
-    edges: { from: number; to: number }[];
-  } | null>(null);
+  const [mapData, setMapData] = useState<MapData | null>(null);
 
   const levels = 6;
   const maxNodesPerLevel = 5;
@@ -35,14 +27,8 @@ const Map: FC = () => {
   // library like seedrandom; for simplicity we use Math.random.
   useEffect(() => {
     function generateMap() {
-      const levelsData: {
-        id: number;
-        level: number;
-        position: number;
-        x: number;
-        y: number;
-      }[][] = [];
-      const edges: { from: number; to: number }[] = [];
+      const levelsData: Node[][] = [];
+      const edges: Edge[] = [];
 
       // Helper to generate a node with an id and random x position
       let nodeIdCounter = 0;
@@ -50,7 +36,7 @@ const Map: FC = () => {
         levelIndex: number,
         positionIndex: number,
         nodesInLevel: number,
-      ) => {
+      ): Node => {
         const xSpacing = width / (nodesInLevel + 1);
         const x = xSpacing * (positionIndex + 1);
         const y = (height / (levels + 1)) * (levelIndex + 1);
@@ -66,13 +52,7 @@ const Map: FC = () => {
 
       // Generate nodes for each level
       for (let lvl = 0; lvl < levels; lvl++) {
-        const nodes: {
-          id: number;
-          level: number;
-          position: number;
-          x: number;
-          y: number;
-        }[] = [];
+        const nodes: Node[] = [];
 
         // Single start/end node if first or last level
         if (lvl === 0) {
