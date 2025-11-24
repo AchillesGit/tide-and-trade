@@ -15,6 +15,9 @@ const height = window.innerHeight;
 /** Chance (0–1) that a node branches into two nodes on the next level. */
 const chanceForTwoNodes = 0.35;
 
+/** Variable horizontal offset (in px) applied to node X-positions. */
+const xPositionVariation = 120;
+
 /**
  * Creates a node at a specified level and position. If the node already exists (same level + position),
  * the existing node is returned instead of creating a new one.
@@ -40,7 +43,9 @@ const createNode = (
   // Compute vertical spacing (positions within a level) and coordinates.
   const ySpacing = height / (nodesInLevel + 1);
   const y = ySpacing * (positionIndex + 1);
-  const x = (width / (levels + 1)) * (levelIndex + 1);
+  const x =
+    (width / (levels + 1)) * (levelIndex + 1) +
+    (Math.random() * xPositionVariation - xPositionVariation / 2);
 
   const node: Node = {
     id: crypto.randomUUID(),
