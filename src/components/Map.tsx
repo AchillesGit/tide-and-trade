@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 // import { useNavigate } from "react-router-dom";
 // <button
 //   className="border p-2 cursor-pointer"
@@ -10,18 +8,12 @@ import { useEffect, useState } from "react";
 // </button>;
 //   const navigate = useNavigate();
 
-import generateMap from "../util/mapHelper";
+import { useGameStore } from "../store/gameStore";
 
 import type { FC } from "react";
 
-import type { MapData } from "../types/mapTypes";
-
 const Map: FC = () => {
-  const [mapData, setMapData] = useState<MapData | null>(null);
-
-  useEffect(() => {
-    setMapData(generateMap());
-  }, []);
+  const { mapData } = useGameStore();
 
   if (!mapData) {
     return <div>Loading map…</div>;
