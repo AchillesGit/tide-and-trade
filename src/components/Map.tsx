@@ -25,10 +25,10 @@ const Map: FC = () => {
   } | null>(null);
 
   const levels = 6;
-  const minNodesPerLevel = 2;
-  const maxNodesPerLevel = 4;
+  const maxNodesPerLevel = 5;
   const width = 600;
   const height = 800;
+  const chanceForTwoNodes = 0.35;
 
   // Generate the map on mount or when the configuration changes. For
   // reproducibility you could seed the random number generator via a
@@ -76,11 +76,15 @@ const Map: FC = () => {
 
         // Single start/end node if first or last level
         if (lvl === 0) {
-          nodes.push(createNode(lvl, 0, 5));
-          nodes.push(createNode(lvl, 2, 5));
-          nodes.push(createNode(lvl, 4, 5));
+          nodes.push(createNode(lvl, 0, maxNodesPerLevel));
+          nodes.push(
+            createNode(lvl, Math.floor(maxNodesPerLevel / 2), maxNodesPerLevel),
+          );
+          nodes.push(createNode(lvl, maxNodesPerLevel - 1, maxNodesPerLevel));
         } else if (lvl === levels - 1) {
-          nodes.push(createNode(lvl, 2, 5));
+          nodes.push(
+            createNode(lvl, Math.floor(maxNodesPerLevel / 2), maxNodesPerLevel),
+          );
           for (const node of levelsData[lvl - 1]) {
             edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
           }
@@ -95,21 +99,28 @@ const Map: FC = () => {
               // Special endpoints for short levels
               if (position === 0) {
                 if (!nodes.some((n) => n.level === lvl && n.position === 0)) {
-                  nodes.push(createNode(lvl, 0, 4));
+                  nodes.push(createNode(lvl, 0, maxNodesPerLevel - 1));
                 }
                 edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
                 continue;
               }
-              if (position === 4) {
-                if (!nodes.some((n) => n.level === lvl && n.position === 3)) {
-                  nodes.push(createNode(lvl, 3, 4));
+              if (position === maxNodesPerLevel - 1) {
+                if (
+                  !nodes.some(
+                    (n) =>
+                      n.level === lvl && n.position === maxNodesPerLevel - 2,
+                  )
+                ) {
+                  nodes.push(
+                    createNode(lvl, maxNodesPerLevel - 2, maxNodesPerLevel - 1),
+                  );
                 }
                 edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
                 continue;
               }
             }
 
-            if (Math.random() < 0.5) {
+            if (Math.random() < chanceForTwoNodes) {
               // Connect to one or two nodes
               const newUpperPos = isShortLevel ? position - 1 : position;
               const newLowerPos = isShortLevel ? position : position + 1;
@@ -118,7 +129,13 @@ const Map: FC = () => {
                   (n) => n.level === lvl && n.position === newUpperPos,
                 )
               ) {
-                nodes.push(createNode(lvl, newUpperPos, isShortLevel ? 4 : 5));
+                nodes.push(
+                  createNode(
+                    lvl,
+                    newUpperPos,
+                    isShortLevel ? maxNodesPerLevel - 1 : maxNodesPerLevel,
+                  ),
+                );
               }
               edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
               if (
@@ -126,7 +143,13 @@ const Map: FC = () => {
                   (n) => n.level === lvl && n.position === newLowerPos,
                 )
               ) {
-                nodes.push(createNode(lvl, newLowerPos, isShortLevel ? 4 : 5));
+                nodes.push(
+                  createNode(
+                    lvl,
+                    newLowerPos,
+                    isShortLevel ? maxNodesPerLevel - 1 : maxNodesPerLevel,
+                  ),
+                );
               }
               edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
             } else {
@@ -140,7 +163,13 @@ const Map: FC = () => {
                   (n) => n.level === lvl && n.position === newRandomPos,
                 )
               ) {
-                nodes.push(createNode(lvl, newRandomPos, isShortLevel ? 4 : 5));
+                nodes.push(
+                  createNode(
+                    lvl,
+                    newRandomPos,
+                    isShortLevel ? maxNodesPerLevel - 1 : maxNodesPerLevel,
+                  ),
+                );
               }
               edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
             }
@@ -154,7 +183,7 @@ const Map: FC = () => {
     }
 
     setMapData(generateMap());
-  }, [levels, minNodesPerLevel, maxNodesPerLevel, width, height]);
+  }, [levels, maxNodesPerLevel, width, height]);
 
   if (!mapData) {
     return <div>Loading map…</div>;
