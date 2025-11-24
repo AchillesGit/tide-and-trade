@@ -4,21 +4,18 @@ import type { Edge, MapData, Node, NodeType } from "../types/mapTypes";
 
 /** Number of vertical levels in the generated map. */
 const levels = 6;
-
 /** Maximum number of nodes per level. */
 const maxNodesPerLevel = 5;
-
 /** Total width (in px) of the map layout. */
 const width = window.innerWidth;
-
 /** Total height (in px) of the map layout. */
 const height = window.innerHeight;
-
 /** Chance (0–1) that a node branches into two nodes on the next level. */
 const chanceForTwoNodes = 0.35;
-
 /** Variable horizontal offset (in px) applied to node X-positions. */
 const xPositionVariation = 120;
+/** Variable vertical offset (in px) applied to node Y-positions. */
+const yPositionVariation = 40;
 
 /**
  * Returns a random NodeType from the predefined `nodeTypes` array.
@@ -55,7 +52,9 @@ const createNode = (
 
   // Compute vertical spacing (positions within a level) and coordinates.
   const ySpacing = height / (nodesInLevel + 1);
-  const y = ySpacing * (positionIndex + 1);
+  const y =
+    ySpacing * (positionIndex + 1) +
+    (Math.random() * yPositionVariation - yPositionVariation / 2);
   const x =
     (width / (levels + 1)) * (levelIndex + 1) +
     (Math.random() * xPositionVariation - xPositionVariation / 2);
