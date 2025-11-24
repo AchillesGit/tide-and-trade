@@ -11,159 +11,15 @@ import { useEffect, useState } from "react";
 //   const navigate = useNavigate();
 
 import type { FC } from "react";
-import type { Edge, MapData, Node } from "../types/mapTypes";
+import type { MapData } from "../types/mapTypes";
+import { generateMap } from "../util/mapHelper";
 
 const Map: FC = () => {
   const [mapData, setMapData] = useState<MapData | null>(null);
 
-  const levels = 6;
-  const maxNodesPerLevel = 5;
-  const width = 600;
-  const height = 800;
-  const chanceForTwoNodes = 0.35;
-
-  // Generate the map on mount or when the configuration changes. For
-  // reproducibility you could seed the random number generator via a
-  // library like seedrandom; for simplicity we use Math.random.
   useEffect(() => {
-    function generateMap() {
-      const levelsData: Node[][] = [];
-      const edges: Edge[] = [];
-
-      // Helper to generate a node with an id and random x position
-      let nodeIdCounter = 0;
-      const createNode = (
-        levelIndex: number,
-        positionIndex: number,
-        nodesInLevel: number,
-      ): Node => {
-        const xSpacing = width / (nodesInLevel + 1);
-        const x = xSpacing * (positionIndex + 1);
-        const y = (height / (levels + 1)) * (levelIndex + 1);
-        nodeIdCounter += 1;
-        return {
-          id: nodeIdCounter,
-          level: levelIndex,
-          position: positionIndex,
-          x,
-          y,
-        };
-      };
-
-      // Generate nodes for each level
-      for (let lvl = 0; lvl < levels; lvl++) {
-        const nodes: Node[] = [];
-
-        // Single start/end node if first or last level
-        if (lvl === 0) {
-          nodes.push(createNode(lvl, 0, maxNodesPerLevel));
-          nodes.push(
-            createNode(lvl, Math.floor(maxNodesPerLevel / 2), maxNodesPerLevel),
-          );
-          nodes.push(createNode(lvl, maxNodesPerLevel - 1, maxNodesPerLevel));
-        } else if (lvl === levels - 1) {
-          nodes.push(
-            createNode(lvl, Math.floor(maxNodesPerLevel / 2), maxNodesPerLevel),
-          );
-          for (const node of levelsData[lvl - 1]) {
-            edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
-          }
-        } else {
-          const prevLevel = levelsData[lvl - 1];
-          const isShortLevel = lvl % 2 === 1;
-
-          for (const node of prevLevel) {
-            const { position } = node;
-
-            if (isShortLevel) {
-              // Special endpoints for short levels
-              if (position === 0) {
-                if (!nodes.some((n) => n.level === lvl && n.position === 0)) {
-                  nodes.push(createNode(lvl, 0, maxNodesPerLevel - 1));
-                }
-                edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
-                continue;
-              }
-              if (position === maxNodesPerLevel - 1) {
-                if (
-                  !nodes.some(
-                    (n) =>
-                      n.level === lvl && n.position === maxNodesPerLevel - 2,
-                  )
-                ) {
-                  nodes.push(
-                    createNode(lvl, maxNodesPerLevel - 2, maxNodesPerLevel - 1),
-                  );
-                }
-                edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
-                continue;
-              }
-            }
-
-            if (Math.random() < chanceForTwoNodes) {
-              // Connect to one or two nodes
-              const newUpperPos = isShortLevel ? position - 1 : position;
-              const newLowerPos = isShortLevel ? position : position + 1;
-              if (
-                !nodes.some(
-                  (n) => n.level === lvl && n.position === newUpperPos,
-                )
-              ) {
-                nodes.push(
-                  createNode(
-                    lvl,
-                    newUpperPos,
-                    isShortLevel ? maxNodesPerLevel - 1 : maxNodesPerLevel,
-                  ),
-                );
-              }
-              edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
-              if (
-                !nodes.some(
-                  (n) => n.level === lvl && n.position === newLowerPos,
-                )
-              ) {
-                nodes.push(
-                  createNode(
-                    lvl,
-                    newLowerPos,
-                    isShortLevel ? maxNodesPerLevel - 1 : maxNodesPerLevel,
-                  ),
-                );
-              }
-              edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
-            } else {
-              const newUpperPos = isShortLevel ? position - 1 : position;
-              const newLowerPos = isShortLevel ? position : position + 1;
-              const newRandomPos =
-                Math.random() < 0.5 ? newUpperPos : newLowerPos;
-
-              if (
-                !nodes.some(
-                  (n) => n.level === lvl && n.position === newRandomPos,
-                )
-              ) {
-                nodes.push(
-                  createNode(
-                    lvl,
-                    newRandomPos,
-                    isShortLevel ? maxNodesPerLevel - 1 : maxNodesPerLevel,
-                  ),
-                );
-              }
-              edges.push({ from: node.id, to: nodes[nodes.length - 1].id });
-            }
-          }
-        }
-
-        levelsData.push(nodes);
-      }
-
-      return { levels: levelsData, edges };
-    }
-
     setMapData(generateMap());
-  }, [levels, maxNodesPerLevel, width, height]);
+  }, []);
 
   if (!mapData) {
     return <div>Loading map…</div>;
@@ -171,9 +27,9 @@ const Map: FC = () => {
 
   return (
     <svg
-      height={height}
+      height={800}
       style={{ border: "1px solid #ccc", background: "#fafafa" }}
-      width={width}
+      width={600}
     >
       {/* Render edges as lines */}
       {mapData.edges.map((edge) => {
@@ -214,7 +70,7 @@ const Map: FC = () => {
                 x={node.x}
                 y={node.y + 5}
               >
-                {node.id}
+                Hi
               </text>
             </g>
           ))}
