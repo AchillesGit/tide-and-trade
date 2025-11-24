@@ -8,6 +8,14 @@
 // </button>;
 //   const navigate = useNavigate();
 
+import {
+  GiCash,
+  GiPirateFlag,
+  GiSurprisedSkull,
+  GiTreasureMap,
+  GiWoodBeam,
+} from "react-icons/gi";
+
 import { useGameStore } from "../store/gameStore";
 
 import type { FC } from "react";
@@ -30,7 +38,7 @@ const Map: FC = () => {
           <line
             key={`${edge.from}-${edge.to}`}
             stroke="#888"
-            strokeWidth={2}
+            strokeWidth={1}
             x1={fromNode.x}
             x2={toNode.x}
             y1={fromNode.y}
@@ -44,24 +52,39 @@ const Map: FC = () => {
         <g key={levelNodes.map((n) => n.id).join("-")}>
           {levelNodes.map((node) => (
             <g key={node.id}>
-              <circle
-                cx={node.x}
-                cy={node.y}
-                fill="#e5e5e5"
-                r={15}
-                stroke="#333"
-                strokeWidth={2}
-              />
-              {/* label the node with its id or type */}
-              <text
-                fill="#333"
-                fontSize="10"
-                textAnchor="middle"
-                x={node.x}
-                y={node.y + 5}
+              <circle cx={node.x} cy={node.y} fill="white" r={34} />
+              <foreignObject
+                height={36}
+                width={36}
+                x={node.x - 18}
+                y={node.y - 18}
               >
-                {node.nodeType}
-              </text>
+                <div
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {node.nodeType === "battle" && (
+                    <GiPirateFlag color="#45556c" size={36} />
+                  )}
+                  {node.nodeType === "boss" && (
+                    <GiSurprisedSkull color="#45556c" size={36} />
+                  )}
+                  {node.nodeType === "shipyard" && (
+                    <GiWoodBeam color="#45556c" size={36} />
+                  )}
+                  {node.nodeType === "shop" && (
+                    <GiCash color="#45556c" size={36} />
+                  )}
+                  {node.nodeType === "treasure" && (
+                    <GiTreasureMap color="#45556c" size={36} />
+                  )}
+                </div>
+              </foreignObject>
             </g>
           ))}
         </g>
