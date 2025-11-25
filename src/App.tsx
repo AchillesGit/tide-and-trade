@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 
 import Inventory from "./components/Inventory";
 import Map from "./components/Map";
+import Placeholder from "./components/Placeholder";
 import ResourcesBar from "./components/ResourcesBar";
 import Shop from "./components/Shop";
 import { useGameStore } from "./store/gameStore";
@@ -38,6 +39,7 @@ const App: FC = () => {
             </div>
           }
         />
+        <Route element={<Placeholder />} path="*" />
       </Routes>
     </React.Fragment>
   );

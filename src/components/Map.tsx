@@ -1,13 +1,3 @@
-// import { useNavigate } from "react-router-dom";
-// <button
-//   className="border p-2 cursor-pointer"
-//   onClick={async () => navigate("/shop")}
-//   type="button"
-// >
-//   Shop
-// </button>;
-//   const navigate = useNavigate();
-
 import {
   GiCash,
   GiIsland,
@@ -20,18 +10,37 @@ import {
   GiTreasureMap,
   GiWoodBeam,
 } from "react-icons/gi";
+import { useNavigate } from "react-router-dom";
 
 import { useGameStore } from "../store/gameStore";
 import { edgePath, hash01 } from "../util/mapHelper";
 
 import type { FC } from "react";
 
+import type { Node } from "../types/mapTypes";
+
 const Map: FC = () => {
-  const { mapData } = useGameStore();
+  const { mapData, currentNodeId, setCurrentNodeId } = useGameStore();
+  const navigate = useNavigate();
 
   if (!mapData) {
     return <div>Loading map…</div>;
   }
+
+  const availableNextNodes: string[] = (() => {
+    if (!currentNodeId) {
+      return mapData.levels[0].map((lvl) => lvl.id);
+    }
+    return mapData.edges
+      .filter((e) => e.from === currentNodeId)
+      .map((e) => e.to);
+  })();
+
+  const onNodeClick = (node: Node) => {
+    if (!availableNextNodes.includes(node.id)) return;
+    setCurrentNodeId(node.id);
+    navigate(`/${node.nodeType}`);
+  };
 
   return (
     <svg height={window.innerHeight} width={window.innerWidth}>
@@ -69,11 +78,21 @@ const Map: FC = () => {
               <circle cx={node.x} cy={node.y} fill="white" r={34} />
               <foreignObject
                 height={50}
+                overflow="visible"
                 width={50}
                 x={node.x - 25}
                 y={node.y - 25}
               >
-                <div className="flex items-center justify-center hover:scale-110 transition-all cursor-pointer">
+                <button
+                  onClick={() => onNodeClick(node)}
+                  type="button"
+                  className={`flex items-center justify-center hover:scale-110 transition-all cursor-pointer
+                    ${
+                      availableNextNodes.includes(node.id)
+                        ? "animate-bounce"
+                        : ""
+                    }`}
+                >
                   {node.nodeType === "battle" && (
                     <GiPirateFlag color="#45556c" size={36} />
                   )}
@@ -104,7 +123,7 @@ const Map: FC = () => {
                   {node.nodeType === "jellyfish" && (
                     <GiJellyfish color="#45556c" size={36} />
                   )}
-                </div>
+                </button>
               </foreignObject>
             </g>
           ))}
