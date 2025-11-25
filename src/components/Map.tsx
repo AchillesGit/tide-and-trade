@@ -6,6 +6,7 @@ import {
   GiMermaid,
   GiPirateFlag,
   GiRollingDices,
+  GiShoonerSailboat,
   GiSurprisedSkull,
   GiTreasureMap,
   GiWoodBeam,
@@ -83,47 +84,54 @@ const Map: FC = () => {
                 x={node.x - 25}
                 y={node.y - 25}
               >
-                <button
-                  onClick={() => onNodeClick(node)}
-                  type="button"
-                  className={`flex items-center justify-center hover:scale-110 transition-all cursor-pointer
+                {node.id === currentNodeId ? (
+                  <GiShoonerSailboat
+                    color="oklch(50.5% 0.213 27.518)"
+                    size={36}
+                  />
+                ) : (
+                  <button
+                    onClick={() => onNodeClick(node)}
+                    type="button"
+                    className={`flex items-center justify-center hover:scale-110 transition-all cursor-pointer
                     ${
                       availableNextNodes.includes(node.id)
                         ? "animate-bounce"
                         : ""
                     }`}
-                >
-                  {node.nodeType === "battle" && (
-                    <GiPirateFlag color="#45556c" size={36} />
-                  )}
-                  {node.nodeType === "boss" && (
-                    <GiSurprisedSkull color="#45556c" size={36} />
-                  )}
-                  {node.nodeType === "shipyard" && (
-                    <GiWoodBeam color="#45556c" size={36} />
-                  )}
-                  {node.nodeType === "shop" && (
-                    <GiCash color="#45556c" size={36} />
-                  )}
-                  {node.nodeType === "treasure" && (
-                    <GiTreasureMap color="#45556c" size={36} />
-                  )}
-                  {node.nodeType === "island" && (
-                    <GiIsland color="#45556c" size={36} />
-                  )}
-                  {node.nodeType === "mermaid" && (
-                    <GiMermaid color="#45556c" size={36} />
-                  )}
-                  {node.nodeType === "diamond" && (
-                    <GiJeweledChalice color="#45556c" size={36} />
-                  )}
-                  {node.nodeType === "rollingDices" && (
-                    <GiRollingDices color="#45556c" size={36} />
-                  )}
-                  {node.nodeType === "jellyfish" && (
-                    <GiJellyfish color="#45556c" size={36} />
-                  )}
-                </button>
+                  >
+                    {node.nodeType === "battle" && (
+                      <GiPirateFlag color="#45556c" size={36} />
+                    )}
+                    {node.nodeType === "boss" && (
+                      <GiSurprisedSkull color="#45556c" size={36} />
+                    )}
+                    {node.nodeType === "shipyard" && (
+                      <GiWoodBeam color="#45556c" size={36} />
+                    )}
+                    {node.nodeType === "shop" && (
+                      <GiCash color="#45556c" size={36} />
+                    )}
+                    {node.nodeType === "treasure" && (
+                      <GiTreasureMap color="#45556c" size={36} />
+                    )}
+                    {node.nodeType === "island" && (
+                      <GiIsland color="#45556c" size={36} />
+                    )}
+                    {node.nodeType === "mermaid" && (
+                      <GiMermaid color="#45556c" size={36} />
+                    )}
+                    {node.nodeType === "diamond" && (
+                      <GiJeweledChalice color="#45556c" size={36} />
+                    )}
+                    {node.nodeType === "rollingDices" && (
+                      <GiRollingDices color="#45556c" size={36} />
+                    )}
+                    {node.nodeType === "jellyfish" && (
+                      <GiJellyfish color="#45556c" size={36} />
+                    )}
+                  </button>
+                )}
               </foreignObject>
             </g>
           ))}
