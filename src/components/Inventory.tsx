@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import ItemInfo from "./ItemInfo";
 import StatsSumInfo from "./StatsSumInfo";
 import useInventory from "../hooks/useInventory";
@@ -23,15 +25,20 @@ const Inventory: FC = () => {
     grabbedItem,
     setHoveredItem,
   } = useGameStore();
+  const navigate = useNavigate();
 
   const { clickCell, clickItem, cursorPos, getTransformForDirection } =
     useInventory();
 
   return (
-    <div
-      className={`h-screen ${grabbedItem ? "cursor-grabbing" : "cursor-default"}`}
-    >
-      <h2>Inventory</h2>
+    <div className={grabbedItem ? "cursor-grabbing" : "cursor-default"}>
+      <button
+        className="border p-2 cursor-pointer"
+        onClick={async () => navigate("/")}
+        type="button"
+      >
+        Map
+      </button>
       <div
         className="grid"
         style={{
