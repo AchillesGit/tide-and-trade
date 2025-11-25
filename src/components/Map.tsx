@@ -68,20 +68,12 @@ const Map: FC = () => {
             <g key={node.id}>
               <circle cx={node.x} cy={node.y} fill="white" r={34} />
               <foreignObject
-                height={36}
-                width={36}
-                x={node.x - 18}
-                y={node.y - 18}
+                height={50}
+                width={50}
+                x={node.x - 25}
+                y={node.y - 25}
               >
-                <div
-                  style={{
-                    width: "36px",
-                    height: "36px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
+                <div className="flex items-center justify-center hover:scale-110 transition-all cursor-pointer">
                   {node.nodeType === "battle" && (
                     <GiPirateFlag color="#45556c" size={36} />
                   )}
