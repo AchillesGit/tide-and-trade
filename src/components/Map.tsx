@@ -20,6 +20,7 @@ import type { FC } from "react";
 
 import type { Node } from "../types/mapTypes";
 
+/** Renders the world map including nodes and connecting edges. */
 const Map: FC = () => {
   const { mapData, currentNodeId, setCurrentNodeId } = useGameStore();
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const Map: FC = () => {
     return <div>Loading map…</div>;
   }
 
+  /** Computes the list of nodes the player is allowed to move to next. */
   const availableNextNodes: string[] = (() => {
     if (!currentNodeId) {
       return mapData.levels[0].map((lvl) => lvl.id);
@@ -37,6 +39,11 @@ const Map: FC = () => {
       .map((e) => e.to);
   })();
 
+  /**
+   * Handles player clicking on a node.
+   *
+   * @param node - The map node that was clicked.
+   */
   const onNodeClick = (node: Node) => {
     if (!availableNextNodes.includes(node.id)) return;
     setCurrentNodeId(node.id);
