@@ -10,7 +10,12 @@
 
 import {
   GiCash,
+  GiIsland,
+  GiJellyfish,
+  GiJeweledChalice,
+  GiMermaid,
   GiPirateFlag,
+  GiRollingDices,
   GiSurprisedSkull,
   GiTreasureMap,
   GiWoodBeam,
@@ -91,6 +96,21 @@ const Map: FC = () => {
                   )}
                   {node.nodeType === "treasure" && (
                     <GiTreasureMap color="#45556c" size={36} />
+                  )}
+                  {node.nodeType === "island" && (
+                    <GiIsland color="#45556c" size={36} />
+                  )}
+                  {node.nodeType === "mermaid" && (
+                    <GiMermaid color="#45556c" size={36} />
+                  )}
+                  {node.nodeType === "diamond" && (
+                    <GiJeweledChalice color="#45556c" size={36} />
+                  )}
+                  {node.nodeType === "rollingDices" && (
+                    <GiRollingDices color="#45556c" size={36} />
+                  )}
+                  {node.nodeType === "jellyfish" && (
+                    <GiJellyfish color="#45556c" size={36} />
                   )}
                 </div>
               </foreignObject>

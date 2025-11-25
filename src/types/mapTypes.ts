@@ -15,10 +15,30 @@ export interface Node {
 }
 
 /** Type of encounter on the map. */
-export type NodeType = "shop" | "battle" | "treasure" | "shipyard" | "boss";
+export type NodeType =
+  | "shop"
+  | "battle"
+  | "treasure"
+  | "shipyard"
+  | "island"
+  | "mermaid"
+  | "jellyfish"
+  | "rollingDices"
+  | "diamond"
+  | "boss";
 
 /** List of all possible node encounter types that can appear on the map (boss is excluded). */
-export const nodeTypes: NodeType[] = ["shop", "battle", "treasure", "shipyard"];
+export const nodeTypes: NodeType[] = [
+  "shop",
+  "battle",
+  "treasure",
+  "shipyard",
+  "island",
+  "mermaid",
+  "jellyfish",
+  "rollingDices",
+  "diamond",
+];
 
 /**
  * Represents a directed connection between two nodes.
