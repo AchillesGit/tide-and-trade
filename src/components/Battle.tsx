@@ -156,6 +156,7 @@ const Battle: React.FC = () => {
       </div>
     );
   };
+
   const renderShipStats = (ship: Ship) => (
     <table className="w-full border-collapse mb-2 text-sm">
       <tbody className="[&>tr]:mb-3 [&>tr]:flex [&>tr]:justify-between">
@@ -221,7 +222,7 @@ const Battle: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col gap-4 font-sans">
+    <div className="flex flex-col gap-4 mx-30">
       <div className="flex gap-4">
         {ships.map((ship) => (
           <div
