@@ -12,102 +12,87 @@ import {
   GiShoonerSailboat,
 } from "react-icons/gi";
 
+import { useGameStore } from "../store/gameStore";
+import { sumInventoryStats } from "../util/formatHelper";
+
 import type { Ship } from "../types/inventoryTypes";
 
-interface Log {
+interface BattleLog {
   id: string;
   log: string;
 }
 
 const Battle: React.FC = () => {
-  const initialShips: Ship[] = [
-    {
-      name: "Fregatte",
-      currentHp: 800,
-      maxHp: 800,
-      firepower: 45,
-      attackSpeed: 1.6,
-      criticalChance: 0.15,
-      criticalDamage: 1.5,
-      armor: 8,
-      evasionChance: 0.08,
-      gold: 0,
-    },
-    {
-      name: "Zerstörer",
-      currentHp: 1000,
-      maxHp: 1000,
-      firepower: 55,
-      attackSpeed: 1.4,
-      criticalChance: 0.1,
-      criticalDamage: 1.8,
-      armor: 12,
-      evasionChance: 0.05,
-      gold: 0,
-    },
-  ];
+  const { inventoryItems } = useGameStore();
 
-  const [ships, setShips] = useState<Ship[]>(initialShips);
-  const shipsRef = useRef<Ship[]>(initialShips);
+  const [playerShip, setPlayerShip] = useState<Ship>(
+    sumInventoryStats(inventoryItems),
+  );
 
-  const [log, setLog] = useState<Log[]>([]);
-  const logRef = useRef<Log[]>([]);
+  const [enemyShip, setEnemyShip] = useState<Ship>({
+    name: "Battle Gustav",
+    currentHp: 1000,
+    maxHp: 1000,
+    firepower: 55,
+    attackSpeed: 1.4,
+    criticalChance: 0.1,
+    criticalDamage: 1.8,
+    armor: 12,
+    evasionChance: 0.05,
+    gold: 0,
+  });
+
+  const [log, setLog] = useState<BattleLog[]>([]);
+  const logRef = useRef<BattleLog[]>([]);
 
   const battleFinishedRef = useRef<boolean>(false);
 
-  const scheduleAttack = (attackerIndex: number, defenderIndex: number) => {
-    const attacker = shipsRef.current[attackerIndex];
+  const scheduleAttack = (
+    attacker: Ship,
+    defender: Ship,
+    setDefender: React.Dispatch<React.SetStateAction<Ship>>,
+  ) => {
     const interval = Math.max(1000 / (attacker.attackSpeed || 1), 10);
     setTimeout(() => {
       if (battleFinishedRef.current) return;
 
-      const currentAttacker = shipsRef.current[attackerIndex];
-      const currentDefender = shipsRef.current[defenderIndex];
-
-      if (!currentAttacker || !currentDefender) return;
+      if (!attacker || !defender) return;
 
       let message = ``;
 
-      const evaded = Math.random() < currentDefender.evasionChance;
-      if (evaded) {
-        message = `${currentAttacker.name} attackiert ${currentDefender.name}, doch ${currentDefender.name} weicht aus!`;
-      } else {
-        const baseDamage = currentAttacker.firepower;
+      const evaded = Math.random() < defender.evasionChance;
 
-        const isCrit = Math.random() < currentAttacker.criticalChance;
+      if (evaded) {
+        message = `${attacker.name} attackiert ${defender.name}, doch ${defender.name} weicht aus!`;
+      } else {
+        const baseDamage = attacker.firepower;
+
+        const isCrit = Math.random() < attacker.criticalChance;
         const damageWithCrit = isCrit
-          ? baseDamage * currentAttacker.criticalDamage
+          ? baseDamage * attacker.criticalDamage
           : baseDamage;
 
-        const damageAfterArmor = Math.max(
-          0,
-          damageWithCrit - currentDefender.armor,
-        );
+        const damageAfterArmor = Math.max(0, damageWithCrit - defender.armor);
 
         const damageDealt = Math.round(damageAfterArmor * 10) / 10;
 
-        const newShips = shipsRef.current.map((s, idx) => {
-          if (idx !== defenderIndex) return s;
-          const newHp = Math.max(0, s.currentHp - damageDealt);
-          return { ...s, currentHp: newHp };
-        });
-        shipsRef.current = newShips;
-        setShips(newShips);
+        const newHp = Math.max(0, defender.currentHp - damageDealt);
+        setDefender((prev) => ({ ...prev, currentHp: newHp }));
 
-        message = `${currentAttacker.name} trifft ${currentDefender.name} `;
+        message = `${attacker.name} trifft ${defender.name} `;
         if (isCrit) {
           message += `(Kritischer Treffer) `;
         }
         message += `für ${damageDealt.toFixed(1)} Schaden. `;
-        message += `${currentDefender.name} hat noch ${newShips[defenderIndex].currentHp.toFixed(1)} HP.`;
+        message += `${defender.name} hat noch ${newHp.toFixed(1)} HP.`;
 
-        if (newShips[defenderIndex].currentHp <= 0) {
-          message += ` ${currentDefender.name} wurde zerstört!`;
+        if (newHp <= 0) {
+          message += ` ${defender.name} wurde zerstört!`;
           battleFinishedRef.current = true;
         }
       }
 
-      const newLog: Log = {
+      const newLog: BattleLog = {
         id: crypto.randomUUID(),
         log: message,
       };
@@ -117,20 +102,15 @@ const Battle: React.FC = () => {
       setLog(updatedLog);
 
       if (!battleFinishedRef.current) {
-        scheduleAttack(attackerIndex, defenderIndex);
+        scheduleAttack(attacker, defender, setDefender);
       }
     }, interval);
   };
 
   useEffect(() => {
-    shipsRef.current = initialShips;
-    logRef.current = [];
     battleFinishedRef.current = false;
-    setShips(initialShips);
-    setLog([]);
-
-    scheduleAttack(0, 1);
-    scheduleAttack(1, 0);
+    scheduleAttack(playerShip, enemyShip, setEnemyShip);
+    scheduleAttack(enemyShip, playerShip, setPlayerShip);
 
     return () => {
       battleFinishedRef.current = true;
@@ -224,19 +204,28 @@ const Battle: React.FC = () => {
   return (
     <div className="flex flex-col gap-4 mx-30">
       <div className="flex gap-4">
-        {ships.map((ship) => (
-          <div
-            key={ship.name}
-            className="flex-1 p-3 border border-gray-300 rounded"
-          >
-            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-              <GiShoonerSailboat size={33} />
-              {ship.name}
-            </h3>
-            {renderHealthBar(ship)}
-            <div className="mt-2">{renderShipStats(ship)}</div>
-          </div>
-        ))}
+        <div
+          key={playerShip.name}
+          className="flex-1 p-3 border border-gray-300 rounded"
+        >
+          <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+            <GiShoonerSailboat size={33} />
+            {playerShip.name}
+          </h3>
+          {renderHealthBar(playerShip)}
+          <div className="mt-2">{renderShipStats(playerShip)}</div>
+        </div>
+        <div
+          key={enemyShip.name}
+          className="flex-1 p-3 border border-gray-300 rounded"
+        >
+          <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+            <GiShoonerSailboat size={33} />
+            {enemyShip.name}
+          </h3>
+          {renderHealthBar(enemyShip)}
+          <div className="mt-2">{renderShipStats(enemyShip)}</div>
+        </div>
       </div>
 
       <div className="p-3 border border-gray-300 rounded h-52 overflow-y-auto bg-gray-50">

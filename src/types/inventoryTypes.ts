@@ -125,7 +125,19 @@ export interface Ship {
   /** Evasion chance per level (e.g. 0.10 = 10%) */
   evasionChance: number;
 
-  // TODO: Brauchen wir das?
-  /** Summed up Gold */
+  // TODO: Do we need this?
   gold: number;
 }
+
+export const baseShipValues: Ship = {
+  gold: 0,
+  armor: 10,
+  attackSpeed: 1,
+  criticalChance: 0,
+  criticalDamage: 20,
+  evasionChance: 5,
+  firepower: 10,
+  currentHp: 1000,
+  name: "Battle Reiner",
+  maxHp: 1000,
+};
