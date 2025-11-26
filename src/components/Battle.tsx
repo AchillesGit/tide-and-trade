@@ -1,256 +1,251 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 
-import {
-  GiCrossedSwords,
-  GiDiceFire,
-  GiDodging,
-  GiHeartBottle,
-  GiHydraShot,
-  GiMineExplosion,
-  GiPirateCannon,
-  GiShieldReflect,
-  GiShoonerSailboat,
-} from "react-icons/gi";
+const ATTACK_DIE: number[] = [1, 1, 2, 0, 0, 0];
+const DEFENSE_DIE: number[] = [1, 1, 2, 0, 0, 0];
 
-import { useGameStore } from "../store/gameStore";
-import { sumInventoryStats } from "../util/formatHelper";
+interface DiceResult {
+  type: "attack" | "defense";
+  value: number;
+}
 
-import type { Ship } from "../types/inventoryTypes";
+function rollAttack(): DiceResult {
+  const index = Math.floor(Math.random() * ATTACK_DIE.length);
+  return { type: "attack", value: ATTACK_DIE[index] };
+}
 
-interface BattleLog {
-  id: string;
-  log: string;
+function rollDefense(): DiceResult {
+  const index = Math.floor(Math.random() * DEFENSE_DIE.length);
+  return { type: "defense", value: DEFENSE_DIE[index] };
 }
 
 const Battle: React.FC = () => {
-  const { inventoryItems } = useGameStore();
+  const [playerLife, setPlayerLife] = useState(10);
+  const [computerLife, setComputerLife] = useState(10);
 
-  const [playerShip, setPlayerShip] = useState<Ship>(
-    sumInventoryStats(inventoryItems),
-  );
+  const [playerDice, setPlayerDice] = useState<DiceResult[]>([]);
+  const [computerDice, setComputerDice] = useState<DiceResult[]>([]);
 
-  const [enemyShip, setEnemyShip] = useState<Ship>({
-    name: "Battle Gustav",
-    currentHp: 1000,
-    maxHp: 1000,
-    firepower: 55,
-    attackSpeed: 1,
-    criticalChance: 0.1,
-    criticalDamage: 1.5,
-    armor: 0.12,
-    evasionChance: 0.05,
-    gold: 0,
-  });
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
 
-  const playerShipRef = useRef<Ship>(playerShip);
-  const enemyShipRef = useRef<Ship>(enemyShip);
+  const [rolled, setRolled] = useState(false);
 
-  const [log, setLog] = useState<BattleLog[]>([]);
-  const logRef = useRef<BattleLog[]>([]);
+  const [roundResult, setRoundResult] = useState<string>("");
 
-  const battleFinishedRef = useRef<boolean>(false);
+  const handleRoll = () => {
+    if (playerLife <= 0 || computerLife <= 0) return;
+    const newPlayerDice: DiceResult[] = [
+      rollAttack(),
+      rollAttack(),
+      rollDefense(),
+      rollDefense(),
+    ];
+    const newComputerDice: DiceResult[] = [
+      rollAttack(),
+      rollAttack(),
+      rollDefense(),
+      rollDefense(),
+    ];
+    setPlayerDice(newPlayerDice);
+    setComputerDice(newComputerDice);
+    setSelectedIndices([]);
+    setRoundResult("");
+    setRolled(true);
+  };
 
-  const scheduleAttack = (
-    attackerRef: React.RefObject<Ship>,
-    defenderRef: React.RefObject<Ship>,
-    setDefender: React.Dispatch<React.SetStateAction<Ship>>,
-  ) => {
-    const interval = Math.max(
-      2000 / (attackerRef.current.attackSpeed || 1),
-      10,
-    );
-    setTimeout(() => {
-      if (battleFinishedRef.current) return;
+  const toggleSelect = (index: number) => {
+    if (!rolled) return;
+    if (selectedIndices.includes(index)) {
+      setSelectedIndices(selectedIndices.filter((i) => i !== index));
+    } else if (selectedIndices.length < 3) {
+      setSelectedIndices([...selectedIndices, index]);
+    }
+  };
 
-      const attacker = attackerRef.current;
-      const defender = defenderRef.current;
-      if (!attacker || !defender) return;
+  const handleResolve = () => {
+    if (!rolled || selectedIndices.length !== 3) return;
 
-      let message = "";
-
-      const evaded = Math.random() < defender.evasionChance;
-      if (evaded) {
-        message = `${attacker.name} attackiert ${defender.name}, doch ${defender.name} weicht aus!`;
+    let playerAttack = 0;
+    let playerDefense = 0;
+    selectedIndices.forEach((idx) => {
+      const result = playerDice[idx];
+      if (result.type === "attack") {
+        playerAttack += result.value;
       } else {
-        const baseDamage = attacker.firepower;
-        const isCrit = Math.random() < attacker.criticalChance;
-        const damageWithCrit = isCrit
-          ? baseDamage * attacker.criticalDamage
-          : baseDamage;
-        const damageAfterArmor = Math.max(
-          0,
-          damageWithCrit * (1 - defender.armor / 100),
-        );
-        const damageDealt = Math.round(damageAfterArmor * 10) / 10;
-
-        const newHp = Math.max(0, defender.currentHp - damageDealt);
-        defenderRef.current = { ...defenderRef.current, currentHp: newHp };
-        setDefender((prev) => ({ ...prev, currentHp: newHp }));
-
-        message = `${attacker.name} trifft ${defender.name} `;
-        if (isCrit) {
-          message += `(Kritischer Treffer) `;
-        }
-        message += `für ${damageDealt.toFixed(1)} Schaden. `;
-        message += `${defender.name} hat noch ${newHp.toFixed(1)} HP.`;
-
-        if (newHp <= 0) {
-          message += ` ${defender.name} wurde zerstört!`;
-          battleFinishedRef.current = true;
-        }
+        playerDefense += result.value;
       }
+    });
 
-      const newLog: BattleLog = { id: crypto.randomUUID(), log: message };
-      const updatedLog = [...logRef.current, newLog];
-      logRef.current = updatedLog;
-      setLog(updatedLog);
+    let computerAttack = 0;
+    let computerDefense = 0;
+    computerDice.forEach((res) => {
+      if (res.type === "attack") computerAttack += res.value;
+      else computerDefense += res.value;
+    });
 
-      if (!battleFinishedRef.current) {
-        scheduleAttack(attackerRef, defenderRef, setDefender);
-      }
-    }, interval);
+    const damageToComputer = Math.max(playerAttack - computerDefense, 0);
+    const damageToPlayer = Math.max(computerAttack - playerDefense, 0);
+
+    const newPlayerLife = Math.max(playerLife - damageToPlayer, 0);
+    const newComputerLife = Math.max(computerLife - damageToComputer, 0);
+    setPlayerLife(newPlayerLife);
+    setComputerLife(newComputerLife);
+
+    let summary = `Du hast ${playerAttack} Angriff und ${playerDefense} Verteidigung gewürfelt. `;
+    summary += `Der Gegner hat ${computerAttack} Angriff und ${computerDefense} Verteidigung gewürfelt. `;
+    if (damageToComputer > 0) {
+      summary += `Du fügst dem Gegner ${damageToComputer} Schaden zu. `;
+    } else {
+      summary += `Du konntest keinen Schaden verursachen. `;
+    }
+    if (damageToPlayer > 0) {
+      summary += `Der Gegner fügt dir ${damageToPlayer} Schaden zu.`;
+    } else {
+      summary += `Der Gegner verursacht keinen Schaden.`;
+    }
+    setRoundResult(summary);
+
+    setRolled(false);
   };
 
-  useEffect(() => {
-    battleFinishedRef.current = false;
-
-    // initiale Werte in die Refs schreiben
-    playerShipRef.current = sumInventoryStats(inventoryItems);
-    enemyShipRef.current = { ...enemyShipRef.current };
-
-    setPlayerShip(playerShipRef.current);
-    setEnemyShip(enemyShipRef.current);
-    setLog([]);
-
-    scheduleAttack(playerShipRef, enemyShipRef, setEnemyShip);
-    scheduleAttack(enemyShipRef, playerShipRef, setPlayerShip);
-
-    return () => {
-      battleFinishedRef.current = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const renderHealthBar = (ship: Ship) => {
-    const hpPercent = (ship.currentHp / ship.maxHp) * 100;
-    const barColorClass =
-      // eslint-disable-next-line no-nested-ternary
-      hpPercent > 50
-        ? "bg-green-500"
-        : hpPercent > 20
-          ? "bg-orange-500"
-          : "bg-red-500";
-    return (
-      <div className="w-full h-4 bg-gray-300 rounded overflow-hidden">
-        <div
-          className={`h-full transition-all duration-200 ease-linear ${barColorClass}`}
-          style={{ width: `${hpPercent}%` }}
-        />
-      </div>
-    );
-  };
-
-  const renderShipStats = (ship: Ship) => (
-    <table className="w-full border-collapse mb-2 text-sm">
-      <tbody className="[&>tr]:mb-3 [&>tr]:flex [&>tr]:justify-between">
-        <tr>
-          <th className="text-left pr-2 font-medium flex items-center gap-3">
-            <GiHeartBottle size={24} />
-            HP
-          </th>
-
-          <td>
-            {ship.currentHp.toFixed(1)} / {ship.maxHp.toFixed(1)}
-          </td>
-        </tr>
-        <tr>
-          <th className="text-left pr-2 font-medium flex items-center gap-3">
-            <GiPirateCannon size={24} />
-            Feuerkraft
-          </th>
-
-          <td>{ship.firepower}</td>
-        </tr>
-        <tr>
-          <th className="text-left pr-2 font-medium flex items-center gap-3">
-            <GiHydraShot size={24} />
-            Angriffsgeschwindigkeit
-          </th>
-          <td>{ship.attackSpeed.toFixed(1)}</td>
-        </tr>
-        <tr>
-          <th className="text-left pr-2 font-medium flex items-center gap-3">
-            <GiDiceFire size={24} />
-            Kritische Chance
-          </th>
-
-          <td>{(ship.criticalChance * 100).toFixed(1)}%</td>
-        </tr>
-        <tr>
-          <th className="text-left pr-2 font-medium flex items-center gap-3">
-            <GiMineExplosion size={24} />
-            Kritischer Schaden
-          </th>
-
-          <td>{((ship.criticalDamage - 1) * 100).toFixed(0)}%</td>
-        </tr>
-        <tr>
-          <th className="text-left pr-2 font-medium flex items-center gap-3">
-            <GiShieldReflect size={24} />
-            Rüstung
-          </th>
-          <td>{(ship.armor * 100).toFixed(1)}%</td>
-        </tr>
-        <tr>
-          <th className="text-left pr-2 font-medium flex items-center gap-3">
-            <GiDodging size={24} />
-            Ausweichchance
-          </th>
-
-          <td>{(ship.evasionChance * 100).toFixed(1)}%</td>
-        </tr>
-      </tbody>
-    </table>
-  );
+  const primaryButtonClasses =
+    "inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition cursor-pointer";
+  const diceButtonBase =
+    "min-w-[3rem] rounded-md border px-3 py-2 text-sm font-semibold shadow-sm cursor-pointer select-none";
 
   return (
-    <div className="flex flex-col gap-4 mx-30">
-      <div className="flex gap-4">
-        <div
-          key={playerShip.name}
-          className="flex-1 p-3 border border-gray-300 rounded"
-        >
-          <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-            <GiShoonerSailboat size={33} />
-            {playerShip.name}
-          </h3>
-          {renderHealthBar(playerShip)}
-          <div className="mt-2">{renderShipStats(playerShip)}</div>
+    <div className="p-4 max-w-xl mx-auto space-y-4 bg-slate-900 text-slate-100 rounded-xl shadow-lg">
+      <h2 className="text-2xl font-bold text-center">Kampf</h2>
+
+      <div className="flex items-center justify-between gap-4 text-sm">
+        <div className="flex-1 rounded-lg bg-slate-800 px-3 py-2">
+          <p className="font-semibold">Du</p>
+          <p className="mt-1 text-xs">
+            Lebenspunkte:
+            <span className="font-mono font-bold text-green-400">
+              {playerLife}
+            </span>
+          </p>
         </div>
-        <div
-          key={enemyShip.name}
-          className="flex-1 p-3 border border-gray-300 rounded"
-        >
-          <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-            <GiShoonerSailboat size={33} />
-            {enemyShip.name}
-          </h3>
-          {renderHealthBar(enemyShip)}
-          <div className="mt-2">{renderShipStats(enemyShip)}</div>
+        <div className="flex-1 rounded-lg bg-slate-800 px-3 py-2 text-right">
+          <p className="font-semibold">Gegner</p>
+          <p className="mt-1 text-xs">
+            Lebenspunkte:
+            <span className="font-mono font-bold text-red-400">
+              {computerLife}
+            </span>
+          </p>
         </div>
       </div>
 
-      <div className="p-3 border border-gray-300 rounded h-52 overflow-y-auto bg-gray-50">
-        <h4 className="font-semibold mb-2">Kampflog</h4>
-        <ul className="list-none p-0 m-0 space-y-1 text-sm">
-          {log.map((entry) => (
-            <li key={entry.id} className="flex items-start gap-2">
-              <GiCrossedSwords />
-              {entry.log}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {playerLife <= 0 || computerLife <= 0 ? (
+        <div className="mt-4 space-y-3 text-center">
+          <h3 className="text-xl font-bold">
+            {playerLife <= 0 ? "Du hast verloren" : "Du hast gewonnen!"}
+          </h3>
+          <button
+            className={primaryButtonClasses}
+            type="button"
+            onClick={() => {
+              setPlayerLife(10);
+              setComputerLife(10);
+              setPlayerDice([]);
+              setComputerDice([]);
+              setSelectedIndices([]);
+              setRoundResult("");
+              setRolled(false);
+            }}
+          >
+            Neu starten
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-4 mt-4">
+          {!rolled && (
+            <div className="flex justify-center">
+              <button
+                className={primaryButtonClasses}
+                onClick={handleRoll}
+                type="button"
+              >
+                Würfeln
+              </button>
+            </div>
+          )}
+
+          {rolled ? (
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium mb-2">
+                  Deine Würfel
+                  <span className="text-xs font-normal text-slate-300">
+                    (klicke, um drei auszuwählen)
+                  </span>
+                </p>
+                <div className="flex gap-2 flex-wrap">
+                  {playerDice.map((res, idx) => {
+                    const isSelected = selectedIndices.includes(idx);
+                    const selectedClasses = isSelected
+                      ? "border-red-500 bg-red-50 text-red-700"
+                      : "border-slate-400 bg-slate-800 text-slate-100";
+                    return (
+                      <button
+                        key={idx}
+                        className={`${diceButtonBase} ${selectedClasses}`}
+                        onClick={() => toggleSelect(idx)}
+                        type="button"
+                      >
+                        {res.type === "attack"
+                          ? `A${res.value}`
+                          : `V${res.value}`}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium mb-2">Gegnerische Würfel:</p>
+                <div className="flex gap-2 flex-wrap">
+                  {computerDice.map((res, idx) => (
+                    <div
+                      key={idx}
+                      className="min-w-12 rounded-md border border-slate-500 bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-100 shadow-sm text-center"
+                    >
+                      {res.type === "attack"
+                        ? `A${res.value}`
+                        : `V${res.value}`}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-sm">
+                <p>
+                  Ausgewählt:
+                  <span className="font-mono">
+                    {selectedIndices.length} / 3
+                  </span>
+                </p>
+                <button
+                  className={primaryButtonClasses}
+                  disabled={selectedIndices.length !== 3}
+                  onClick={handleResolve}
+                  type="button"
+                >
+                  Runde berechnen
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          {roundResult ? (
+            <div className="mt-4 rounded-lg border-l-4 border-blue-500 bg-slate-800/80 px-4 py-3 text-sm">
+              <p className="font-semibold mb-1">Rundenresultat</p>
+              <p>{roundResult}</p>
+            </div>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 };
