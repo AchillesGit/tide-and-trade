@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
 
-/** Simple resource state for tracking player gold. */
+/** Simple resource state for tracking the ships HP. */
 export interface ShipHpState {
   /** Current amount of HP of the ship */
   currentHp: number;
@@ -17,7 +17,7 @@ export interface ShipHpState {
   removeCurrentHP: (amount: number) => void;
 }
 
-/** Creates the resource slice for managing gold. */
+/** Creates the resource slice for managing the HP of the ship. */
 export const createShipHpSlice: StateCreator<ShipHpState> = (set) => ({
   currentHp: 500,
   maxHp: 1000,
