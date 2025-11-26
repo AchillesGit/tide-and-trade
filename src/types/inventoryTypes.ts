@@ -131,11 +131,11 @@ export interface Ship {
 
 export const baseShipValues: Ship = {
   gold: 0,
-  armor: 10,
+  armor: 0.1,
   attackSpeed: 1,
   criticalChance: 0,
-  criticalDamage: 20,
-  evasionChance: 5,
+  criticalDamage: 1.2,
+  evasionChance: 0.05,
   firepower: 10,
   currentHp: 1000,
   name: "Battle Reiner",

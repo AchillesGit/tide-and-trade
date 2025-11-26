@@ -34,13 +34,16 @@ const Battle: React.FC = () => {
     currentHp: 1000,
     maxHp: 1000,
     firepower: 55,
-    attackSpeed: 1.4,
+    attackSpeed: 1,
     criticalChance: 0.1,
-    criticalDamage: 1.8,
-    armor: 12,
+    criticalDamage: 1.5,
+    armor: 0.12,
     evasionChance: 0.05,
     gold: 0,
   });
+
+  const playerShipRef = useRef<Ship>(playerShip);
+  const enemyShipRef = useRef<Ship>(enemyShip);
 
   const [log, setLog] = useState<BattleLog[]>([]);
   const logRef = useRef<BattleLog[]>([]);
@@ -48,35 +51,40 @@ const Battle: React.FC = () => {
   const battleFinishedRef = useRef<boolean>(false);
 
   const scheduleAttack = (
-    attacker: Ship,
-    defender: Ship,
+    attackerRef: React.RefObject<Ship>,
+    defenderRef: React.RefObject<Ship>,
     setDefender: React.Dispatch<React.SetStateAction<Ship>>,
   ) => {
-    const interval = Math.max(1000 / (attacker.attackSpeed || 1), 10);
+    const interval = Math.max(
+      2000 / (attackerRef.current.attackSpeed || 1),
+      10,
+    );
     setTimeout(() => {
       if (battleFinishedRef.current) return;
 
+      const attacker = attackerRef.current;
+      const defender = defenderRef.current;
       if (!attacker || !defender) return;
 
-      let message = ``;
+      let message = "";
 
       const evaded = Math.random() < defender.evasionChance;
-
       if (evaded) {
         message = `${attacker.name} attackiert ${defender.name}, doch ${defender.name} weicht aus!`;
       } else {
         const baseDamage = attacker.firepower;
-
         const isCrit = Math.random() < attacker.criticalChance;
         const damageWithCrit = isCrit
           ? baseDamage * attacker.criticalDamage
           : baseDamage;
-
-        const damageAfterArmor = Math.max(0, damageWithCrit - defender.armor);
-
+        const damageAfterArmor = Math.max(
+          0,
+          damageWithCrit * (1 - defender.armor / 100),
+        );
         const damageDealt = Math.round(damageAfterArmor * 10) / 10;
 
         const newHp = Math.max(0, defender.currentHp - damageDealt);
+        defenderRef.current = { ...defenderRef.current, currentHp: newHp };
         setDefender((prev) => ({ ...prev, currentHp: newHp }));
 
         message = `${attacker.name} trifft ${defender.name} `;
@@ -92,25 +100,30 @@ const Battle: React.FC = () => {
         }
       }
 
-      const newLog: BattleLog = {
-        id: crypto.randomUUID(),
-        log: message,
-      };
-
+      const newLog: BattleLog = { id: crypto.randomUUID(), log: message };
       const updatedLog = [...logRef.current, newLog];
       logRef.current = updatedLog;
       setLog(updatedLog);
 
       if (!battleFinishedRef.current) {
-        scheduleAttack(attacker, defender, setDefender);
+        scheduleAttack(attackerRef, defenderRef, setDefender);
       }
     }, interval);
   };
 
   useEffect(() => {
     battleFinishedRef.current = false;
-    scheduleAttack(playerShip, enemyShip, setEnemyShip);
-    scheduleAttack(enemyShip, playerShip, setPlayerShip);
+
+    // initiale Werte in die Refs schreiben
+    playerShipRef.current = sumInventoryStats(inventoryItems);
+    enemyShipRef.current = { ...enemyShipRef.current };
+
+    setPlayerShip(playerShipRef.current);
+    setEnemyShip(enemyShipRef.current);
+    setLog([]);
+
+    scheduleAttack(playerShipRef, enemyShipRef, setEnemyShip);
+    scheduleAttack(enemyShipRef, playerShipRef, setPlayerShip);
 
     return () => {
       battleFinishedRef.current = true;
@@ -163,7 +176,7 @@ const Battle: React.FC = () => {
             <GiHydraShot size={24} />
             Angriffsgeschwindigkeit
           </th>
-          <td>{ship.attackSpeed}</td>
+          <td>{ship.attackSpeed.toFixed(1)}</td>
         </tr>
         <tr>
           <th className="text-left pr-2 font-medium flex items-center gap-3">
@@ -179,15 +192,14 @@ const Battle: React.FC = () => {
             Kritischer Schaden
           </th>
 
-          <td>{ship.criticalDamage.toFixed(2)}x</td>
+          <td>{((ship.criticalDamage - 1) * 100).toFixed(0)}%</td>
         </tr>
         <tr>
           <th className="text-left pr-2 font-medium flex items-center gap-3">
             <GiShieldReflect size={24} />
             Rüstung
           </th>
-
-          <td>{ship.armor}</td>
+          <td>{(ship.armor * 100).toFixed(1)}%</td>
         </tr>
         <tr>
           <th className="text-left pr-2 font-medium flex items-center gap-3">
