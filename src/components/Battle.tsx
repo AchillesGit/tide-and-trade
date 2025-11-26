@@ -1,49 +1,58 @@
 import React, { useState } from "react";
 
-const ATTACK_DIE: number[] = [1, 1, 2, 0, 0, 0];
-const DEFENSE_DIE: number[] = [1, 1, 2, 0, 0, 0];
+import { GiBroadsword, GiCrossShield } from "react-icons/gi";
 
-interface DiceResult {
-  type: "attack" | "defense";
-  value: number;
+interface FaceEffects {
+  attack?: number;
+  defense?: number;
 }
 
-function rollAttack(): DiceResult {
-  const index = Math.floor(Math.random() * ATTACK_DIE.length);
-  return { type: "attack", value: ATTACK_DIE[index] };
-}
+const ATTACK_DIE_FACES: FaceEffects[] = [
+  { attack: 1 },
+  { attack: 1 },
+  { attack: 2 },
+  { attack: 0, defense: 0 },
+  { attack: 0, defense: 0 },
+  { attack: 0, defense: 0 },
+];
 
-function rollDefense(): DiceResult {
-  const index = Math.floor(Math.random() * DEFENSE_DIE.length);
-  return { type: "defense", value: DEFENSE_DIE[index] };
+const DEFENSE_DIE_FACES: FaceEffects[] = [
+  { defense: 1 },
+  { defense: 1 },
+  { defense: 2 },
+  { attack: 0, defense: 0 },
+  { attack: 0, defense: 0 },
+  { attack: 0, defense: 0 },
+];
+
+function rollFace(faces: FaceEffects[]): FaceEffects {
+  const index = Math.floor(Math.random() * faces.length);
+  return faces[index];
 }
 
 const Battle: React.FC = () => {
   const [playerLife, setPlayerLife] = useState(10);
   const [computerLife, setComputerLife] = useState(10);
 
-  const [playerDice, setPlayerDice] = useState<DiceResult[]>([]);
-  const [computerDice, setComputerDice] = useState<DiceResult[]>([]);
-
+  const [playerDice, setPlayerDice] = useState<FaceEffects[]>([]);
+  const [computerDice, setComputerDice] = useState<FaceEffects[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-
   const [rolled, setRolled] = useState(false);
-
   const [roundResult, setRoundResult] = useState<string>("");
 
   const handleRoll = () => {
     if (playerLife <= 0 || computerLife <= 0) return;
-    const newPlayerDice: DiceResult[] = [
-      rollAttack(),
-      rollAttack(),
-      rollDefense(),
-      rollDefense(),
+    const newPlayerDice: FaceEffects[] = [
+      rollFace(ATTACK_DIE_FACES),
+      rollFace(ATTACK_DIE_FACES),
+      rollFace(DEFENSE_DIE_FACES),
+      rollFace(DEFENSE_DIE_FACES),
     ];
-    const newComputerDice: DiceResult[] = [
-      rollAttack(),
-      rollAttack(),
-      rollDefense(),
-      rollDefense(),
+    const newComputerDice: FaceEffects[] = [
+      rollFace(ATTACK_DIE_FACES),
+      rollFace(ATTACK_DIE_FACES),
+      rollFace(DEFENSE_DIE_FACES),
+      rollFace(DEFENSE_DIE_FACES),
     ];
     setPlayerDice(newPlayerDice);
     setComputerDice(newComputerDice);
@@ -63,33 +72,25 @@ const Battle: React.FC = () => {
 
   const handleResolve = () => {
     if (!rolled || selectedIndices.length !== 3) return;
-
     let playerAttack = 0;
     let playerDefense = 0;
     selectedIndices.forEach((idx) => {
       const result = playerDice[idx];
-      if (result.type === "attack") {
-        playerAttack += result.value;
-      } else {
-        playerDefense += result.value;
-      }
+      playerAttack += result.attack ?? 0;
+      playerDefense += result.defense ?? 0;
     });
-
     let computerAttack = 0;
     let computerDefense = 0;
     computerDice.forEach((res) => {
-      if (res.type === "attack") computerAttack += res.value;
-      else computerDefense += res.value;
+      computerAttack += res.attack ?? 0;
+      computerDefense += res.defense ?? 0;
     });
-
     const damageToComputer = Math.max(playerAttack - computerDefense, 0);
     const damageToPlayer = Math.max(computerAttack - playerDefense, 0);
-
     const newPlayerLife = Math.max(playerLife - damageToPlayer, 0);
     const newComputerLife = Math.max(computerLife - damageToComputer, 0);
     setPlayerLife(newPlayerLife);
     setComputerLife(newComputerLife);
-
     let summary = `Du hast ${playerAttack} Angriff und ${playerDefense} Verteidigung gewürfelt. `;
     summary += `Der Gegner hat ${computerAttack} Angriff und ${computerDefense} Verteidigung gewürfelt. `;
     if (damageToComputer > 0) {
@@ -103,19 +104,12 @@ const Battle: React.FC = () => {
       summary += `Der Gegner verursacht keinen Schaden.`;
     }
     setRoundResult(summary);
-
     setRolled(false);
   };
-
-  const primaryButtonClasses =
-    "inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition cursor-pointer";
-  const diceButtonBase =
-    "min-w-[3rem] rounded-md border px-3 py-2 text-sm font-semibold shadow-sm cursor-pointer select-none";
 
   return (
     <div className="p-4 max-w-xl mx-auto space-y-4 bg-slate-900 text-slate-100 rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold text-center">Kampf</h2>
-
       <div className="flex items-center justify-between gap-4 text-sm">
         <div className="flex-1 rounded-lg bg-slate-800 px-3 py-2">
           <p className="font-semibold">Du</p>
@@ -136,14 +130,13 @@ const Battle: React.FC = () => {
           </p>
         </div>
       </div>
-
       {playerLife <= 0 || computerLife <= 0 ? (
         <div className="mt-4 space-y-3 text-center">
           <h3 className="text-xl font-bold">
             {playerLife <= 0 ? "Du hast verloren" : "Du hast gewonnen!"}
           </h3>
           <button
-            className={primaryButtonClasses}
+            className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition cursor-pointer"
             type="button"
             onClick={() => {
               setPlayerLife(10);
@@ -163,7 +156,7 @@ const Battle: React.FC = () => {
           {!rolled && (
             <div className="flex justify-center">
               <button
-                className={primaryButtonClasses}
+                className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition cursor-pointer"
                 onClick={handleRoll}
                 type="button"
               >
@@ -171,7 +164,6 @@ const Battle: React.FC = () => {
               </button>
             </div>
           )}
-
           {rolled ? (
             <div className="space-y-4">
               <div>
@@ -187,47 +179,78 @@ const Battle: React.FC = () => {
                     const selectedClasses = isSelected
                       ? "border-red-500 bg-red-50 text-red-700"
                       : "border-slate-400 bg-slate-800 text-slate-100";
+                    const total = (res.attack ?? 0) + (res.defense ?? 0);
                     return (
                       <button
                         key={idx}
-                        className={`${diceButtonBase} ${selectedClasses}`}
+                        className={`min-w-12 rounded-md border px-3 py-2 text-sm font-semibold shadow-sm cursor-pointer select-none ${selectedClasses}`}
                         onClick={() => toggleSelect(idx)}
                         type="button"
                       >
-                        {res.type === "attack"
-                          ? `A${res.value}`
-                          : `V${res.value}`}
+                        {Array.from({ length: res.attack ?? 0 }).map((_, i) => (
+                          <GiBroadsword
+                            key={`a-${idx}-${i}`}
+                            className="inline-block mx-0.5"
+                          />
+                        ))}
+                        {Array.from({ length: res.defense ?? 0 }).map(
+                          (_, i) => (
+                            <GiCrossShield
+                              key={`d-${idx}-${i}`}
+                              className="inline-block mx-0.5"
+                            />
+                          ),
+                        )}
+                        {total === 0 && (
+                          <span className="text-slate-500">-</span>
+                        )}
                       </button>
                     );
                   })}
                 </div>
               </div>
-
               <div>
                 <p className="text-sm font-medium mb-2">Gegnerische Würfel:</p>
                 <div className="flex gap-2 flex-wrap">
-                  {computerDice.map((res, idx) => (
-                    <div
-                      key={idx}
-                      className="min-w-12 rounded-md border border-slate-500 bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-100 shadow-sm text-center"
-                    >
-                      {res.type === "attack"
-                        ? `A${res.value}`
-                        : `V${res.value}`}
-                    </div>
-                  ))}
+                  {computerDice.map((res, idx) => {
+                    const total = (res.attack ?? 0) + (res.defense ?? 0);
+                    return (
+                      <div
+                        key={idx}
+                        className="min-w-12 rounded-md border border-slate-500 bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-100 shadow-sm text-center"
+                      >
+                        {Array.from({ length: res.attack ?? 0 }).map((_, i) => (
+                          <GiBroadsword
+                            key={`ca-${idx}-${i}`}
+                            className="inline-block mx-0.5"
+                          />
+                        ))}
+                        {Array.from({ length: res.defense ?? 0 }).map(
+                          (_, i) => (
+                            <GiCrossShield
+                              key={`cd-${idx}-${i}`}
+                              className="inline-block mx-0.5"
+                            />
+                          ),
+                        )}
+                        {total === 0 && (
+                          <span className="text-slate-500">-</span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-
               <div className="flex items-center justify-between text-sm">
                 <p>
                   Ausgewählt:
                   <span className="font-mono">
+                    {" "}
                     {selectedIndices.length} / 3
                   </span>
                 </p>
                 <button
-                  className={primaryButtonClasses}
+                  className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={selectedIndices.length !== 3}
                   onClick={handleResolve}
                   type="button"
@@ -237,7 +260,6 @@ const Battle: React.FC = () => {
               </div>
             </div>
           ) : null}
-
           {roundResult ? (
             <div className="mt-4 rounded-lg border-l-4 border-blue-500 bg-slate-800/80 px-4 py-3 text-sm">
               <p className="font-semibold mb-1">Rundenresultat</p>
