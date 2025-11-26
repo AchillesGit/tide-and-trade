@@ -1,5 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import {
+  GiCrossedSwords,
+  GiDiceFire,
+  GiDodging,
+  GiHeartBottle,
+  GiHydraShot,
+  GiMineExplosion,
+  GiPirateCannon,
+  GiShieldReflect,
+  GiShoonerSailboat,
+} from "react-icons/gi";
+
 import type { Ship } from "../types/inventoryTypes";
 
 interface Log {
@@ -146,41 +158,62 @@ const Battle: React.FC = () => {
   };
   const renderShipStats = (ship: Ship) => (
     <table className="w-full border-collapse mb-2 text-sm">
-      <tbody>
+      <tbody className="[&>tr]:mb-3 [&>tr]:flex [&>tr]:justify-between">
         <tr>
-          <th className="text-left pr-2 font-medium">Name</th>
-          <td>{ship.name}</td>
-        </tr>
-        <tr>
-          <th className="text-left pr-2 font-medium">HP</th>
+          <th className="text-left pr-2 font-medium flex items-center gap-3">
+            <GiHeartBottle size={24} />
+            HP
+          </th>
+
           <td>
             {ship.currentHp.toFixed(1)} / {ship.maxHp.toFixed(1)}
           </td>
         </tr>
         <tr>
-          <th className="text-left pr-2 font-medium">Feuerkraft</th>
+          <th className="text-left pr-2 font-medium flex items-center gap-3">
+            <GiPirateCannon size={24} />
+            Feuerkraft
+          </th>
+
           <td>{ship.firepower}</td>
         </tr>
         <tr>
-          <th className="text-left pr-2 font-medium">
+          <th className="text-left pr-2 font-medium flex items-center gap-3">
+            <GiHydraShot size={24} />
             Angriffsgeschwindigkeit
           </th>
           <td>{ship.attackSpeed}</td>
         </tr>
         <tr>
-          <th className="text-left pr-2 font-medium">Kritische Chance</th>
+          <th className="text-left pr-2 font-medium flex items-center gap-3">
+            <GiDiceFire size={24} />
+            Kritische Chance
+          </th>
+
           <td>{(ship.criticalChance * 100).toFixed(1)}%</td>
         </tr>
         <tr>
-          <th className="text-left pr-2 font-medium">Kritischer Schaden</th>
+          <th className="text-left pr-2 font-medium flex items-center gap-3">
+            <GiMineExplosion size={24} />
+            Kritischer Schaden
+          </th>
+
           <td>{ship.criticalDamage.toFixed(2)}×</td>
         </tr>
         <tr>
-          <th className="text-left pr-2 font-medium">Rüstung</th>
+          <th className="text-left pr-2 font-medium flex items-center gap-3">
+            <GiShieldReflect size={24} />
+            Rüstung
+          </th>
+
           <td>{ship.armor}</td>
         </tr>
         <tr>
-          <th className="text-left pr-2 font-medium">Ausweichchance</th>
+          <th className="text-left pr-2 font-medium flex items-center gap-3">
+            <GiDodging size={24} />
+            Ausweichchance
+          </th>
+
           <td>{(ship.evasionChance * 100).toFixed(1)}%</td>
         </tr>
       </tbody>
@@ -197,7 +230,10 @@ const Battle: React.FC = () => {
             key={ship.name}
             className="flex-1 p-3 border border-gray-300 rounded"
           >
-            <h3 className="text-lg font-semibold mb-2">{ship.name}</h3>
+            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+              <GiShoonerSailboat size={33} />
+              {ship.name}
+            </h3>
             {renderHealthBar(ship)}
             <div className="mt-2">{renderShipStats(ship)}</div>
           </div>
@@ -208,7 +244,10 @@ const Battle: React.FC = () => {
         <h4 className="font-semibold mb-2">Kampflog</h4>
         <ul className="list-none p-0 m-0 space-y-1 text-sm">
           {log.map((entry) => (
-            <li key={entry.id}>{entry.log}</li>
+            <li key={entry.id} className="flex items-start gap-2">
+              <GiCrossedSwords />
+              {entry.log}
+            </li>
           ))}
         </ul>
       </div>
