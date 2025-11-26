@@ -97,7 +97,6 @@ export interface ItemInstance {
 /** Fully resolved item for usage in UI / logic. Combines blueprint data and instance data. */
 export type Item = ItemBlueprint & ItemInstance;
 
-// TODO:
 export interface Ship {
   /** Name of the ship */
   name: string;
@@ -126,6 +125,7 @@ export interface Ship {
   /** Evasion chance per level (e.g. 0.10 = 10%) */
   evasionChance: number;
 
+  // TODO: Brauchen wir das?
   /** Summed up Gold */
   gold: number;
 }
