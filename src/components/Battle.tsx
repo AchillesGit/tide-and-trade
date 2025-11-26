@@ -198,7 +198,7 @@ const Battle: React.FC = () => {
             Kritischer Schaden
           </th>
 
-          <td>{ship.criticalDamage.toFixed(2)}×</td>
+          <td>{ship.criticalDamage.toFixed(2)}x</td>
         </tr>
         <tr>
           <th className="text-left pr-2 font-medium flex items-center gap-3">
@@ -222,8 +222,6 @@ const Battle: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-4 font-sans">
-      <h2 className="text-xl font-bold">Kampfsimulation</h2>
-
       <div className="flex gap-4">
         {ships.map((ship) => (
           <div
