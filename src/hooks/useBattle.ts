@@ -10,7 +10,7 @@ import {
   MULTIPLY_ATTACK_DIE_FACES,
   MULTIPLY_DEFENSE_DIE_FACES,
 } from "../blueprints/diceBlueprints";
-import { createDie, rollAll } from "../util/battleHelper";
+import { createDie, rollAll, sortRollResults } from "../util/battleHelper";
 
 import type { DiceState, RollsState } from "../types/battleTypes";
 
@@ -88,10 +88,15 @@ const useBattle = (): UseBattleReturn => {
    */
   const handleRoll = () => {
     if (playerLife <= 0 || enemyLife <= 0) return;
+
+    const playerRolls = sortRollResults(rollAll(dices.player));
+    const enemyRolls = sortRollResults(rollAll(dices.enemy));
+
     setRolls({
-      player: rollAll(dices.player),
-      enemy: rollAll(dices.enemy),
+      player: playerRolls,
+      enemy: enemyRolls,
     });
+
     setSelectedIds([]);
     setRolled(true);
   };
