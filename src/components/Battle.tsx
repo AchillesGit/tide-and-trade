@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 
-import { GiBroadsword, GiCrossShield } from "react-icons/gi";
+import { GiBroadsword, GiCrossShield, GiHeartStake } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 
 interface FaceEffect {
   attack?: number;
   defense?: number;
+  attackMultiplier?: number;
+  defenseMultiplier?: number;
+  absDmg?: number;
 }
 
 interface Dice {
@@ -45,39 +48,58 @@ const DEFENSE_DIE_FACES: FaceEffect[] = [
   {},
   {},
 ];
-
 const HYBRID_DIE_FACES: FaceEffect[] = [
-  { defense: 1, attack: 1 },
-  { defense: 1, attack: 1 },
-  { defense: 1, attack: 1 },
-  { defense: 2, attack: 2 },
+  { attack: 1, defense: 1 },
+  { attack: 1, defense: 1 },
+  { attack: 1, defense: 1 },
+  { attack: 2, defense: 2 },
   {},
   {},
 ];
-
 const ENEMY_DIE_FACES: FaceEffect[] = [
   { attack: 1 },
   { attack: 1 },
   { defense: 1 },
 ];
 
-function rollFace(effects: FaceEffect[]): FaceEffect {
-  const index = Math.floor(Math.random() * effects.length);
-  return effects[index];
+const MULTIPLY_ATTACK_DIE_FACES: FaceEffect[] = [
+  { attackMultiplier: 2 },
+  { attackMultiplier: 2 },
+  { attackMultiplier: 2 },
+  { attackMultiplier: 3 },
+  {},
+  {},
+];
+
+const MULTIPLY_DEFENSE_DIE_FACES: FaceEffect[] = [
+  { defenseMultiplier: 2 },
+  { defenseMultiplier: 2 },
+  { defenseMultiplier: 2 },
+  { defenseMultiplier: 3 },
+  {},
+  {},
+];
+
+const DAMAGE_DIE_FACES: FaceEffect[] = [
+  { absDmg: 3 },
+  { absDmg: 3 },
+  { absDmg: 3 },
+  { absDmg: 2 },
+  {},
+  {},
+];
+
+function rollFace(faces: FaceEffect[]): FaceEffect {
+  const idx = Math.floor(Math.random() * faces.length);
+  return faces[idx];
 }
 
 function rollAll(diceList: Dice[]): RollResult[] {
-  return diceList.map((dice) => ({
-    id: dice.id,
-    face: rollFace(dice.faces),
-  }));
+  return diceList.map((d) => ({ id: d.id, face: rollFace(d.faces) }));
 }
 
 function createDie(faces: FaceEffect[]): Dice {
-  return {
-    id: Math.random().toString(36).slice(2),
-    faces,
-  };
+  return { id: Math.random().toString(36).slice(2), faces };
 }
 
 const dices: DiceState = {
@@ -89,6 +111,9 @@ const dices: DiceState = {
     createDie(HYBRID_DIE_FACES),
     createDie(DEFENSE_DIE_FACES),
     createDie(DEFENSE_DIE_FACES),
+    createDie(MULTIPLY_ATTACK_DIE_FACES),
+    createDie(MULTIPLY_DEFENSE_DIE_FACES),
+    createDie(DAMAGE_DIE_FACES),
   ],
   enemy: [
     createDie(ENEMY_DIE_FACES),
@@ -100,32 +125,17 @@ const dices: DiceState = {
 
 const Battle: React.FC = () => {
   const navigate = useNavigate();
-
   const [playerLife, setPlayerLife] = useState(10);
   const [computerLife, setComputerLife] = useState(10);
-
-  const [rolls, setRolls] = useState<RollsState>({
-    player: [],
-    enemy: [],
-  });
-
+  const [rolls, setRolls] = useState<RollsState>({ player: [], enemy: [] });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rolled, setRolled] = useState(false);
 
-  const primaryButtonClasses =
-    "inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer";
-  const diceButtonBase =
-    "min-w-[3rem] rounded-md border px-3 py-2 text-sm font-semibold shadow-sm cursor-pointer select-none";
-
   const handleRoll = () => {
     if (playerLife <= 0 || computerLife <= 0) return;
-
-    const playerRolls = rollAll(dices.player);
-    const enemyRolls = rollAll(dices.enemy);
-
     setRolls({
-      player: playerRolls,
-      enemy: enemyRolls,
+      player: rollAll(dices.player),
+      enemy: rollAll(dices.enemy),
     });
     setSelectedIds([]);
     setRolled(true);
@@ -146,6 +156,9 @@ const Battle: React.FC = () => {
 
     let playerAttack = 0;
     let playerDefense = 0;
+    let playerAttackMultiplier = 1;
+    let playerDefenseMultiplier = 1;
+    let playerDirectDamage = 0;
 
     selectedIds.forEach((id) => {
       const roll = rolls.player.find((r) => r.id === id);
@@ -153,58 +166,99 @@ const Battle: React.FC = () => {
       const { face } = roll;
       playerAttack += face.attack ?? 0;
       playerDefense += face.defense ?? 0;
+      if (face.attackMultiplier)
+        playerAttackMultiplier *= face.attackMultiplier;
+      if (face.defenseMultiplier)
+        playerDefenseMultiplier *= face.defenseMultiplier;
+      if (face.absDmg) playerDirectDamage += face.absDmg;
     });
+
+    const totalPlayerAttack = playerAttack * playerAttackMultiplier;
+    const totalPlayerDefense = playerDefense * playerDefenseMultiplier;
 
     let enemyAttack = 0;
     let enemyDefense = 0;
-
-    rolls.enemy.forEach((roll) => {
-      const { face } = roll;
-      enemyAttack += face.attack ?? 0;
-      enemyDefense += face.defense ?? 0;
+    rolls.enemy.forEach((r) => {
+      enemyAttack += r.face.attack ?? 0;
+      enemyDefense += r.face.defense ?? 0;
     });
 
-    const damageToComputer = Math.max(playerAttack - enemyDefense, 0);
-    const damageToPlayer = Math.max(enemyAttack - playerDefense, 0);
+    const damageToComputer =
+      Math.max(totalPlayerAttack - enemyDefense, 0) + playerDirectDamage;
+    const damageToPlayer = Math.max(enemyAttack - totalPlayerDefense, 0);
 
-    const newPlayerLife = Math.max(playerLife - damageToPlayer, 0);
-    const newComputerLife = Math.max(computerLife - damageToComputer, 0);
-    setPlayerLife(newPlayerLife);
-    setComputerLife(newComputerLife);
-
+    setPlayerLife(Math.max(playerLife - damageToPlayer, 0));
+    setComputerLife(Math.max(computerLife - damageToComputer, 0));
     setRolled(false);
   };
 
   const renderFaceIcons = (face: FaceEffect) => {
     const atk = face.attack ?? 0;
     const def = face.defense ?? 0;
+    const atkM = face.attackMultiplier ?? 0;
+    const defM = face.defenseMultiplier ?? 0;
+    const absDmg = face.absDmg ?? 0;
 
-    if (atk === 0 && def === 0) {
-      return <span className="text-xs opacity-50">-</span>;
+    const elements: React.ReactNode[] = [];
+
+    if (atk > 0) {
+      const swords = Array.from({ length: atk }, (_, i) => (
+        <GiBroadsword key={`a-${i}`} className="w-4 h-4" />
+      ));
+      elements.push(
+        <span key="atk" className="flex items-center gap-0.5 text-red-400">
+          {swords}
+        </span>,
+      );
     }
 
-    const atkIcons = Array.from({ length: atk }, (_, i) => (
-      <GiBroadsword key={`a-${i}`} className="w-4 h-4" />
-    ));
-    const defIcons = Array.from({ length: def }, (_, i) => (
-      <GiCrossShield key={`d-${i}`} className="w-4 h-4" />
-    ));
+    if (def > 0) {
+      const shields = Array.from({ length: def }, (_, i) => (
+        <GiCrossShield key={`d-${i}`} className="w-4 h-4" />
+      ));
+      elements.push(
+        <span key="def" className="flex items-center gap-0.5 text-blue-300">
+          {shields}
+        </span>,
+      );
+    }
 
-    return (
-      <div className="flex items-center justify-center gap-1">
-        {atkIcons.length > 0 && (
-          <span className="flex items-center gap-0.5 text-red-400">
-            {atkIcons}
-          </span>
-        )}
-        {defIcons.length > 0 && (
-          <span className="flex items-center gap-0.5 text-blue-300">
-            {defIcons}
-          </span>
-        )}
-      </div>
+    if (absDmg > 0) {
+      const abs = Array.from({ length: absDmg }, (_, i) => (
+        <GiHeartStake key={`d-${i}`} className="w-4 h-4" />
+      ));
+      elements.push(
+        <span key="def" className="flex items-center gap-0.5 text-yellow-300">
+          {abs}
+        </span>,
+      );
+    }
+
+    if (atkM > 1) {
+      elements.push(
+        <span key="atkM" className="text-red-500 text-xs font-bold">
+          ×{atkM}
+        </span>,
+      );
+    }
+    if (defM > 1) {
+      elements.push(
+        <span key="defM" className="text-blue-500 text-xs font-bold">
+          ×{defM}
+        </span>,
+      );
+    }
+    return elements.length === 0 ? (
+      <span className="text-xs opacity-50">-</span>
+    ) : (
+      <div className="flex items-center justify-center gap-1">{elements}</div>
     );
   };
+
+  const primaryButtonClasses =
+    "inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer";
+  const diceButtonBase =
+    "min-w-[3rem] rounded-md border px-3 py-2 text-sm font-semibold shadow-sm cursor-pointer select-none";
 
   return (
     <div className="p-4 max-w-xl mx-auto space-y-4 bg-slate-900 text-slate-100 rounded-xl shadow-lg">
