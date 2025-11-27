@@ -8,7 +8,7 @@ export const ATTACK_DIE_FACES: FaceEffect[] = [
   { attack: 1, cost: 1 },
   { attack: 1, cost: 1 },
   { attack: 1, cost: 1 },
-  { attack: 2, cost: 2 },
+  { attack: 3, cost: 2 },
   { cost: 0 },
   { cost: 0 },
 ];
@@ -21,7 +21,7 @@ export const DEFENSE_DIE_FACES: FaceEffect[] = [
   { defense: 1, cost: 1 },
   { defense: 1, cost: 1 },
   { defense: 1, cost: 1 },
-  { defense: 2, cost: 2 },
+  { defense: 3, cost: 2 },
   { cost: 0 },
   { cost: 0 },
 ];
@@ -30,10 +30,10 @@ export const DEFENSE_DIE_FACES: FaceEffect[] = [
  * Hybrid die faces combining attack and defense on the same face.
  */
 export const HYBRID_DIE_FACES: FaceEffect[] = [
-  { attack: 1, defense: 1, cost: 2 },
-  { attack: 1, defense: 1, cost: 2 },
-  { attack: 1, defense: 1, cost: 2 },
-  { attack: 2, defense: 2, cost: 4 },
+  { attack: 1, defense: 1, cost: 1 },
+  { attack: 1, defense: 1, cost: 1 },
+  { attack: 1, defense: 1, cost: 1 },
+  { attack: 2, defense: 2, cost: 3 },
   { cost: 0 },
   { cost: 0 },
 ];
@@ -79,9 +79,9 @@ export const MULTIPLY_DEFENSE_DIE_FACES: FaceEffect[] = [
  * Deals damage that bypasses enemy defense.
  */
 export const DAMAGE_DIE_FACES: FaceEffect[] = [
-  { absDmg: 3, cost: 3 },
-  { absDmg: 3, cost: 3 },
-  { absDmg: 3, cost: 3 },
+  { absDmg: 2, cost: 2 },
+  { absDmg: 2, cost: 2 },
+  { absDmg: 2, cost: 2 },
   { absDmg: 2, cost: 2 },
   { cost: 0 },
   { cost: 0 },
@@ -92,10 +92,10 @@ export const DAMAGE_DIE_FACES: FaceEffect[] = [
  * Increases maximum action cost available next round.
  */
 export const EXTRA_SELECT_DIE_FACES: FaceEffect[] = [
-  { extraSelectNextRound: 1, cost: 1 },
-  { extraSelectNextRound: 1, cost: 1 },
-  { extraSelectNextRound: 1, cost: 1 },
-  { extraSelectNextRound: 2, cost: 2 },
+  { extraSelectNextRound: 2, cost: 1 },
+  { extraSelectNextRound: 2, cost: 1 },
+  { extraSelectNextRound: 2, cost: 1 },
+  { extraSelectNextRound: 4, cost: 2 },
   { cost: 0 },
   { cost: 0 },
 ];
