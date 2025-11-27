@@ -12,7 +12,7 @@ const Battle: React.FC = () => {
     handleRoll,
     toggleSelect,
     playerLife,
-    computerLife,
+    enemyLife,
     rolled,
     selectedIds,
     maxActions,
@@ -38,13 +38,13 @@ const Battle: React.FC = () => {
           <p className="mt-1 text-xs">
             Lebenspunkte:{" "}
             <span className="font-mono font-bold text-red-400">
-              {computerLife}
+              {enemyLife}
             </span>
           </p>
         </div>
       </div>
 
-      {playerLife <= 0 || computerLife <= 0 ? (
+      {playerLife <= 0 || enemyLife <= 0 ? (
         <div className="mt-4 space-y-3 text-center">
           <h3 className="text-xl font-bold">
             {playerLife <= 0 ? "Du hast verloren" : "Du hast gewonnen!"}

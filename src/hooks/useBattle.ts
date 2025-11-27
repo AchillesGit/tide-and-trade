@@ -54,7 +54,7 @@ interface UseBattleReturn {
   /** Player's remaining life points. */
   playerLife: number;
   /** Enemy's remaining life points. */
-  computerLife: number;
+  enemyLife: number;
   /** Resolves the current roll selection and applies damage/defense. */
   handleResolve: () => void;
   /** Toggles selection of a die by id, respecting action cost limits. */
@@ -76,7 +76,7 @@ const DEFAULT_MAX_ACTIONS = 3;
  */
 const useBattle = (): UseBattleReturn => {
   const [playerLife, setPlayerLife] = useState(10);
-  const [computerLife, setComputerLife] = useState(10);
+  const [enemyLife, setEnemyLife] = useState(10);
   const [rolls, setRolls] = useState<RollsState>({ player: [], enemy: [] });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rolled, setRolled] = useState(false);
@@ -87,7 +87,7 @@ const useBattle = (): UseBattleReturn => {
    * Resets selection for the new turn.
    */
   const handleRoll = () => {
-    if (playerLife <= 0 || computerLife <= 0) return;
+    if (playerLife <= 0 || enemyLife <= 0) return;
     setRolls({
       player: rollAll(dices.player),
       enemy: rollAll(dices.enemy),
@@ -169,12 +169,12 @@ const useBattle = (): UseBattleReturn => {
       enemyDefense += r.face.defense ?? 0;
     });
 
-    const damageToComputer =
+    const damageToEnemy =
       Math.max(totalPlayerAttack - enemyDefense, 0) + playerAbsDamage;
     const damageToPlayer = Math.max(enemyAttack - totalPlayerDefense, 0);
 
     setPlayerLife(Math.max(playerLife - damageToPlayer, 0));
-    setComputerLife(Math.max(computerLife - damageToComputer, 0));
+    setEnemyLife(Math.max(enemyLife - damageToEnemy, 0));
 
     setMaxActions(DEFAULT_MAX_ACTIONS + extraSelectSum);
     setRolled(false);
@@ -185,7 +185,7 @@ const useBattle = (): UseBattleReturn => {
     rolls,
     selectedIds,
     playerLife,
-    computerLife,
+    enemyLife,
     maxActions,
     handleResolve,
     toggleSelect,
