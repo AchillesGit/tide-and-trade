@@ -14,6 +14,9 @@ import { createDie, rollAll } from "../util/battleHelper";
 
 import type { DiceState, RollsState } from "../types/battleTypes";
 
+/**
+ * Initial dice pool configuration for player and enemy.
+ */
 const dices: DiceState = {
   player: [
     createDie(ATTACK_DIE_FACES),
@@ -36,20 +39,41 @@ const dices: DiceState = {
   ],
 };
 
+/**
+ * Shape of the object returned by {@link useBattle}.
+ */
 interface UseBattleReturn {
+  /** Whether a roll has been made and is awaiting resolution. */
   rolled: boolean;
+  /** The current rolled faces for both player and enemy. */
   rolls: RollsState;
+  /** IDs of the player's dice currently selected for this round. */
   selectedIds: string[];
+  /** Maximum total action cost the player can spend this round. */
   maxActions: number;
+  /** Player's remaining life points. */
   playerLife: number;
+  /** Enemy's remaining life points. */
   computerLife: number;
+  /** Resolves the current roll selection and applies damage/defense. */
   handleResolve: () => void;
+  /** Toggles selection of a die by id, respecting action cost limits. */
   toggleSelect: (id: string) => void;
+  /** Rolls dice for both player and enemy for a new round. */
   handleRoll: () => void;
 }
 
+/** Default maximum action points per round. */
 const DEFAULT_MAX_ACTIONS = 3;
 
+/**
+ * React hook encapsulating battle state and logic.
+ *
+ * Manages life totals, dice rolls, selected dice, and action point limits.
+ * Intended to be used by a battle UI component to drive the gameplay loop.
+ *
+ * @returns Battle state and handlers to control rolling and resolving actions.
+ */
 const useBattle = (): UseBattleReturn => {
   const [playerLife, setPlayerLife] = useState(10);
   const [computerLife, setComputerLife] = useState(10);
@@ -58,6 +82,10 @@ const useBattle = (): UseBattleReturn => {
   const [rolled, setRolled] = useState(false);
   const [maxActions, setMaxActions] = useState<number>(DEFAULT_MAX_ACTIONS);
 
+  /**
+   * Rolls all dice for player and enemy if the battle is still ongoing.
+   * Resets selection for the new turn.
+   */
   const handleRoll = () => {
     if (playerLife <= 0 || computerLife <= 0) return;
     setRolls({
@@ -68,6 +96,12 @@ const useBattle = (): UseBattleReturn => {
     setRolled(true);
   };
 
+  /**
+   * Toggles selection of a specific player die by id.
+   * Selection is prevented if adding the die would exceed the max action cost.
+   *
+   * @param id - The id of the die to toggle.
+   */
   const toggleSelect = (id: string) => {
     if (!rolled) return;
     const currentCost = selectedIds.reduce((sum, sid) => {
@@ -86,6 +120,14 @@ const useBattle = (): UseBattleReturn => {
     }
   };
 
+  /**
+   * Resolves the current turn:
+   * - Computes player and enemy attack/defense based on selected and rolled faces.
+   * - Applies damage to both sides.
+   * - Updates next round's action limit with any extra selection bonuses.
+   *
+   * Resolution only happens if the total selection cost exactly equals `maxActions`.
+   */
   const handleResolve = () => {
     if (!rolled) return;
     const totalCost = selectedIds.reduce((sum, sid) => {
@@ -150,4 +192,5 @@ const useBattle = (): UseBattleReturn => {
     handleRoll,
   };
 };
+
 export default useBattle;
