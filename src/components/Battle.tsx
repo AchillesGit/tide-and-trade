@@ -31,19 +31,28 @@ interface RollsState {
 const ATTACK_DIE_FACES: FaceEffect[] = [
   { attack: 1 },
   { attack: 1 },
+  { attack: 1 },
   { attack: 2 },
-  { attack: 1, defense: 1 },
-  { attack: 1, defense: 1 },
-  { attack: 0, defense: 0 },
+  {},
+  {},
 ];
 
 const DEFENSE_DIE_FACES: FaceEffect[] = [
   { defense: 1 },
   { defense: 1 },
+  { defense: 1 },
   { defense: 2 },
-  { attack: 1, defense: 1 },
-  { attack: 1, defense: 1 },
-  { attack: 0, defense: 0 },
+  {},
+  {},
+];
+
+const HYBRID_DIE_FACES: FaceEffect[] = [
+  { defense: 1, attack: 1 },
+  { defense: 1, attack: 1 },
+  { defense: 1, attack: 1 },
+  { defense: 2, attack: 2 },
+  {},
+  {},
 ];
 
 const ENEMY_DIE_FACES: FaceEffect[] = [
@@ -76,8 +85,8 @@ const dices: DiceState = {
     createDie(ATTACK_DIE_FACES),
     createDie(ATTACK_DIE_FACES),
     createDie(ATTACK_DIE_FACES),
-    createDie(ATTACK_DIE_FACES),
-    createDie(ATTACK_DIE_FACES),
+    createDie(HYBRID_DIE_FACES),
+    createDie(HYBRID_DIE_FACES),
     createDie(DEFENSE_DIE_FACES),
     createDie(DEFENSE_DIE_FACES),
   ],
