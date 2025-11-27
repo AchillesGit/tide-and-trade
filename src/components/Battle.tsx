@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 
-import { GiBroadsword, GiCrossShield, GiHeartStake } from "react-icons/gi";
+import {
+  GiBroadsword,
+  GiCrossShield,
+  GiHeartStake,
+  GiPerspectiveDiceSixFacesRandom,
+} from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 
 interface FaceEffect {
@@ -9,6 +14,8 @@ interface FaceEffect {
   attackMultiplier?: number;
   defenseMultiplier?: number;
   absDmg?: number;
+  extraSelectNextRound?: number;
+  cost?: number;
 }
 
 interface Dice {
@@ -30,32 +37,33 @@ interface RollsState {
   player: RollResult[];
   enemy: RollResult[];
 }
-
 const ATTACK_DIE_FACES: FaceEffect[] = [
-  { attack: 1 },
-  { attack: 1 },
-  { attack: 1 },
-  { attack: 2 },
-  {},
-  {},
+  { attack: 1, cost: 1 },
+  { attack: 1, cost: 1 },
+  { attack: 1, cost: 1 },
+  { attack: 2, cost: 2 },
+  { cost: 0 },
+  { cost: 0 },
 ];
 
 const DEFENSE_DIE_FACES: FaceEffect[] = [
-  { defense: 1 },
-  { defense: 1 },
-  { defense: 1 },
-  { defense: 2 },
-  {},
-  {},
+  { defense: 1, cost: 1 },
+  { defense: 1, cost: 1 },
+  { defense: 1, cost: 1 },
+  { defense: 2, cost: 2 },
+  { cost: 0 },
+  { cost: 0 },
 ];
+
 const HYBRID_DIE_FACES: FaceEffect[] = [
-  { attack: 1, defense: 1 },
-  { attack: 1, defense: 1 },
-  { attack: 1, defense: 1 },
-  { attack: 2, defense: 2 },
-  {},
-  {},
+  { attack: 1, defense: 1, cost: 2 },
+  { attack: 1, defense: 1, cost: 2 },
+  { attack: 1, defense: 1, cost: 2 },
+  { attack: 2, defense: 2, cost: 4 },
+  { cost: 0 },
+  { cost: 0 },
 ];
+
 const ENEMY_DIE_FACES: FaceEffect[] = [
   { attack: 1 },
   { attack: 1 },
@@ -63,30 +71,39 @@ const ENEMY_DIE_FACES: FaceEffect[] = [
 ];
 
 const MULTIPLY_ATTACK_DIE_FACES: FaceEffect[] = [
-  { attackMultiplier: 2 },
-  { attackMultiplier: 2 },
-  { attackMultiplier: 2 },
-  { attackMultiplier: 3 },
-  {},
-  {},
+  { attackMultiplier: 2, cost: 1 },
+  { attackMultiplier: 2, cost: 1 },
+  { attackMultiplier: 2, cost: 1 },
+  { attackMultiplier: 3, cost: 2 },
+  { cost: 0 },
+  { cost: 0 },
 ];
 
 const MULTIPLY_DEFENSE_DIE_FACES: FaceEffect[] = [
-  { defenseMultiplier: 2 },
-  { defenseMultiplier: 2 },
-  { defenseMultiplier: 2 },
-  { defenseMultiplier: 3 },
-  {},
-  {},
+  { defenseMultiplier: 2, cost: 1 },
+  { defenseMultiplier: 2, cost: 1 },
+  { defenseMultiplier: 2, cost: 1 },
+  { defenseMultiplier: 3, cost: 2 },
+  { cost: 0 },
+  { cost: 0 },
 ];
 
 const DAMAGE_DIE_FACES: FaceEffect[] = [
-  { absDmg: 3 },
-  { absDmg: 3 },
-  { absDmg: 3 },
-  { absDmg: 2 },
-  {},
-  {},
+  { absDmg: 3, cost: 3 },
+  { absDmg: 3, cost: 3 },
+  { absDmg: 3, cost: 3 },
+  { absDmg: 2, cost: 2 },
+  { cost: 0 },
+  { cost: 0 },
+];
+
+const EXTRA_SELECT_DIE_FACES: FaceEffect[] = [
+  { extraSelectNextRound: 1, cost: 1 },
+  { extraSelectNextRound: 1, cost: 1 },
+  { extraSelectNextRound: 1, cost: 1 },
+  { extraSelectNextRound: 2, cost: 2 },
+  { cost: 0 },
+  { cost: 0 },
 ];
 
 function rollFace(faces: FaceEffect[]): FaceEffect {
@@ -114,6 +131,7 @@ const dices: DiceState = {
     createDie(MULTIPLY_ATTACK_DIE_FACES),
     createDie(MULTIPLY_DEFENSE_DIE_FACES),
     createDie(DAMAGE_DIE_FACES),
+    createDie(EXTRA_SELECT_DIE_FACES),
   ],
   enemy: [
     createDie(ENEMY_DIE_FACES),
@@ -123,6 +141,8 @@ const dices: DiceState = {
   ],
 };
 
+const DEFAULT_MAX_ACTIONS = 3;
+
 const Battle: React.FC = () => {
   const navigate = useNavigate();
   const [playerLife, setPlayerLife] = useState(10);
@@ -130,6 +150,7 @@ const Battle: React.FC = () => {
   const [rolls, setRolls] = useState<RollsState>({ player: [], enemy: [] });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rolled, setRolled] = useState(false);
+  const [maxActions, setMaxActions] = useState<number>(DEFAULT_MAX_ACTIONS);
 
   const handleRoll = () => {
     if (playerLife <= 0 || computerLife <= 0) return;
@@ -143,22 +164,37 @@ const Battle: React.FC = () => {
 
   const toggleSelect = (id: string) => {
     if (!rolled) return;
+    const currentCost = selectedIds.reduce((sum, sid) => {
+      const roll = rolls.player.find((r) => r.id === sid);
+      return sum + (roll?.face.cost ?? 1);
+    }, 0);
+
     if (selectedIds.includes(id)) {
       setSelectedIds((prev) => prev.filter((x) => x !== id));
-    } else if (selectedIds.length < 3) {
-      setSelectedIds((prev) => [...prev, id]);
+    } else {
+      const roll = rolls.player.find((r) => r.id === id);
+      const cost = roll?.face.cost ?? 1;
+      if (currentCost + cost <= maxActions) {
+        setSelectedIds((prev) => [...prev, id]);
+      }
     }
   };
 
   const handleResolve = () => {
-    if (!rolled || selectedIds.length !== 3) return;
+    if (!rolled) return;
+    const totalCost = selectedIds.reduce((sum, sid) => {
+      const roll = rolls.player.find((r) => r.id === sid);
+      return sum + (roll?.face.cost ?? 1);
+    }, 0);
+    if (totalCost !== maxActions) return;
     if (rolls.player.length === 0 || rolls.enemy.length === 0) return;
 
     let playerAttack = 0;
     let playerDefense = 0;
     let playerAttackMultiplier = 1;
     let playerDefenseMultiplier = 1;
-    let playerDirectDamage = 0;
+    let playerAbsDamage = 0;
+    let extraSelectSum = 0;
 
     selectedIds.forEach((id) => {
       const roll = rolls.player.find((r) => r.id === id);
@@ -170,7 +206,9 @@ const Battle: React.FC = () => {
         playerAttackMultiplier *= face.attackMultiplier;
       if (face.defenseMultiplier)
         playerDefenseMultiplier *= face.defenseMultiplier;
-      if (face.absDmg) playerDirectDamage += face.absDmg;
+      if (face.absDmg) playerAbsDamage += face.absDmg;
+      if (face.extraSelectNextRound)
+        extraSelectSum += face.extraSelectNextRound;
     });
 
     const totalPlayerAttack = playerAttack * playerAttackMultiplier;
@@ -184,71 +222,92 @@ const Battle: React.FC = () => {
     });
 
     const damageToComputer =
-      Math.max(totalPlayerAttack - enemyDefense, 0) + playerDirectDamage;
+      Math.max(totalPlayerAttack - enemyDefense, 0) + playerAbsDamage;
     const damageToPlayer = Math.max(enemyAttack - totalPlayerDefense, 0);
 
     setPlayerLife(Math.max(playerLife - damageToPlayer, 0));
     setComputerLife(Math.max(computerLife - damageToComputer, 0));
+
+    setMaxActions(DEFAULT_MAX_ACTIONS + extraSelectSum);
     setRolled(false);
   };
 
   const renderFaceIcons = (face: FaceEffect) => {
     const atk = face.attack ?? 0;
     const def = face.defense ?? 0;
-    const atkM = face.attackMultiplier ?? 0;
-    const defM = face.defenseMultiplier ?? 0;
+    const atkMult = face.attackMultiplier ?? 0;
+    const defMult = face.defenseMultiplier ?? 0;
     const absDmg = face.absDmg ?? 0;
+    const extra = face.extraSelectNextRound ?? 0;
+    const cost = face.cost ?? 1;
 
     const elements: React.ReactNode[] = [];
 
     if (atk > 0) {
-      const swords = Array.from({ length: atk }, (_, i) => (
+      const icons = Array.from({ length: atk }, (_, i) => (
         <GiBroadsword key={`a-${i}`} className="w-4 h-4" />
       ));
       elements.push(
         <span key="atk" className="flex items-center gap-0.5 text-red-400">
-          {swords}
+          {icons}
         </span>,
       );
     }
-
     if (def > 0) {
-      const shields = Array.from({ length: def }, (_, i) => (
+      const icons = Array.from({ length: def }, (_, i) => (
         <GiCrossShield key={`d-${i}`} className="w-4 h-4" />
       ));
       elements.push(
         <span key="def" className="flex items-center gap-0.5 text-blue-300">
-          {shields}
+          {icons}
         </span>,
       );
     }
-
     if (absDmg > 0) {
-      const abs = Array.from({ length: absDmg }, (_, i) => (
-        <GiHeartStake key={`d-${i}`} className="w-4 h-4" />
+      const icons = Array.from({ length: absDmg }, (_, i) => (
+        <GiHeartStake key={`h-${i}`} className="w-4 h-4" />
       ));
       elements.push(
-        <span key="def" className="flex items-center gap-0.5 text-yellow-300">
-          {abs}
+        <span key="dmg" className="flex items-center gap-0.5 text-yellow-300">
+          {icons}
         </span>,
       );
     }
-
-    if (atkM > 1) {
+    if (extra > 0) {
+      elements.push(
+        <span
+          key="extra"
+          className="flex items-center gap-0.5 text-green-400 text-xs font-bold"
+        >
+          +{extra}
+          <GiPerspectiveDiceSixFacesRandom className="w-3 h-3" />
+        </span>,
+      );
+    }
+    if (atkMult > 1) {
       elements.push(
         <span key="atkM" className="text-red-500 text-xs font-bold">
-          ×{atkM}
+          ×{atkMult}
         </span>,
       );
     }
-    if (defM > 1) {
+    if (defMult > 1) {
       elements.push(
         <span key="defM" className="text-blue-500 text-xs font-bold">
-          ×{defM}
+          ×{defMult}
         </span>,
       );
     }
-    return elements.length === 0 ? (
+    // Kosten anzeigen (in Klammern)
+    elements.push(
+      <span key="cost" className="text-xs text-gray-400 font-mono">
+        ({cost})
+      </span>,
+    );
+
+    const hasEffect =
+      atk || def || absDmg || extra || atkMult > 1 || defMult > 1;
+    return !hasEffect ? (
       <span className="text-xs opacity-50">-</span>
     ) : (
       <div className="flex items-center justify-center gap-1">{elements}</div>
@@ -360,14 +419,25 @@ const Battle: React.FC = () => {
 
               <div className="flex items-center justify-between text-sm">
                 <p>
-                  Ausgewählt:{" "}
-                  <span className="font-mono">{selectedIds.length} / 3</span>
+                  Aktionen:{" "}
+                  <span className="font-mono">
+                    {selectedIds.reduce((sum, sid) => {
+                      const roll = rolls.player.find((r) => r.id === sid);
+                      return sum + (roll?.face.cost ?? 1);
+                    }, 0)}
+                  </span>{" "}
+                  / {maxActions}
                 </p>
                 <button
                   className={primaryButtonClasses}
-                  disabled={selectedIds.length !== 3}
                   onClick={handleResolve}
                   type="button"
+                  disabled={
+                    selectedIds.reduce((sum, sid) => {
+                      const roll = rolls.player.find((r) => r.id === sid);
+                      return sum + (roll?.face.cost ?? 1);
+                    }, 0) !== maxActions
+                  }
                 >
                   Runde berechnen
                 </button>
