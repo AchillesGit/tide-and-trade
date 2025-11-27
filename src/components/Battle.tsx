@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import { GiBroadsword, GiCrossShield } from "react-icons/gi";
+import { useNavigate } from "react-router-dom";
 
 interface FaceEffect {
   attack?: number;
@@ -35,6 +36,7 @@ const ATTACK_DIE_FACES: FaceEffect[] = [
   { attack: 1, defense: 1 },
   { attack: 0, defense: 0 },
 ];
+
 const DEFENSE_DIE_FACES: FaceEffect[] = [
   { defense: 1 },
   { defense: 1 },
@@ -42,6 +44,12 @@ const DEFENSE_DIE_FACES: FaceEffect[] = [
   { attack: 1, defense: 1 },
   { attack: 1, defense: 1 },
   { attack: 0, defense: 0 },
+];
+
+const ENEMY_DIE_FACES: FaceEffect[] = [
+  { attack: 1 },
+  { attack: 1 },
+  { defense: 1 },
 ];
 
 function rollFace(effects: FaceEffect[]): FaceEffect {
@@ -74,14 +82,16 @@ const dices: DiceState = {
     createDie(DEFENSE_DIE_FACES),
   ],
   enemy: [
-    createDie(ATTACK_DIE_FACES),
-    createDie(ATTACK_DIE_FACES),
-    createDie(DEFENSE_DIE_FACES),
-    createDie(DEFENSE_DIE_FACES),
+    createDie(ENEMY_DIE_FACES),
+    createDie(ENEMY_DIE_FACES),
+    createDie(ENEMY_DIE_FACES),
+    createDie(ENEMY_DIE_FACES),
   ],
 };
 
 const Battle: React.FC = () => {
+  const navigate = useNavigate();
+
   const [playerLife, setPlayerLife] = useState(10);
   const [computerLife, setComputerLife] = useState(10);
 
@@ -221,14 +231,10 @@ const Battle: React.FC = () => {
             className={primaryButtonClasses}
             type="button"
             onClick={() => {
-              setPlayerLife(10);
-              setComputerLife(10);
-              setRolls({ player: [], enemy: [] });
-              setSelectedIds([]);
-              setRolled(false);
+              navigate("/");
             }}
           >
-            Neu starten
+            Weiter
           </button>
         </div>
       ) : (
