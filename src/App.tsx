@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 import { Route, Routes } from "react-router-dom";
 
-import Battle from "./components/Battle";
+import Battle from "./components/battle/Battle";
 import Inventory from "./components/Inventory";
 import Map from "./components/Map";
 import Placeholder from "./components/Placeholder";
