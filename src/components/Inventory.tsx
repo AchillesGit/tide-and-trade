@@ -4,6 +4,7 @@ import ItemInfo from "./ItemInfo";
 import StatsSumInfo from "./StatsSumInfo";
 import useInventory from "../hooks/useInventory";
 import { useGameStore } from "../store/gameStore";
+import { getItemAtCell } from "../util/gridHelper";
 import { resolveItem } from "../util/itemHelper";
 
 import type { FC } from "react";
@@ -62,6 +63,16 @@ const Inventory: FC = () => {
                     relativeX,
                     relativeY,
                   );
+                } else {
+                  const itemAtCell = getItemAtCell(
+                    { row: rowIndex, col: colIndex },
+                    inventoryItems,
+                  );
+
+                  if (!itemAtCell) return;
+
+                  const resolvedItem = resolveItem(itemAtCell);
+                  if (resolvedItem) clickItem(resolvedItem);
                 }
               }}
             >
@@ -77,18 +88,12 @@ const Inventory: FC = () => {
                 const resolvedItem = resolveItem(item);
 
                 return (
-                  // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
                   <img
                     alt={resolvedItem.name}
-                    className="absolute cursor-grab"
+                    className="absolute pointer-events-none"
                     onMouseEnter={() => setHoveredItem(resolvedItem)}
                     onMouseLeave={() => setHoveredItem(null)}
                     src={resolvedItem.image}
-                    onClick={(e) => {
-                      setHoveredItem(null);
-                      e.stopPropagation();
-                      clickItem(resolvedItem);
-                    }}
                     style={{
                       transformOrigin: "top left",
                       transform: getTransformForDirection(item.direction),

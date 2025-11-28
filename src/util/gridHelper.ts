@@ -1,6 +1,11 @@
 import { resolveItem } from "./itemHelper";
 
-import type { Direction, Item, ItemInstance } from "../types/inventoryTypes";
+import type {
+  Direction,
+  Item,
+  ItemInstance,
+  Position,
+} from "../types/inventoryTypes";
 
 /**
  * Build a clean 2D occupancy grid from a list of items.
@@ -75,10 +80,7 @@ export function fillInventoryGrid(
  * @returns True if item fits inside bounds and doesn't overlap
  */
 export function isPositionValid(
-  newPosition: {
-    row: number;
-    col: number;
-  },
+  newPosition: Position,
   inventoryGrid: number[][],
   grabbedItem: Item,
 ): boolean {
@@ -130,4 +132,40 @@ export function rotateMatrix(
     }
   }
   return rotated;
+}
+
+/**
+ * Returns the item occupying a specific inventory cell.
+ *
+ * This function checks each item’s resolved position and shape (space matrix)
+ * and determines whether the given cell lies within the item’s footprint.
+ *
+ * @param cell - The target grid position to inspect.
+ * @param items - The list of all inventory item instances.
+ * @returns The ItemInstance occupying the cell, or `null` if the cell is empty.
+ */
+export function getItemAtCell(
+  cell: Position,
+  items: ItemInstance[],
+): ItemInstance | null {
+  return (
+    items.find((itemInstance) => {
+      const resolved = resolveItem(itemInstance);
+      const { position, space } = resolved;
+
+      const relRow = cell.row - position.row;
+      const relCol = cell.col - position.col;
+
+      if (
+        relRow < 0 ||
+        relCol < 0 ||
+        relRow >= space.length ||
+        relCol >= space[0].length
+      ) {
+        return false;
+      }
+
+      return space[relRow][relCol] === 1;
+    }) ?? null
+  );
 }
