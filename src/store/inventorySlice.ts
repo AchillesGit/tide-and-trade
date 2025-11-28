@@ -1,7 +1,4 @@
-import {
-  mockInventoryGrid,
-  mockInventoryItems,
-} from "../mock/inventoryMockData";
+import { mockInventoryGrid } from "../mock/inventoryMockData";
 import { fillInventoryGrid, isPositionValid } from "../util/gridHelper";
 
 import type { StateCreator } from "zustand";
@@ -48,8 +45,8 @@ export const createInventorySlice: StateCreator<InventoryState> = (
   set,
   get,
 ) => ({
-  inventoryGrid: fillInventoryGrid(mockInventoryItems, mockInventoryGrid),
-  inventoryItems: mockInventoryItems,
+  inventoryGrid: fillInventoryGrid([], mockInventoryGrid),
+  inventoryItems: [],
 
   addInventoryItem: (item) =>
     set(

@@ -1,9 +1,6 @@
 /** Rarity of an item. 1 = common, 5 = extremely rare. */
 export type ItemRarity = 0 | 1 | 2 | 3 | 4 | 5;
 
-/** Merge level of an item. 1 = base, 5 = max. */
-export type ItemLevel = 1 | 2 | 3 | 4 | 5;
-
 /** Item categories. Extend as needed. */
 export type ItemCategory = "white" | "green" | "blue" | "violet" | "yellow";
 
@@ -68,9 +65,6 @@ export interface ItemInstance {
 
   /** Origin: shop/inventory */
   origin: ItemOrigin;
-
-  /** Merge level (1–5) */
-  level: ItemLevel;
 }
 
 /** Fully resolved item for usage in UI / logic. Combines blueprint data and instance data. */

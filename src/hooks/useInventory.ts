@@ -2,12 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useGameStore } from "../store/gameStore";
 
-import type {
-  Degree,
-  Item,
-  ItemLevel,
-  Position,
-} from "../types/inventoryTypes";
+import type { Degree, Item, Position } from "../types/inventoryTypes";
 
 interface UseInventoryReturn {
   /** Current absolute cursor position */
@@ -46,7 +41,6 @@ const useInventory = (): UseInventoryReturn => {
     storeItem,
     rotateItem,
     removeInventoryItem,
-    addInventoryItem,
     setGrabbedItem,
   } = useGameStore();
 
@@ -96,78 +90,9 @@ const useInventory = (): UseInventoryReturn => {
   };
 
   const clickItem = (clickedItem: Item) => {
-    // No item grabbed → grab the clicked item
     if (!grabbedItem) {
       setGrabbedItem({ ...clickedItem });
       removeInventoryItem(clickedItem.instanceId);
-      return;
-    }
-
-    // Clicking the same item again → do nothing (should not happen)
-    if (grabbedItem.instanceId === clickedItem.instanceId) return;
-
-    // Same blueprint, level and level under 5 → merge
-    if (
-      grabbedItem.blueprintId === clickedItem.blueprintId &&
-      grabbedItem.level === clickedItem.level &&
-      grabbedItem.level < 5
-    ) {
-      const newLevel = Math.min(clickedItem.level + 1, 5) as ItemLevel;
-
-      const mergedItem: Item = {
-        ...clickedItem,
-        instanceId: crypto.randomUUID(),
-        level: newLevel,
-      };
-
-      // Remove both items
-      removeInventoryItem(grabbedItem.instanceId);
-      removeInventoryItem(clickedItem.instanceId);
-
-      // Insert merged item
-      addInventoryItem(mergedItem);
-
-      setGrabbedItem(null);
-      return;
-    }
-
-    // Different blueprint → try SWAP
-    const posGrabbed = grabbedItem.position;
-    const posClicked = clickedItem.position;
-
-    removeInventoryItem(grabbedItem.instanceId);
-    removeInventoryItem(clickedItem.instanceId);
-
-    let placementValid;
-
-    const itemH = clickedItem.space.length;
-    const itemW = clickedItem.space[0].length;
-    const occupiedCells: Position[] = [];
-
-    for (let r = 0; r < itemH; r += 1) {
-      for (let c = 0; c < itemW; c += 1) {
-        if (clickedItem.space[r][c] === 1) {
-          occupiedCells.push({
-            row: posClicked.row + r,
-            col: posClicked.col + c,
-          });
-        }
-      }
-    }
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const cell of occupiedCells) {
-      placementValid = storeItem(grabbedItem, cell, 0, 0);
-      if (placementValid) break;
-    }
-
-    if (!placementValid) {
-      addInventoryItem(clickedItem);
-    } else {
-      setGrabbedItem({
-        ...clickedItem,
-        position: posGrabbed,
-      });
     }
   };
 

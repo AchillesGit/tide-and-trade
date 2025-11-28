@@ -6,7 +6,6 @@ import type {
   Item,
   ItemBlueprint,
   ItemInstance,
-  ItemLevel,
   ItemOrigin,
 } from "../types/inventoryTypes";
 
@@ -16,15 +15,12 @@ import type {
  * @param blueprint - The static blueprint from which this item instance is created.
  * @param origin - The source where the item was generated (e.g. "shop" or "inventory").
  *                 Defaults to `"inventory"`.
- * @param level - The initial merge/upgrade level of the item (1–5).
- *                Defaults to `1`.
  *
  * @returns A new {@link ItemInstance} object.
  */
 export function createItemInstance(
   blueprint: ItemBlueprint,
   origin: ItemOrigin = "inventory",
-  level: ItemLevel = 1,
 ): ItemInstance {
   return {
     instanceId: uuid(),
@@ -32,7 +28,6 @@ export function createItemInstance(
     direction: 0,
     position: { row: 0, col: 0 },
     origin,
-    level,
   };
 }
 

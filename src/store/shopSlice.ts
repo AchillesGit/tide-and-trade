@@ -54,7 +54,7 @@ export const createShopSlice: StateCreator<ShopState> = (set) => ({
       const newShopItems: ItemInstance[] = Array.from({ length: count }, () => {
         const randomBlueprint =
           blueprints[Math.floor(Math.random() * blueprints.length)];
-        return createItemInstance(randomBlueprint, "shop", 1);
+        return createItemInstance(randomBlueprint, "shop");
       });
 
       return {
