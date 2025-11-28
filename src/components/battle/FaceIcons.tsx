@@ -1,5 +1,5 @@
 import {
-  GiPerspectiveDiceSixFacesRandom,
+  GiCoins,
   GiPirateCannon,
   GiPirateSkull,
   GiRoundShield,
@@ -47,32 +47,35 @@ const FaceIcons: FC<FaceEffect> = ({
       <GiPirateCannon key={`h-${i}`} className="w-4 h-4" />
     ));
     elements.push(
-      <span key="dmg" className="flex items-center gap-0.5 text-yellow-300">
+      <span key="dmg" className="flex items-center gap-0.5 text-emerald-400">
         {icons}
       </span>,
     );
   }
   if (extraSelectNextRound > 0) {
+    const diceIcons = Array.from({ length: extraSelectNextRound }, (_, i) => (
+      <GiCoins key={`x-${i}`} className="w-4 h-4" />
+    ));
     elements.push(
       <span
         key="extraSelectNextRound"
-        className="flex items-center gap-0.5 text-green-400 text-xs font-bold"
+        className="flex items-center gap-0.5 text-yellow-400"
       >
-        +{extraSelectNextRound}
-        <GiPerspectiveDiceSixFacesRandom className="w-3 h-3" />
+        {diceIcons}
       </span>,
     );
   }
+
   if (attackMultiplier > 1) {
     elements.push(
-      <span key="attackM" className="text-red-500 text-xs font-bold">
+      <span key="attackM" className="text-red-400 text-xs font-bold">
         x{attackMultiplier}
       </span>,
     );
   }
   if (defenseMultiplier > 1) {
     elements.push(
-      <span key="defenseM" className="text-blue-500 text-xs font-bold">
+      <span key="defenseM" className="text-blue-300 text-xs font-bold">
         x{defenseMultiplier}
       </span>,
     );
