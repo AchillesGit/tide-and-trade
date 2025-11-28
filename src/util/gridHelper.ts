@@ -2,8 +2,10 @@ import { resolveItem } from "./itemHelper";
 
 import type {
   Direction,
+  InventoryGrid,
   Item,
   ItemInstance,
+  ItemMatrix,
   Position,
 } from "../types/inventoryTypes";
 
@@ -16,12 +18,12 @@ import type {
  */
 export function getInventoryAsTwoDArray(
   items: Item[],
-  inventoryGrid: number[][],
-): number[][] {
+  inventoryGrid: InventoryGrid,
+): InventoryGrid {
   const rows = inventoryGrid.length;
   const cols = inventoryGrid[0].length;
 
-  const grid: number[][] = Array.from({ length: rows }, () =>
+  const grid: InventoryGrid = Array.from({ length: rows }, () =>
     Array.from({ length: cols }, () => 0),
   );
 
@@ -51,9 +53,11 @@ export function getInventoryAsTwoDArray(
  */
 export function fillInventoryGrid(
   items: ItemInstance[],
-  inventoryGrid: number[][],
-): number[][] {
-  const updatedGrid = inventoryGrid.map((row) => [...row].map(() => 0));
+  inventoryGrid: InventoryGrid,
+): InventoryGrid {
+  const updatedGrid: InventoryGrid = inventoryGrid.map((row) =>
+    [...row].map((_) => (_ === null ? null : 0)),
+  );
   items.forEach((item) => {
     const resolvedItem = resolveItem(item);
     resolvedItem.space.forEach((row, rIdx) => {
@@ -81,7 +85,7 @@ export function fillInventoryGrid(
  */
 export function isPositionValid(
   newPosition: Position,
-  inventoryGrid: number[][],
+  inventoryGrid: InventoryGrid,
   grabbedItem: Item,
 ): boolean {
   const { space } = grabbedItem;
@@ -96,7 +100,8 @@ export function isPositionValid(
           gridCol < 0 ||
           gridRow >= inventoryGrid.length ||
           gridCol >= inventoryGrid[0].length ||
-          inventoryGrid[gridRow][gridCol] === 1
+          inventoryGrid[gridRow][gridCol] === 1 ||
+          inventoryGrid[gridRow][gridCol] === null
         ) {
           return false;
         }
@@ -114,12 +119,12 @@ export function isPositionValid(
  * @returns New rotated matrix
  */
 export function rotateMatrix(
-  matrix: number[][],
+  matrix: ItemMatrix,
   direction: Direction,
-): number[][] {
+): ItemMatrix {
   const rows = matrix.length;
   const cols = matrix[0].length;
-  const rotated: number[][] = Array.from({ length: cols }, () =>
+  const rotated: ItemMatrix = Array.from({ length: cols }, () =>
     Array.from({ length: rows }, () => 0),
   );
   for (let r = 0; r < rows; r += 1) {

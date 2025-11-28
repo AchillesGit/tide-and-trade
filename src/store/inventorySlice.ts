@@ -3,12 +3,17 @@ import { fillInventoryGrid, isPositionValid } from "../util/gridHelper";
 
 import type { StateCreator } from "zustand";
 
-import type { Item, ItemInstance, Position } from "../types/inventoryTypes";
+import type {
+  InventoryGrid,
+  Item,
+  ItemInstance,
+  Position,
+} from "../types/inventoryTypes";
 
 /** Zustand slice state for managing the inventory grid and items. */
 export interface InventoryState {
   /** 2D grid representing occupied (item ID) or empty (0) cells */
-  inventoryGrid: number[][];
+  inventoryGrid: InventoryGrid;
   /** All items currently stored in the inventory */
   inventoryItems: ItemInstance[];
   /**

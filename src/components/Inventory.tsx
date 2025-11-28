@@ -47,62 +47,74 @@ const Inventory: FC = () => {
         }}
       >
         {inventoryGrid.map((row, rowIndex) =>
-          row.map((_, colIndex) => (
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-            <div
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${rowIndex}-${colIndex}`}
-              className="border border-gray-300 w-[50px] h-[50px]"
-              onClick={(e) => {
-                if (grabbedItem) {
-                  const bounds = e.currentTarget.getBoundingClientRect();
-                  const relativeX = e.clientX - bounds.left;
-                  const relativeY = e.clientY - bounds.top;
-                  clickCell(
-                    { row: rowIndex, col: colIndex },
-                    relativeX,
-                    relativeY,
+          row.map((cell, colIndex) => {
+            if (cell === null) {
+              return (
+                <div
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${rowIndex}-${colIndex}`}
+                  className="w-[50px] h-[50px]"
+                />
+              );
+            }
+
+            return (
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+              <div
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${rowIndex}-${colIndex}`}
+                className="border border-gray-300 w-[50px] h-[50px]"
+                onClick={(e) => {
+                  if (grabbedItem) {
+                    const bounds = e.currentTarget.getBoundingClientRect();
+                    const relativeX = e.clientX - bounds.left;
+                    const relativeY = e.clientY - bounds.top;
+                    clickCell(
+                      { row: rowIndex, col: colIndex },
+                      relativeX,
+                      relativeY,
+                    );
+                  } else {
+                    const itemAtCell = getItemAtCell(
+                      { row: rowIndex, col: colIndex },
+                      inventoryItems,
+                    );
+
+                    if (!itemAtCell) return;
+
+                    const resolvedItem = resolveItem(itemAtCell);
+                    if (resolvedItem) clickItem(resolvedItem);
+                  }
+                }}
+              >
+                {(() => {
+                  const item = inventoryItems.find(
+                    (ir) =>
+                      ir.position.row === rowIndex &&
+                      ir.position.col === colIndex,
                   );
-                } else {
-                  const itemAtCell = getItemAtCell(
-                    { row: rowIndex, col: colIndex },
-                    inventoryItems,
+
+                  if (!item) return null;
+
+                  const resolvedItem = resolveItem(item);
+
+                  return (
+                    <img
+                      alt={resolvedItem.name}
+                      className="absolute pointer-events-none"
+                      onMouseEnter={() => setHoveredItem(resolvedItem)}
+                      onMouseLeave={() => setHoveredItem(null)}
+                      src={resolvedItem.image}
+                      style={{
+                        transformOrigin: "top left",
+                        transform: getTransformForDirection(item.direction),
+                      }}
+                    />
                   );
-
-                  if (!itemAtCell) return;
-
-                  const resolvedItem = resolveItem(itemAtCell);
-                  if (resolvedItem) clickItem(resolvedItem);
-                }
-              }}
-            >
-              {(() => {
-                const item = inventoryItems.find(
-                  (ir) =>
-                    ir.position.row === rowIndex &&
-                    ir.position.col === colIndex,
-                );
-
-                if (!item) return null;
-
-                const resolvedItem = resolveItem(item);
-
-                return (
-                  <img
-                    alt={resolvedItem.name}
-                    className="absolute pointer-events-none"
-                    onMouseEnter={() => setHoveredItem(resolvedItem)}
-                    onMouseLeave={() => setHoveredItem(null)}
-                    src={resolvedItem.image}
-                    style={{
-                      transformOrigin: "top left",
-                      transform: getTransformForDirection(item.direction),
-                    }}
-                  />
-                );
-              })()}
-            </div>
-          )),
+                })()}
+              </div>
+            );
+          }),
         )}
       </div>
 

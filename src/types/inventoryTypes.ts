@@ -13,6 +13,12 @@ export interface Position {
   col: number;
 }
 
+/** 2D inventory grid. null = unavailable space, 0 = empty space, 1 = occupied by an item. */
+export type InventoryGrid = (number | null)[][];
+
+/** 2D footprint matrix used to represent an item's shape. */
+export type ItemMatrix = number[][];
+
 /** Rotation direction for an item */
 export type Direction = "left" | "right";
 
@@ -31,7 +37,7 @@ export interface ItemBlueprint {
   name: string;
 
   /** 2D footprint matrix */
-  space: number[][];
+  space: ItemMatrix;
 
   /** Asset path */
   image: string;
