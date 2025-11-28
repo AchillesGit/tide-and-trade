@@ -1,5 +1,6 @@
 import React from "react";
 
+import { GiToken } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 
 import FaceIcons from "./FaceIcons";
@@ -18,6 +19,11 @@ const Battle: React.FC = () => {
     maxActions,
     rolls,
   } = useBattle();
+
+  const usedActions = selectedIds.reduce((sum, sid) => {
+    const roll = rolls.player.find((r) => r.id === sid);
+    return sum + (roll?.face.cost ?? 1);
+  }, 0);
 
   return (
     <div className="p-4 max-w-xl mx-auto space-y-4 bg-slate-900 text-slate-100 rounded-xl shadow-lg">
@@ -134,26 +140,27 @@ const Battle: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between text-sm">
-                <p>
-                  Aktionen:{" "}
-                  <span className="font-mono">
-                    {selectedIds.reduce((sum, sid) => {
-                      const roll = rolls.player.find((r) => r.id === sid);
-                      return sum + (roll?.face.cost ?? 1);
-                    }, 0)}
-                  </span>{" "}
-                  / {maxActions}
+                <p className="flex items-center gap-2">
+                  Aktionen:
+                  <span className="flex items-center gap-1">
+                    {Array.from({ length: maxActions }, (_, i) => (
+                      <GiToken
+                        key={i}
+                        className={`w-3 h-3 ${
+                          i < usedActions
+                            ? "text-yellow-400"
+                            : "text-yellow-400 opacity-25"
+                        }`}
+                      />
+                    ))}
+                  </span>
                 </p>
+
                 <button
                   className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
+                  disabled={usedActions !== maxActions}
                   onClick={handleResolve}
                   type="button"
-                  disabled={
-                    selectedIds.reduce((sum, sid) => {
-                      const roll = rolls.player.find((r) => r.id === sid);
-                      return sum + (roll?.face.cost ?? 1);
-                    }, 0) !== maxActions
-                  }
                 >
                   Runde berechnen
                 </button>

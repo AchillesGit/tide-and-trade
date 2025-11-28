@@ -1,8 +1,10 @@
 import {
-  GiBroadsword,
-  GiCrossShield,
-  GiHeartStake,
   GiPerspectiveDiceSixFacesRandom,
+  GiPirateCannon,
+  GiPirateSkull,
+  GiRoundShield,
+  GiSaberAndPistol,
+  GiToken,
 } from "react-icons/gi";
 
 import type { FC } from "react";
@@ -22,7 +24,7 @@ const FaceIcons: FC<FaceEffect> = ({
 
   if (attack > 0) {
     const icons = Array.from({ length: attack }, (_, i) => (
-      <GiBroadsword key={`a-${i}`} className="w-4 h-4" />
+      <GiSaberAndPistol key={`a-${i}`} className="w-4 h-4" />
     ));
     elements.push(
       <span key="attack" className="flex items-center gap-0.5 text-red-400">
@@ -32,7 +34,7 @@ const FaceIcons: FC<FaceEffect> = ({
   }
   if (defense > 0) {
     const icons = Array.from({ length: defense }, (_, i) => (
-      <GiCrossShield key={`d-${i}`} className="w-4 h-4" />
+      <GiRoundShield key={`d-${i}`} className="w-4 h-4" />
     ));
     elements.push(
       <span key="defense" className="flex items-center gap-0.5 text-blue-300">
@@ -42,7 +44,7 @@ const FaceIcons: FC<FaceEffect> = ({
   }
   if (absDmg > 0) {
     const icons = Array.from({ length: absDmg }, (_, i) => (
-      <GiHeartStake key={`h-${i}`} className="w-4 h-4" />
+      <GiPirateCannon key={`h-${i}`} className="w-4 h-4" />
     ));
     elements.push(
       <span key="dmg" className="flex items-center gap-0.5 text-yellow-300">
@@ -75,11 +77,17 @@ const FaceIcons: FC<FaceEffect> = ({
       </span>,
     );
   }
-  elements.push(
-    <span key="cost" className="text-xs text-gray-400 font-mono">
-      ({cost})
-    </span>,
-  );
+  if (cost > 0) {
+    const coins = Array.from({ length: cost }, (_, i) => (
+      <GiToken key={`coin-${i}`} className="w-2 h-2 text-yellow-400" />
+    ));
+
+    elements.push(
+      <span key="cost" className="flex flex-col items-center">
+        {coins}
+      </span>,
+    );
+  }
 
   const hasEffect =
     attack ||
@@ -89,7 +97,9 @@ const FaceIcons: FC<FaceEffect> = ({
     attackMultiplier > 1 ||
     defenseMultiplier > 1;
   return !hasEffect ? (
-    <span className="text-xs opacity-50">-</span>
+    <span className="flex items-center justify-center opacity-40 text-gray-400">
+      <GiPirateSkull className="w-4 h-4" />
+    </span>
   ) : (
     <div className="flex items-center justify-center gap-1">{elements}</div>
   );
