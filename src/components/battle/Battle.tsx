@@ -141,7 +141,7 @@ const Battle: React.FC = () => {
 
               <div className="flex items-center justify-between text-sm">
                 <p className="flex items-center gap-2">
-                  Aktionen:
+                  Actions:
                   <span className="flex items-center gap-1">
                     {Array.from({ length: maxActions }, (_, i) => (
                       <GiToken
@@ -157,12 +157,18 @@ const Battle: React.FC = () => {
                 </p>
 
                 <button
-                  className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
-                  disabled={usedActions !== maxActions}
+                  disabled={usedActions === 0}
                   onClick={handleResolve}
                   type="button"
+                  className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold shadow transition cursor-pointer
+                            ${
+                              usedActions === maxActions
+                                ? "bg-yellow-400 hover:bg-yellow-500 text-slate-900"
+                                : "bg-blue-600 hover:bg-blue-700 text-white"
+                            }
+                          `}
                 >
-                  Runde berechnen
+                  Resolve
                 </button>
               </div>
             </div>

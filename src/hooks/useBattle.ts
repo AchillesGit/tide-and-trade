@@ -135,12 +135,6 @@ const useBattle = (): UseBattleReturn => {
    */
   const handleResolve = () => {
     if (!rolled) return;
-    const totalCost = selectedIds.reduce((sum, sid) => {
-      const roll = rolls.player.find((r) => r.id === sid);
-      return sum + (roll?.face.cost ?? 1);
-    }, 0);
-    if (totalCost !== maxActions) return;
-    if (rolls.player.length === 0 || rolls.enemy.length === 0) return;
 
     let playerAttack = 0;
     let playerDefense = 0;
