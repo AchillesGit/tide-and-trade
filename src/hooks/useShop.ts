@@ -51,8 +51,8 @@ const useShop = (): UseShopReturn => {
   }
 
   const refreshShopItems = () => {
-    if (gold >= 100) {
-      removeGold(100);
+    if (gold >= 3) {
+      removeGold(3);
       generateShopItems(5);
     }
   };

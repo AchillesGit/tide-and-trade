@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import { Route, Routes } from "react-router-dom";
 
@@ -26,7 +26,7 @@ const App: FC = () => {
   }, [onRightClick]);
 
   return (
-    <React.Fragment>
+    <div className="h-screen flex flex-col">
       <ResourcesBar />
 
       <Routes>
@@ -34,7 +34,7 @@ const App: FC = () => {
         <Route
           path="/shop"
           element={
-            <div className="flex justify-between">
+            <div className="flex justify-between flex-1 min-h-0">
               <Inventory />
               <Shop />
             </div>
@@ -43,7 +43,7 @@ const App: FC = () => {
         <Route element={<Battle />} path="/battle" />
         <Route element={<Placeholder />} path="*" />
       </Routes>
-    </React.Fragment>
+    </div>
   );
 };
 

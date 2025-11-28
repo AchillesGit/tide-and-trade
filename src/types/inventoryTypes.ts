@@ -1,11 +1,11 @@
 /** Rarity of an item. 1 = common, 5 = extremely rare. */
-export type ItemRarity = 1 | 2 | 3 | 4 | 5;
+export type ItemRarity = 0 | 1 | 2 | 3 | 4 | 5;
 
 /** Merge level of an item. 1 = base, 5 = max. */
 export type ItemLevel = 1 | 2 | 3 | 4 | 5;
 
 /** Item categories. Extend as needed. */
-export type ItemCategory = "weapon" | "commodity";
+export type ItemCategory = "white" | "green" | "blue" | "violet" | "yellow";
 
 /** Allowed rotation angles in degrees */
 export type Degree = 0 | 90 | 180 | 270;
@@ -47,27 +47,6 @@ export interface ItemBlueprint {
 
   /** One or more categories */
   categories: ItemCategory[];
-
-  /** Firepower per level. Index corresponds to level - 1 (e.g. index 0 = level 1, index 4 = level 5). */
-  firepower: number[];
-
-  /** Attack speed per level */
-  attackSpeed: number[];
-
-  /** Critical hit chance per level (e.g. 0.15 = 15%) */
-  criticalChance: number[];
-
-  /** Critical hit damage multiplier per level (e.g. 1.5 = +50% damage) */
-  criticalDamage: number[];
-
-  /** Evasion chance per level (e.g. 0.10 = 10%) */
-  evasionChance: number[];
-
-  /** Ship HP increase per level */
-  shipHpIncrease: number[];
-
-  /** Armor value per level */
-  armor: number[];
 }
 
 /**
@@ -96,48 +75,3 @@ export interface ItemInstance {
 
 /** Fully resolved item for usage in UI / logic. Combines blueprint data and instance data. */
 export type Item = ItemBlueprint & ItemInstance;
-
-export interface Ship {
-  /** Name of the ship */
-  name: string;
-
-  /** Current HP */
-  currentHp: number;
-
-  /** Maximum HP */
-  maxHp: number;
-
-  /** Firepower per level. Index corresponds to level - 1 (e.g. index 0 = level 1, index 4 = level 5). */
-  firepower: number;
-
-  /** Attack speed per level */
-  attackSpeed: number;
-
-  /** Critical hit chance per level (e.g. 0.15 = 15%) */
-  criticalChance: number;
-
-  /** Critical hit damage multiplier per level (e.g. 1.5 = +50% damage) */
-  criticalDamage: number;
-
-  /** Armor value per level */
-  armor: number;
-
-  /** Evasion chance per level (e.g. 0.10 = 10%) */
-  evasionChance: number;
-
-  // TODO: Do we need this?
-  gold: number;
-}
-
-export const baseShipValues: Ship = {
-  gold: 0,
-  armor: 0.1,
-  attackSpeed: 1,
-  criticalChance: 0,
-  criticalDamage: 1.2,
-  evasionChance: 0.05,
-  firepower: 10,
-  currentHp: 1000,
-  name: "Battle Reiner",
-  maxHp: 1000,
-};

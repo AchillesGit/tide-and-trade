@@ -18,7 +18,7 @@ export interface ResourceState {
 
 /** Creates the resource slice for managing gold. */
 export const createResourceSlice: StateCreator<ResourceState> = (set) => ({
-  gold: 1000,
+  gold: 10,
   addGold: (amount) => set((state) => ({ gold: state.gold + amount })),
   removeGold: (amount) => set((state) => ({ gold: state.gold - amount })),
 });

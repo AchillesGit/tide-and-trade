@@ -1,8 +1,3 @@
-import ItemBlueprints from "../blueprints/itemBlueprints";
-import { baseShipValues } from "../types/inventoryTypes";
-
-import type { ItemInstance, Ship } from "../types/inventoryTypes";
-
 /**
  * Formats a number as a percentage.
  *
@@ -62,34 +57,3 @@ export const getStars = (level: number): string => {
   const emptyStars = Array(maxStars - level).fill("☆");
   return [...filledStars, ...emptyStars].join(" ");
 };
-
-/**
- * Aggregates total ship stats from a list of inventory item instances.
- *
- * Each item contributes stat values based on its blueprint and level.
- * Missing blueprints are skipped gracefully.
- *
- * @param items - The list of item instances to sum stats from.
- * @returns A `Ship` object representing the total accumulated stats.
- */
-export const sumInventoryStats = (items: ItemInstance[]): Ship =>
-  items.reduce((sum, instance) => {
-    const blueprint = ItemBlueprints[instance.blueprintId];
-    if (!blueprint) return sum;
-
-    const lvl = instance.level;
-
-    return {
-      ...sum,
-      gold: sum.gold + (blueprint.baseValue ?? 0),
-      armor: sum.armor + (blueprint.armor?.[lvl] ?? 0),
-      attackSpeed: sum.attackSpeed + (blueprint.attackSpeed?.[lvl] ?? 0),
-      criticalChance:
-        sum.criticalChance + (blueprint.criticalChance?.[lvl] ?? 0),
-      criticalDamage:
-        sum.criticalDamage + (blueprint.criticalDamage?.[lvl] ?? 0),
-      evasionChance: sum.evasionChance + (blueprint.evasionChance?.[lvl] ?? 0),
-      firepower: sum.firepower + (blueprint.firepower?.[lvl] ?? 0),
-      hp: sum.currentHp + (blueprint.shipHpIncrease?.[lvl] ?? 0),
-    };
-  }, baseShipValues);
