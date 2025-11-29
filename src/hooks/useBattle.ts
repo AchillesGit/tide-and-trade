@@ -52,8 +52,28 @@ const useBattle = (): UseBattleReturn => {
   const [maxActions, setMaxActions] = useState<number>(DEFAULT_MAX_ACTIONS);
 
   /**
-   * Initial dice pool configuration for player and enemy.
+   * green
+   * 3: +2 abs
+   * 5: +5 abs
+   *
+   * yellow:
+   * 3: + 1action
+   * 5: + 2action
+   *
+   * violet:
+   * 3: + 4atk
+   * 5: + 8 atk
+   *
+   * white:
+   * 3: +1 abs, +2 atk, +2def
+   * 5: +3abs, +6atk, +5 def
+   *
+   * blue:
+   * 3: + 4 def
+   * 5: + 8 def
    */
+
+  /** Initial dice pool configuration for player and enemy. */
   const dices: DiceState = {
     player: inventoryItems.map((i) => {
       const resolved = resolveItem(i);
