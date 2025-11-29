@@ -61,7 +61,7 @@ const useBattle = (): UseBattleReturn => {
    * 5: + 2action
    *
    * violet:
-   * 3: + 4atk
+   * 3: + 4 atk
    * 5: + 8 atk
    *
    * white:
