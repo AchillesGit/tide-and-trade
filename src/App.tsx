@@ -6,6 +6,7 @@ import Inventory from "./components/Inventory";
 import Map from "./components/Map";
 import Placeholder from "./components/Placeholder";
 import ResourcesBar from "./components/ResourcesBar";
+import Shipyard from "./components/Shipyard";
 import Shop from "./components/Shop";
 import { useGameStore } from "./store/gameStore";
 
@@ -30,6 +31,7 @@ const App: FC = () => {
 
       <Routes>
         <Route element={<Map />} path="/" />
+        <Route element={<Shipyard />} path="/shipyard" />
         <Route
           path="/shop"
           element={
