@@ -64,6 +64,7 @@ const Inventory: FC = () => {
                 // eslint-disable-next-line react/no-array-index-key
                 key={`${rowIndex}-${colIndex}`}
                 className="border border-gray-300 w-[50px] h-[50px]"
+                onMouseLeave={() => setHoveredItem(null)}
                 onClick={(e) => {
                   if (grabbedItem) {
                     const bounds = e.currentTarget.getBoundingClientRect();
@@ -86,6 +87,17 @@ const Inventory: FC = () => {
                     if (resolvedItem) clickItem(resolvedItem);
                   }
                 }}
+                onMouseEnter={() => {
+                  const itemAtCell = getItemAtCell(
+                    { row: rowIndex, col: colIndex },
+                    inventoryItems,
+                  );
+
+                  if (!itemAtCell) return;
+
+                  const resolvedItem = resolveItem(itemAtCell);
+                  if (resolvedItem) setHoveredItem(resolvedItem);
+                }}
               >
                 {(() => {
                   const item = inventoryItems.find(
@@ -102,8 +114,6 @@ const Inventory: FC = () => {
                     <img
                       alt={resolvedItem.name}
                       className="absolute pointer-events-none"
-                      onMouseEnter={() => setHoveredItem(resolvedItem)}
-                      onMouseLeave={() => setHoveredItem(null)}
                       src={resolvedItem.image}
                       style={{
                         transformOrigin: "top left",

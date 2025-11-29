@@ -1,49 +1,47 @@
-// import { useGameStore } from "../store/gameStore";
-// import { formatGold, formatNumber, formatPercent } from "../util/formatHelper";
+import { useGameStore } from "../store/gameStore";
+import { resolveItem } from "../util/itemHelper";
+import FaceIcons from "./battle/FaceIcons";
 
 import type { FC } from "react";
 
-const StatsSumInfo: FC = () => (
-  // const { inventoryItems } = useGameStore();
+const StatsSumInfo: FC = () => {
+  const { inventoryItems } = useGameStore();
 
-  <div className="" />
-  // <div className="relative min-w-60 max-w-[320px] bg-gray-800 text-white rounded-[10px] p-3 shadow-md border-2 border-transparent">
-  //   {/* name + gold */}
-  //   <div className="flex justify-between items-baseline mb-1.5">
-  //     <h1 className="text-xl font-bold">{ship.name}</h1>
-  //     <span className="text-base text-yellow-400">
-  //       {formatGold(ship.gold)}
-  //     </span>
-  //   </div>
+  if (!inventoryItems || inventoryItems.length === 0) return null;
 
-  //   {/* info */}
-  //   <div className="flex justify-between items-center gap-1.5 mb-2">
-  //     <span className="text-[13px] text-gray-300">My Ships total stats</span>
-  //   </div>
+  return (
+    <div className="mt-3 rounded-md bg-slate-900/80 p-3 text-xs">
+      <div className="mb-2 text-[10px] uppercase tracking-wide text-slate-400">
+        Übersicht – Alle Würfel aller Items
+      </div>
 
-  //   {/* value sums */}
-  //   <div className="grid grid-cols-2 gap-x-2 gap-y-1 mt-3">
-  //     <span className="text-gray-400">Armor:</span>
-  //     <span className="text-right">{formatNumber(ship.armor)}</span>
+      <div className="flex flex-col gap-4">
+        {inventoryItems.map((item, idx) => {
+          const resolvedItem = resolveItem(item);
 
-  //     <span className="text-gray-400">Attack Speed:</span>
-  //     <span className="text-right">{formatNumber(ship.attackSpeed)}</span>
+          return (
+            <div key={item.instanceId} className="flex flex-col gap-1">
+              <div className="text-[11px] text-slate-300">
+                {item.blueprintId ?? `Item ${idx + 1}`}
+              </div>
 
-  //     <span className="text-gray-400">Critical Chance:</span>
-  //     <span className="text-right">{formatPercent(ship.criticalChance)}</span>
+              <div className="grid grid-cols-3 gap-2">
+                {resolvedItem.dice?.map((face, faceIndex) => (
+                  <div
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={faceIndex}
+                    className="flex h-10 items-center justify-center rounded border border-slate-700 bg-slate-800/60"
+                  >
+                    <FaceIcons {...face} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
-  //     <span className="text-gray-400">Critical Damage:</span>
-  //     <span className="text-right">{formatNumber(ship.criticalDamage)}</span>
-
-  //     <span className="text-gray-400">Evasion Chance:</span>
-  //     <span className="text-right">{formatPercent(ship.evasionChance)}</span>
-
-  //     <span className="text-gray-400">Firepower:</span>
-  //     <span className="text-right">{formatNumber(ship.firepower)}</span>
-
-  //     <span className="text-gray-400">Ship HP +:</span>
-  //     <span className="text-right">{formatNumber(ship.currentHp)}</span>
-  //   </div>
-  // </div>
-);
 export default StatsSumInfo;

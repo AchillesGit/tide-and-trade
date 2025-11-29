@@ -1,3 +1,5 @@
+import type { FaceEffect } from "./battleTypes";
+
 /** Rarity of an item. 1 = common, 5 = extremely rare. */
 export type ItemRarity = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -50,6 +52,9 @@ export interface ItemBlueprint {
 
   /** One or more categories */
   categories: ItemCategory[];
+
+  /** Dice that this item brings */
+  dice: FaceEffect[];
 }
 
 /**

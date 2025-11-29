@@ -1,3 +1,14 @@
+import {
+  ATTACK_DIE_FACES,
+  DAMAGE_DIE_FACES,
+  DEFENSE_DIE_FACES,
+  ENEMY_DIE_FACES,
+  EXTRA_SELECT_DIE_FACES,
+  HYBRID_DIE_FACES,
+  MULTIPLY_ATTACK_DIE_FACES,
+  MULTIPLY_DEFENSE_DIE_FACES,
+} from "./diceBlueprints";
+
 import type { ItemBlueprint } from "../types/inventoryTypes";
 
 /**
@@ -29,6 +40,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 2,
     rarity: 0,
     categories: ["green"],
+    dice: ATTACK_DIE_FACES,
   },
   green2: {
     id: "green2",
@@ -41,6 +53,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 5,
     rarity: 0,
     categories: ["green"],
+    dice: ATTACK_DIE_FACES,
   },
   green3: {
     id: "green3",
@@ -55,6 +68,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 1,
     rarity: 0,
     categories: ["green"],
+    dice: ATTACK_DIE_FACES,
   },
   green4: {
     id: "green4",
@@ -67,6 +81,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 8,
     rarity: 0,
     categories: ["green"],
+    dice: DEFENSE_DIE_FACES,
   },
   green5: {
     id: "green5",
@@ -80,6 +95,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 2,
     rarity: 0,
     categories: ["green"],
+    dice: DEFENSE_DIE_FACES,
   },
   green6: {
     id: "green6",
@@ -93,6 +109,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 5,
     rarity: 0,
     categories: ["green"],
+    dice: DEFENSE_DIE_FACES,
   },
   violet1: {
     id: "violet1",
@@ -105,6 +122,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 5,
     rarity: 0,
     categories: ["violet"],
+    dice: HYBRID_DIE_FACES,
   },
   violet2: {
     id: "violet2",
@@ -118,6 +136,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 2,
     rarity: 0,
     categories: ["violet"],
+    dice: HYBRID_DIE_FACES,
   },
   violet3: {
     id: "violet3",
@@ -132,6 +151,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 1,
     rarity: 0,
     categories: ["violet"],
+    dice: HYBRID_DIE_FACES,
   },
   violet4: {
     id: "violet4",
@@ -145,6 +165,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 5,
     rarity: 0,
     categories: ["violet"],
+    dice: ENEMY_DIE_FACES,
   },
   violet5: {
     id: "violet5",
@@ -154,6 +175,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 12,
     rarity: 0,
     categories: ["violet"],
+    dice: ENEMY_DIE_FACES,
   },
   violet6: {
     id: "violet6",
@@ -168,6 +190,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 1,
     rarity: 0,
     categories: ["violet"],
+    dice: ENEMY_DIE_FACES,
   },
   white1: {
     id: "white1",
@@ -181,6 +204,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 5,
     rarity: 0,
     categories: ["white"],
+    dice: MULTIPLY_ATTACK_DIE_FACES,
   },
   white2: {
     id: "white2",
@@ -195,6 +219,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 1,
     rarity: 0,
     categories: ["white"],
+    dice: MULTIPLY_ATTACK_DIE_FACES,
   },
   white3: {
     id: "white3",
@@ -208,6 +233,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 2,
     rarity: 0,
     categories: ["white"],
+    dice: MULTIPLY_ATTACK_DIE_FACES,
   },
   white4: {
     id: "white4",
@@ -222,6 +248,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 1,
     rarity: 0,
     categories: ["white"],
+    dice: MULTIPLY_DEFENSE_DIE_FACES,
   },
   white5: {
     id: "white5",
@@ -231,6 +258,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 16,
     rarity: 0,
     categories: ["white"],
+    dice: MULTIPLY_DEFENSE_DIE_FACES,
   },
   white6: {
     id: "white6",
@@ -244,6 +272,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 2,
     rarity: 0,
     categories: ["white"],
+    dice: MULTIPLY_DEFENSE_DIE_FACES,
   },
   yellow1: {
     id: "yellow1",
@@ -258,6 +287,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 2,
     rarity: 0,
     categories: ["yellow"],
+    dice: DAMAGE_DIE_FACES,
   },
   yellow2: {
     id: "yellow2",
@@ -271,6 +301,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 2,
     rarity: 0,
     categories: ["yellow"],
+    dice: DAMAGE_DIE_FACES,
   },
   yellow3: {
     id: "yellow3",
@@ -280,6 +311,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 8,
     rarity: 0,
     categories: ["yellow"],
+    dice: DAMAGE_DIE_FACES,
   },
   yellow4: {
     id: "yellow4",
@@ -289,6 +321,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 5,
     rarity: 0,
     categories: ["yellow"],
+    dice: EXTRA_SELECT_DIE_FACES,
   },
   yellow5: {
     id: "yellow5",
@@ -303,6 +336,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 2,
     rarity: 0,
     categories: ["yellow"],
+    dice: EXTRA_SELECT_DIE_FACES,
   },
 
   yellow6: {
@@ -318,6 +352,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     baseValue: 2,
     rarity: 0,
     categories: ["yellow"],
+    dice: EXTRA_SELECT_DIE_FACES,
   },
 };
 

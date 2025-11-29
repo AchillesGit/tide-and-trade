@@ -47,13 +47,13 @@ const useShop = (): UseShopReturn => {
   }, [addGold, grabbedItem, setGrabbedItem]);
 
   if (shopItems.length === 0) {
-    generateShopItems(5);
+    generateShopItems(3);
   }
 
   const refreshShopItems = () => {
     if (gold >= 3) {
       removeGold(3);
-      generateShopItems(5);
+      generateShopItems(3);
     }
   };
 
