@@ -55,7 +55,7 @@ const Shipyard: FC = () => {
                 : "bg-emerald-600 hover:bg-emerald-700"
             }`}
         >
-          🔧 Repair +{repairAmount} HP ({singleRepairCost}💰)
+          🔧 Repair +{repairAmount} HP ({singleRepairCost}🪙)
         </button>
 
         {/* Full Repair */}
@@ -70,7 +70,7 @@ const Shipyard: FC = () => {
                 : "bg-teal-600 hover:bg-teal-700"
             }`}
         >
-          🛠️ Fully Repair ({fullRepairCost}💰)
+          🛠️ Fully Repair ({fullRepairCost}🪙)
         </button>
 
         {/* Feedback */}
