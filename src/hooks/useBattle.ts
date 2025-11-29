@@ -1,43 +1,11 @@
 import { useState } from "react";
 
-import {
-  ATTACK_DIE_FACES,
-  DAMAGE_DIE_FACES,
-  DEFENSE_DIE_FACES,
-  ENEMY_DIE_FACES,
-  EXTRA_SELECT_DIE_FACES,
-  HYBRID_DIE_FACES,
-  MULTIPLY_ATTACK_DIE_FACES,
-  MULTIPLY_DEFENSE_DIE_FACES,
-} from "../blueprints/diceBlueprints";
+import { ENEMY_DIE_FACES } from "../blueprints/diceBlueprints";
+import { useGameStore } from "../store/gameStore";
 import { createDie, rollAll, sortRollResults } from "../util/battleHelper";
+import { resolveItem } from "../util/itemHelper";
 
 import type { DiceState, RollsState } from "../types/battleTypes";
-
-/**
- * Initial dice pool configuration for player and enemy.
- */
-const dices: DiceState = {
-  player: [
-    createDie(ATTACK_DIE_FACES),
-    createDie(ATTACK_DIE_FACES),
-    createDie(ATTACK_DIE_FACES),
-    createDie(HYBRID_DIE_FACES),
-    createDie(HYBRID_DIE_FACES),
-    createDie(DEFENSE_DIE_FACES),
-    createDie(DEFENSE_DIE_FACES),
-    createDie(MULTIPLY_ATTACK_DIE_FACES),
-    createDie(MULTIPLY_DEFENSE_DIE_FACES),
-    createDie(DAMAGE_DIE_FACES),
-    createDie(EXTRA_SELECT_DIE_FACES),
-  ],
-  enemy: [
-    createDie(ENEMY_DIE_FACES),
-    createDie(ENEMY_DIE_FACES),
-    createDie(ENEMY_DIE_FACES),
-    createDie(ENEMY_DIE_FACES),
-  ],
-};
 
 /**
  * Shape of the object returned by {@link useBattle}.
@@ -75,12 +43,24 @@ const DEFAULT_MAX_ACTIONS = 3;
  * @returns Battle state and handlers to control rolling and resolving actions.
  */
 const useBattle = (): UseBattleReturn => {
+  const { inventoryItems } = useGameStore();
   const [playerLife, setPlayerLife] = useState(10);
   const [enemyLife, setEnemyLife] = useState(10);
   const [rolls, setRolls] = useState<RollsState>({ player: [], enemy: [] });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rolled, setRolled] = useState(false);
   const [maxActions, setMaxActions] = useState<number>(DEFAULT_MAX_ACTIONS);
+
+  /**
+   * Initial dice pool configuration for player and enemy.
+   */
+  const dices: DiceState = {
+    player: inventoryItems.map((i) => {
+      const resolved = resolveItem(i);
+      return createDie(resolved.dice);
+    }),
+    enemy: [createDie(ENEMY_DIE_FACES), createDie(ENEMY_DIE_FACES)],
+  };
 
   /**
    * Rolls all dice for player and enemy if the battle is still ongoing.
