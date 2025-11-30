@@ -54,7 +54,31 @@ const Inventory: FC = () => {
                   // eslint-disable-next-line react/no-array-index-key
                   key={`${rowIndex}-${colIndex}`}
                   className="w-[50px] h-[50px]"
-                />
+                >
+                  {(() => {
+                    const item = inventoryItems.find(
+                      (ir) =>
+                        ir.position.row === rowIndex &&
+                        ir.position.col === colIndex,
+                    );
+
+                    if (!item) return null;
+
+                    const resolvedItem = resolveItem(item);
+
+                    return (
+                      <img
+                        alt={resolvedItem.name}
+                        className="absolute pointer-events-none"
+                        src={resolvedItem.image}
+                        style={{
+                          transformOrigin: "top left",
+                          transform: getTransformForDirection(item.direction),
+                        }}
+                      />
+                    );
+                  })()}
+                </div>
               );
             }
 
