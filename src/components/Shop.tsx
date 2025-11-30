@@ -10,7 +10,7 @@ const Shop: FC = () => {
   const { buyShopItem, refreshShopItems, resolvedShopItems } = useShop();
 
   return (
-    <div className="bg-gray-800 text-white rounded-md p-3 shadow-md border-2 border-transparent min-w-72">
+    <div className="bg-gray-800 text-white rounded-md p-3 shadow-md border-2 border-transparent min-w-72 flex flex-col">
       {/* header */}
       <div className="flex justify-between items-baseline mb-2">
         <h1 className="text-lg font-bold">Shop</h1>
@@ -23,7 +23,7 @@ const Shop: FC = () => {
       </p>
 
       {/* shop items list */}
-      <div className="flex flex-col gap-2 mb-3">
+      <div className="flex flex-col gap-2 mb-3 flex-1 min-h-0 overflow-y-auto">
         {resolvedShopItems.map((item) => (
           <button
             key={item.instanceId}
@@ -39,7 +39,7 @@ const Shop: FC = () => {
                 {formatGold(item.baseValue)}
               </span>
             </div>
-            <img alt={item.blueprintId} className="h-10" src={item.image} />
+            <img alt={item.blueprintId} src={item.image} />
           </button>
         ))}
       </div>
@@ -51,7 +51,7 @@ const Shop: FC = () => {
         type="button"
       >
         <span className="font-semibold text-sm">Refresh</span>
-        <span className="text-sm text-yellow-400">{formatGold(100)}</span>
+        <span className="text-sm text-yellow-400">{formatGold(3)}</span>
       </button>
     </div>
   );

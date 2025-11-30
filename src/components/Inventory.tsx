@@ -4,6 +4,7 @@ import ItemInfo from "./ItemInfo";
 import StatsSumInfo from "./StatsSumInfo";
 import useInventory from "../hooks/useInventory";
 import { useGameStore } from "../store/gameStore";
+import { getItemAtCell } from "../util/gridHelper";
 import { resolveItem } from "../util/itemHelper";
 
 import type { FC } from "react";
@@ -46,58 +47,108 @@ const Inventory: FC = () => {
         }}
       >
         {inventoryGrid.map((row, rowIndex) =>
-          row.map((_, colIndex) => (
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-            <div
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${rowIndex}-${colIndex}`}
-              className="border border-gray-300 w-[50px] h-[50px]"
-              onClick={(e) => {
-                if (grabbedItem) {
-                  const bounds = e.currentTarget.getBoundingClientRect();
-                  const relativeX = e.clientX - bounds.left;
-                  const relativeY = e.clientY - bounds.top;
-                  clickCell(
+          row.map((cell, colIndex) => {
+            if (cell === null) {
+              return (
+                <div
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${rowIndex}-${colIndex}`}
+                  className="w-[50px] h-[50px]"
+                >
+                  {(() => {
+                    const item = inventoryItems.find(
+                      (ir) =>
+                        ir.position.row === rowIndex &&
+                        ir.position.col === colIndex,
+                    );
+
+                    if (!item) return null;
+
+                    const resolvedItem = resolveItem(item);
+
+                    return (
+                      <img
+                        alt={resolvedItem.name}
+                        className="absolute pointer-events-none"
+                        src={resolvedItem.image}
+                        style={{
+                          transformOrigin: "top left",
+                          transform: getTransformForDirection(item.direction),
+                        }}
+                      />
+                    );
+                  })()}
+                </div>
+              );
+            }
+
+            return (
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+              <div
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${rowIndex}-${colIndex}`}
+                className="border border-gray-300 w-[50px] h-[50px]"
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={(e) => {
+                  if (grabbedItem) {
+                    const bounds = e.currentTarget.getBoundingClientRect();
+                    const relativeX = e.clientX - bounds.left;
+                    const relativeY = e.clientY - bounds.top;
+                    clickCell(
+                      { row: rowIndex, col: colIndex },
+                      relativeX,
+                      relativeY,
+                    );
+                  } else {
+                    const itemAtCell = getItemAtCell(
+                      { row: rowIndex, col: colIndex },
+                      inventoryItems,
+                    );
+
+                    if (!itemAtCell) return;
+
+                    const resolvedItem = resolveItem(itemAtCell);
+                    if (resolvedItem) clickItem(resolvedItem);
+                  }
+                }}
+                onMouseEnter={() => {
+                  const itemAtCell = getItemAtCell(
                     { row: rowIndex, col: colIndex },
-                    relativeX,
-                    relativeY,
+                    inventoryItems,
                   );
-                }
-              }}
-            >
-              {(() => {
-                const item = inventoryItems.find(
-                  (ir) =>
-                    ir.position.row === rowIndex &&
-                    ir.position.col === colIndex,
-                );
 
-                if (!item) return null;
+                  if (!itemAtCell) return;
 
-                const resolvedItem = resolveItem(item);
+                  const resolvedItem = resolveItem(itemAtCell);
+                  if (resolvedItem) setHoveredItem(resolvedItem);
+                }}
+              >
+                {(() => {
+                  const item = inventoryItems.find(
+                    (ir) =>
+                      ir.position.row === rowIndex &&
+                      ir.position.col === colIndex,
+                  );
 
-                return (
-                  // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-                  <img
-                    alt={resolvedItem.name}
-                    className="absolute cursor-grab"
-                    onMouseEnter={() => setHoveredItem(resolvedItem)}
-                    onMouseLeave={() => setHoveredItem(null)}
-                    src={resolvedItem.image}
-                    onClick={(e) => {
-                      setHoveredItem(null);
-                      e.stopPropagation();
-                      clickItem(resolvedItem);
-                    }}
-                    style={{
-                      transformOrigin: "top left",
-                      transform: getTransformForDirection(item.direction),
-                    }}
-                  />
-                );
-              })()}
-            </div>
-          )),
+                  if (!item) return null;
+
+                  const resolvedItem = resolveItem(item);
+
+                  return (
+                    <img
+                      alt={resolvedItem.name}
+                      className="absolute pointer-events-none"
+                      src={resolvedItem.image}
+                      style={{
+                        transformOrigin: "top left",
+                        transform: getTransformForDirection(item.direction),
+                      }}
+                    />
+                  );
+                })()}
+              </div>
+            );
+          }),
         )}
       </div>
 

@@ -1,11 +1,10 @@
-/** Rarity of an item. 1 = common, 5 = extremely rare. */
-export type ItemRarity = 1 | 2 | 3 | 4 | 5;
+import type { FaceEffect } from "./battleTypes";
 
-/** Merge level of an item. 1 = base, 5 = max. */
-export type ItemLevel = 1 | 2 | 3 | 4 | 5;
+/** Rarity of an item. 1 = common, 5 = extremely rare. */
+export type ItemRarity = 0 | 1 | 2 | 3 | 4 | 5;
 
 /** Item categories. Extend as needed. */
-export type ItemCategory = "weapon" | "commodity";
+export type ItemCategory = "white" | "green" | "blue" | "violet" | "yellow";
 
 /** Allowed rotation angles in degrees */
 export type Degree = 0 | 90 | 180 | 270;
@@ -15,6 +14,12 @@ export interface Position {
   row: number;
   col: number;
 }
+
+/** 2D inventory grid. null = unavailable space, 0 = empty space, 1 = occupied by an item. */
+export type InventoryGrid = (number | null)[][];
+
+/** 2D footprint matrix used to represent an item's shape. */
+export type ItemMatrix = number[][];
 
 /** Rotation direction for an item */
 export type Direction = "left" | "right";
@@ -34,7 +39,7 @@ export interface ItemBlueprint {
   name: string;
 
   /** 2D footprint matrix */
-  space: number[][];
+  space: ItemMatrix;
 
   /** Asset path */
   image: string;
@@ -48,26 +53,8 @@ export interface ItemBlueprint {
   /** One or more categories */
   categories: ItemCategory[];
 
-  /** Firepower per level. Index corresponds to level - 1 (e.g. index 0 = level 1, index 4 = level 5). */
-  firepower: number[];
-
-  /** Attack speed per level */
-  attackSpeed: number[];
-
-  /** Critical hit chance per level (e.g. 0.15 = 15%) */
-  criticalChance: number[];
-
-  /** Critical hit damage multiplier per level (e.g. 1.5 = +50% damage) */
-  criticalDamage: number[];
-
-  /** Evasion chance per level (e.g. 0.10 = 10%) */
-  evasionChance: number[];
-
-  /** Ship HP increase per level */
-  shipHpIncrease: number[];
-
-  /** Armor value per level */
-  armor: number[];
+  /** Dice that this item brings */
+  dice: FaceEffect[];
 }
 
 /**
@@ -89,43 +76,7 @@ export interface ItemInstance {
 
   /** Origin: shop/inventory */
   origin: ItemOrigin;
-
-  /** Merge level (1–5) */
-  level: ItemLevel;
 }
 
 /** Fully resolved item for usage in UI / logic. Combines blueprint data and instance data. */
 export type Item = ItemBlueprint & ItemInstance;
-
-// TODO:
-export interface Ship {
-  /** Name of the ship */
-  name: string;
-
-  /** Current HP */
-  currentHp: number;
-
-  /** Maximum HP */
-  maxHp: number;
-
-  /** Firepower per level. Index corresponds to level - 1 (e.g. index 0 = level 1, index 4 = level 5). */
-  firepower: number;
-
-  /** Attack speed per level */
-  attackSpeed: number;
-
-  /** Critical hit chance per level (e.g. 0.15 = 15%) */
-  criticalChance: number;
-
-  /** Critical hit damage multiplier per level (e.g. 1.5 = +50% damage) */
-  criticalDamage: number;
-
-  /** Armor value per level */
-  armor: number;
-
-  /** Evasion chance per level (e.g. 0.10 = 10%) */
-  evasionChance: number;
-
-  /** Summed up Gold */
-  gold: number;
-}

@@ -1,7 +1,3 @@
-import ItemBlueprints from "../blueprints/itemBlueprints";
-
-import type { ItemInstance, Ship } from "../types/inventoryTypes";
-
 /**
  * Formats a number as a percentage.
  *
@@ -61,40 +57,3 @@ export const getStars = (level: number): string => {
   const emptyStars = Array(maxStars - level).fill("☆");
   return [...filledStars, ...emptyStars].join(" ");
 };
-
-export const sumInventoryStats = (items: ItemInstance[]): Ship =>
-  items.reduce(
-    (sum, instance) => {
-      const blueprint = ItemBlueprints[instance.blueprintId];
-      if (!blueprint) return sum;
-
-      const lvl = instance.level;
-
-      return {
-        ...sum,
-        gold: sum.gold + (blueprint.baseValue ?? 0),
-        armor: sum.armor + (blueprint.armor?.[lvl] ?? 0),
-        attackSpeed: sum.attackSpeed + (blueprint.attackSpeed?.[lvl] ?? 0),
-        criticalChance:
-          sum.criticalChance + (blueprint.criticalChance?.[lvl] ?? 0),
-        criticalDamage:
-          sum.criticalDamage + (blueprint.criticalDamage?.[lvl] ?? 0),
-        evasionChance:
-          sum.evasionChance + (blueprint.evasionChance?.[lvl] ?? 0),
-        firepower: sum.firepower + (blueprint.firepower?.[lvl] ?? 0),
-        hp: sum.currentHp + (blueprint.shipHpIncrease?.[lvl] ?? 0),
-      };
-    },
-    {
-      gold: 0,
-      armor: 0,
-      attackSpeed: 0,
-      criticalChance: 0,
-      criticalDamage: 0,
-      evasionChance: 0,
-      firepower: 0,
-      currentHp: 0,
-      name: "Battle Reiner",
-      maxHp: 0,
-    } satisfies Ship,
-  );

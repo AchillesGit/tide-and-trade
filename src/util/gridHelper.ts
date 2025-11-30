@@ -1,6 +1,13 @@
 import { resolveItem } from "./itemHelper";
 
-import type { Direction, Item, ItemInstance } from "../types/inventoryTypes";
+import type {
+  Direction,
+  InventoryGrid,
+  Item,
+  ItemInstance,
+  ItemMatrix,
+  Position,
+} from "../types/inventoryTypes";
 
 /**
  * Build a clean 2D occupancy grid from a list of items.
@@ -11,12 +18,12 @@ import type { Direction, Item, ItemInstance } from "../types/inventoryTypes";
  */
 export function getInventoryAsTwoDArray(
   items: Item[],
-  inventoryGrid: number[][],
-): number[][] {
+  inventoryGrid: InventoryGrid,
+): InventoryGrid {
   const rows = inventoryGrid.length;
   const cols = inventoryGrid[0].length;
 
-  const grid: number[][] = Array.from({ length: rows }, () =>
+  const grid: InventoryGrid = Array.from({ length: rows }, () =>
     Array.from({ length: cols }, () => 0),
   );
 
@@ -46,9 +53,11 @@ export function getInventoryAsTwoDArray(
  */
 export function fillInventoryGrid(
   items: ItemInstance[],
-  inventoryGrid: number[][],
-): number[][] {
-  const updatedGrid = inventoryGrid.map((row) => [...row].map(() => 0));
+  inventoryGrid: InventoryGrid,
+): InventoryGrid {
+  const updatedGrid: InventoryGrid = inventoryGrid.map((row) =>
+    [...row].map((_) => (_ === null ? null : 0)),
+  );
   items.forEach((item) => {
     const resolvedItem = resolveItem(item);
     resolvedItem.space.forEach((row, rIdx) => {
@@ -75,11 +84,8 @@ export function fillInventoryGrid(
  * @returns True if item fits inside bounds and doesn't overlap
  */
 export function isPositionValid(
-  newPosition: {
-    row: number;
-    col: number;
-  },
-  inventoryGrid: number[][],
+  newPosition: Position,
+  inventoryGrid: InventoryGrid,
   grabbedItem: Item,
 ): boolean {
   const { space } = grabbedItem;
@@ -94,7 +100,8 @@ export function isPositionValid(
           gridCol < 0 ||
           gridRow >= inventoryGrid.length ||
           gridCol >= inventoryGrid[0].length ||
-          inventoryGrid[gridRow][gridCol] === 1
+          inventoryGrid[gridRow][gridCol] === 1 ||
+          inventoryGrid[gridRow][gridCol] === null
         ) {
           return false;
         }
@@ -112,12 +119,12 @@ export function isPositionValid(
  * @returns New rotated matrix
  */
 export function rotateMatrix(
-  matrix: number[][],
+  matrix: ItemMatrix,
   direction: Direction,
-): number[][] {
+): ItemMatrix {
   const rows = matrix.length;
   const cols = matrix[0].length;
-  const rotated: number[][] = Array.from({ length: cols }, () =>
+  const rotated: ItemMatrix = Array.from({ length: cols }, () =>
     Array.from({ length: rows }, () => 0),
   );
   for (let r = 0; r < rows; r += 1) {
@@ -130,4 +137,40 @@ export function rotateMatrix(
     }
   }
   return rotated;
+}
+
+/**
+ * Returns the item occupying a specific inventory cell.
+ *
+ * This function checks each item’s resolved position and shape (space matrix)
+ * and determines whether the given cell lies within the item’s footprint.
+ *
+ * @param cell - The target grid position to inspect.
+ * @param items - The list of all inventory item instances.
+ * @returns The ItemInstance occupying the cell, or `null` if the cell is empty.
+ */
+export function getItemAtCell(
+  cell: Position,
+  items: ItemInstance[],
+): ItemInstance | null {
+  return (
+    items.find((itemInstance) => {
+      const resolved = resolveItem(itemInstance);
+      const { position, space } = resolved;
+
+      const relRow = cell.row - position.row;
+      const relCol = cell.col - position.col;
+
+      if (
+        relRow < 0 ||
+        relCol < 0 ||
+        relRow >= space.length ||
+        relCol >= space[0].length
+      ) {
+        return false;
+      }
+
+      return space[relRow][relCol] === 1;
+    }) ?? null
+  );
 }
