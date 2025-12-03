@@ -1,6 +1,21 @@
 import type { FaceEffect } from "../types/battleTypes";
 
 /**
+ * Predefined enemy dice templates.
+ * Each template consists of a level and an array of possible die faces.
+ */
+export const enemyDices: { level: number; faces: FaceEffect[] }[] = [
+  {
+    level: 1,
+    faces: [{ attack: 3 }, { attack: 1 }, { attack: 1 }, { attack: 1 }, {}],
+  },
+  {
+    level: 1,
+    faces: [{ absDmg: 1 }, { attack: 2 }, { defense: 5 }, { defense: 5 }, {}],
+  },
+];
+
+/**
  * Standard attack die faces.
  * Primarily grants attack points, sometimes at higher cost, with some blank faces.
  */

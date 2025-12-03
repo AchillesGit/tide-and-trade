@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { ENEMY_DIE_FACES } from "../blueprints/diceBlueprints";
 import { useGameStore } from "../store/gameStore";
 import { createDie, rollAll, sortRollResults } from "../util/battleHelper";
+import { generateEnemyForLevel } from "../util/enemyHelper";
 import { resolveItem } from "../util/itemHelper";
 
 import type { DiceState, RollsState } from "../types/battleTypes";
@@ -39,47 +39,33 @@ const DEFAULT_MAX_ACTIONS = 3;
  *
  * Manages life totals, dice rolls, selected dice, and action point limits.
  * Intended to be used by a battle UI component to drive the gameplay loop.
- *
  * @returns Battle state and handlers to control rolling and resolving actions.
  */
 const useBattle = (): UseBattleReturn => {
-  const { inventoryItems } = useGameStore();
+  const { inventoryItems, getCurrentLevel } = useGameStore();
   const [playerLife, setPlayerLife] = useState(10);
-  const [enemyLife, setEnemyLife] = useState(10);
+
+  const { enemyDice, startingEnemyLife } =
+    generateEnemyForLevel(getCurrentLevel());
+
+  const [enemyLife, setEnemyLife] = useState(startingEnemyLife);
+
   const [rolls, setRolls] = useState<RollsState>({ player: [], enemy: [] });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rolled, setRolled] = useState(false);
   const [maxActions, setMaxActions] = useState<number>(DEFAULT_MAX_ACTIONS);
 
   /**
-   * green
-   * 3: +2 abs
-   * 5: +5 abs
-   *
-   * yellow:
-   * 3: + 1action
-   * 5: + 2action
-   *
-   * violet:
-   * 3: + 4 atk
-   * 5: + 8 atk
-   *
-   * white:
-   * 3: +1 abs, +2 atk, +2def
-   * 5: +3abs, +6atk, +5 def
-   *
-   * blue:
-   * 3: + 4 def
-   * 5: + 8 def
+   * Initial dice pool configuration for player and enemy.
+   * Player dice are built from inventory items; enemy dice are
+   * generated based on the level parameter above.
    */
-
-  /** Initial dice pool configuration for player and enemy. */
   const dices: DiceState = {
     player: inventoryItems.map((i) => {
       const resolved = resolveItem(i);
       return createDie(resolved.dice);
     }),
-    enemy: [createDie(ENEMY_DIE_FACES), createDie(ENEMY_DIE_FACES)],
+    enemy: enemyDice,
   };
 
   /**
@@ -131,7 +117,7 @@ const useBattle = (): UseBattleReturn => {
    * - Applies damage to both sides.
    * - Updates next round's action limit with any extra selection bonuses.
    *
-   * Resolution only happens if the total selection cost exactly equals `maxActions`.
+   * Resolution only happens if a roll has been made in the current turn.
    */
   const handleResolve = () => {
     if (!rolled) return;

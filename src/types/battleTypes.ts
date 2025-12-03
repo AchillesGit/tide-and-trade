@@ -66,3 +66,15 @@ export interface RollsState {
   /** Enemy's roll results. */
   enemy: RollResult[];
 }
+
+/** Configuration object describing an enemy in battle. */
+export interface EnemyConfig {
+  /** The list of dice assigned to this enemy. */
+  enemyDice: Dice[];
+
+  /**
+   * The initial amount of health the enemy starts with
+   * at the beginning of the battle.
+   */
+  startingEnemyLife: number;
+}
