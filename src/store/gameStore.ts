@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { createGrabbedItemSlice } from "./grabbedItemSlice";
 import { createHoveredItemSlice } from "./hoveredItemSlice";
 import { createInventorySlice } from "./inventorySlice";
+import { createLuckSlice } from "./luckSlice";
 import { createMapSlice } from "./mapSlice";
 import { createResourceSlice } from "./resourcesSlice";
 import { createShipHpSlice } from "./shipHpSlice";
@@ -11,6 +12,7 @@ import { createShopSlice } from "./shopSlice";
 import type { GrabbedItemState } from "./grabbedItemSlice";
 import type { HoveredItemState } from "./hoveredItemSlice";
 import type { InventoryState } from "./inventorySlice";
+import type { LuckSlice } from "./luckSlice";
 import type { MapState } from "./mapSlice";
 import type { ResourceState } from "./resourcesSlice";
 import type { ShipHpState } from "./shipHpSlice";
@@ -26,6 +28,7 @@ export type GameState = ShopState &
   ShipHpState &
   GrabbedItemState &
   HoveredItemState &
+  LuckSlice &
   MapState & {
     /** Handle right-click: return grabbed item to its original source. */
     onRightClick: () => void;
@@ -39,6 +42,7 @@ export const useGameStore = create<GameState>((...args) => ({
   ...createShipHpSlice(...args),
   ...createGrabbedItemSlice(...args),
   ...createHoveredItemSlice(...args),
+  ...createLuckSlice(...args),
   ...createMapSlice(...args),
 
   onRightClick: () => {
