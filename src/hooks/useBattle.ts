@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import { ENEMY_DIE_FACES } from "../blueprints/diceBlueprints";
+import ENEMIES from "../blueprints/enemies";
 import { useGameStore } from "../store/gameStore";
 import { createDie, rollAll, sortRollResults } from "../util/battleHelper";
 import { resolveItem } from "../util/itemHelper";
 
-import type { DiceState, RollsState } from "../types/battleTypes";
+import type { DiceState, EnemyType, RollsState } from "../types/battleTypes";
 
 /**
  * Shape of the object returned by {@link useBattle}.
@@ -19,10 +19,8 @@ interface UseBattleReturn {
   selectedIds: string[];
   /** Maximum total action cost the player can spend this round. */
   maxActions: number;
-  /** Player's remaining life points. */
-  playerLife: number;
-  /** Enemy's remaining life points. */
-  enemyLife: number;
+  /** Enemy's object with hp, dices and more. */
+  enemy: EnemyType;
   /** Resolves the current roll selection and applies damage/defense. */
   handleResolve: () => void;
   /** Toggles selection of a die by id, respecting action cost limits. */
@@ -39,47 +37,45 @@ const DEFAULT_MAX_ACTIONS = 3;
  *
  * Manages life totals, dice rolls, selected dice, and action point limits.
  * Intended to be used by a battle UI component to drive the gameplay loop.
- *
  * @returns Battle state and handlers to control rolling and resolving actions.
  */
 const useBattle = (): UseBattleReturn => {
-  const { inventoryItems } = useGameStore();
-  const [playerLife, setPlayerLife] = useState(10);
-  const [enemyLife, setEnemyLife] = useState(10);
+  const { inventoryItems, currentHp, getCurrentLevel, removeCurrentHP } =
+    useGameStore();
+
+  /** Get random enemy based on current level */
+  const [enemy, setEnemy] = useState<EnemyType>(() => {
+    const candidates = ENEMIES.filter((e) => e.level === getCurrentLevel());
+    return candidates[Math.floor(Math.random() * candidates.length)];
+  });
+
   const [rolls, setRolls] = useState<RollsState>({ player: [], enemy: [] });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rolled, setRolled] = useState(false);
   const [maxActions, setMaxActions] = useState<number>(DEFAULT_MAX_ACTIONS);
 
   /**
-   * green
-   * 3: +2 abs
-   * 5: +5 abs
-   *
-   * yellow:
-   * 3: + 1action
-   * 5: + 2action
-   *
-   * violet:
-   * 3: + 4 atk
-   * 5: + 8 atk
-   *
-   * white:
-   * 3: +1 abs, +2 atk, +2def
-   * 5: +3abs, +6atk, +5 def
-   *
-   * blue:
-   * 3: + 4 def
-   * 5: + 8 def
+   * Initial dice pool configuration for player and enemy.
+   * Player dice are built from inventory items; enemy dice are
+   * generated based on the level parameter above.
    */
-
-  /** Initial dice pool configuration for player and enemy. */
   const dices: DiceState = {
-    player: inventoryItems.map((i) => {
-      const resolved = resolveItem(i);
-      return createDie(resolved.dice);
-    }),
-    enemy: [createDie(ENEMY_DIE_FACES), createDie(ENEMY_DIE_FACES)],
+    player: [
+      ...inventoryItems.map((i) => {
+        const resolved = resolveItem(i);
+        return createDie(resolved.dice);
+      }),
+      createDie([
+        { attack: 1, cost: 1 },
+        { attack: 3, cost: 2 },
+      ]),
+      createDie([
+        { defense: 1, cost: 1 },
+        { defense: 3, cost: 2 },
+      ]),
+      createDie([{ attack: 1, defense: 1, cost: 1 }, {}]),
+    ],
+    enemy: enemy.dices,
   };
 
   /**
@@ -87,7 +83,7 @@ const useBattle = (): UseBattleReturn => {
    * Resets selection for the new turn.
    */
   const handleRoll = () => {
-    if (playerLife <= 0 || enemyLife <= 0) return;
+    if (currentHp <= 0 || enemy.currentHp <= 0) return;
 
     const playerRolls = sortRollResults(rollAll(dices.player));
     const enemyRolls = sortRollResults(rollAll(dices.enemy));
@@ -131,7 +127,7 @@ const useBattle = (): UseBattleReturn => {
    * - Applies damage to both sides.
    * - Updates next round's action limit with any extra selection bonuses.
    *
-   * Resolution only happens if the total selection cost exactly equals `maxActions`.
+   * Resolution only happens if a roll has been made in the current turn.
    */
   const handleResolve = () => {
     if (!rolled) return;
@@ -163,17 +159,23 @@ const useBattle = (): UseBattleReturn => {
 
     let enemyAttack = 0;
     let enemyDefense = 0;
+    let enemyAbsDamage = 0;
     rolls.enemy.forEach((r) => {
       enemyAttack += r.face.attack ?? 0;
       enemyDefense += r.face.defense ?? 0;
+      enemyAbsDamage += r.face.absDmg ?? 0;
     });
 
     const damageToEnemy =
       Math.max(totalPlayerAttack - enemyDefense, 0) + playerAbsDamage;
-    const damageToPlayer = Math.max(enemyAttack - totalPlayerDefense, 0);
+    const damageToPlayer =
+      Math.max(enemyAttack - totalPlayerDefense, 0) + enemyAbsDamage;
 
-    setPlayerLife(Math.max(playerLife - damageToPlayer, 0));
-    setEnemyLife(Math.max(enemyLife - damageToEnemy, 0));
+    removeCurrentHP(damageToPlayer);
+    setEnemy((prev) => ({
+      ...prev,
+      currentHp: Math.max(prev.currentHp - damageToEnemy, 0),
+    }));
 
     setMaxActions(DEFAULT_MAX_ACTIONS + extraSelectSum);
     setRolled(false);
@@ -183,8 +185,7 @@ const useBattle = (): UseBattleReturn => {
     rolled,
     rolls,
     selectedIds,
-    playerLife,
-    enemyLife,
+    enemy,
     maxActions,
     handleResolve,
     toggleSelect,
