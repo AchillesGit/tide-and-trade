@@ -19,8 +19,6 @@ interface UseBattleReturn {
   selectedIds: string[];
   /** Maximum total action cost the player can spend this round. */
   maxActions: number;
-  /** Player's remaining life points. */
-  playerLife: number;
   /** Enemy's remaining life points. */
   enemyLife: number;
   /** Resolves the current roll selection and applies damage/defense. */
@@ -42,8 +40,8 @@ const DEFAULT_MAX_ACTIONS = 3;
  * @returns Battle state and handlers to control rolling and resolving actions.
  */
 const useBattle = (): UseBattleReturn => {
-  const { inventoryItems, getCurrentLevel } = useGameStore();
-  const [playerLife, setPlayerLife] = useState(10);
+  const { inventoryItems, currentHp, getCurrentLevel, removeCurrentHP } =
+    useGameStore();
 
   const { enemyDice, startingEnemyLife } =
     generateEnemyForLevel(getCurrentLevel());
@@ -73,7 +71,7 @@ const useBattle = (): UseBattleReturn => {
    * Resets selection for the new turn.
    */
   const handleRoll = () => {
-    if (playerLife <= 0 || enemyLife <= 0) return;
+    if (currentHp <= 0 || enemyLife <= 0) return;
 
     const playerRolls = sortRollResults(rollAll(dices.player));
     const enemyRolls = sortRollResults(rollAll(dices.enemy));
@@ -158,7 +156,7 @@ const useBattle = (): UseBattleReturn => {
       Math.max(totalPlayerAttack - enemyDefense, 0) + playerAbsDamage;
     const damageToPlayer = Math.max(enemyAttack - totalPlayerDefense, 0);
 
-    setPlayerLife(Math.max(playerLife - damageToPlayer, 0));
+    removeCurrentHP(damageToPlayer);
     setEnemyLife(Math.max(enemyLife - damageToEnemy, 0));
 
     setMaxActions(DEFAULT_MAX_ACTIONS + extraSelectSum);
@@ -169,7 +167,6 @@ const useBattle = (): UseBattleReturn => {
     rolled,
     rolls,
     selectedIds,
-    playerLife,
     enemyLife,
     maxActions,
     handleResolve,

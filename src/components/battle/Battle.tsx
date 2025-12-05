@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import FaceIcons from "./FaceIcons";
 import useBattle from "../../hooks/useBattle";
+import { useGameStore } from "../../store/gameStore";
 
 const Battle: React.FC = () => {
   const navigate = useNavigate();
@@ -12,13 +13,14 @@ const Battle: React.FC = () => {
     handleResolve,
     handleRoll,
     toggleSelect,
-    playerLife,
     enemyLife,
     rolled,
     selectedIds,
     maxActions,
     rolls,
   } = useBattle();
+
+  const { currentHp } = useGameStore();
 
   const usedActions = selectedIds.reduce((sum, sid) => {
     const roll = rolls.player.find((r) => r.id === sid);
@@ -35,7 +37,7 @@ const Battle: React.FC = () => {
           <p className="mt-1 text-xs">
             Lebenspunkte:{" "}
             <span className="font-mono font-bold text-green-400">
-              {playerLife}
+              {currentHp}
             </span>
           </p>
         </div>
@@ -50,10 +52,10 @@ const Battle: React.FC = () => {
         </div>
       </div>
 
-      {playerLife <= 0 || enemyLife <= 0 ? (
+      {currentHp <= 0 || enemyLife <= 0 ? (
         <div className="mt-4 space-y-3 text-center">
           <h3 className="text-xl font-bold">
-            {playerLife <= 0 ? "Du hast verloren" : "Du hast gewonnen!"}
+            {currentHp <= 0 ? "Du hast verloren" : "Du hast gewonnen!"}
           </h3>
           <button
             className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
