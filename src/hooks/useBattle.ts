@@ -1,8 +1,8 @@
 import { useState } from "react";
 
+import ENEMIES from "../blueprints/enemies";
 import { useGameStore } from "../store/gameStore";
 import { createDie, rollAll, sortRollResults } from "../util/battleHelper";
-import { generateEnemyForLevel } from "../util/enemyHelper";
 import { resolveItem } from "../util/itemHelper";
 
 import type { DiceState, RollsState } from "../types/battleTypes";
@@ -21,6 +21,8 @@ interface UseBattleReturn {
   maxActions: number;
   /** Enemy's remaining life points. */
   enemyLife: number;
+  /** Enemy's name. */
+  enemyName: string;
   /** Resolves the current roll selection and applies damage/defense. */
   handleResolve: () => void;
   /** Toggles selection of a die by id, respecting action cost limits. */
@@ -43,8 +45,14 @@ const useBattle = (): UseBattleReturn => {
   const { inventoryItems, currentHp, getCurrentLevel, removeCurrentHP } =
     useGameStore();
 
-  const { enemyDice, startingEnemyLife } =
-    generateEnemyForLevel(getCurrentLevel());
+  /** Get random enemy based on current level */
+  const {
+    enemyDice,
+    startingEnemyLife,
+    name: enemyName,
+  } = ENEMIES.filter((e) => e.level === getCurrentLevel()).sort(
+    () => Math.random() - 0.5,
+  )[0];
 
   const [enemyLife, setEnemyLife] = useState(startingEnemyLife);
 
@@ -166,6 +174,7 @@ const useBattle = (): UseBattleReturn => {
   return {
     rolled,
     rolls,
+    enemyName,
     selectedIds,
     enemyLife,
     maxActions,

@@ -14,6 +14,7 @@ const Battle: React.FC = () => {
     handleRoll,
     toggleSelect,
     enemyLife,
+    enemyName,
     rolled,
     selectedIds,
     maxActions,
@@ -34,6 +35,7 @@ const Battle: React.FC = () => {
       <div className="flex items-center justify-between gap-4 text-sm">
         <div className="flex-1 rounded-lg bg-slate-800 px-3 py-2">
           <p className="font-semibold">Du</p>
+          <p className="text-sm font-bold text-green-300">Battle Reiner</p>
           <p className="mt-1 text-xs">
             Lebenspunkte:{" "}
             <span className="font-mono font-bold text-green-400">
@@ -43,6 +45,7 @@ const Battle: React.FC = () => {
         </div>
         <div className="flex-1 rounded-lg bg-slate-800 px-3 py-2 text-right">
           <p className="font-semibold">Gegner</p>
+          <p className="text-sm font-bold text-red-300">{enemyName}</p>
           <p className="mt-1 text-xs">
             Lebenspunkte:{" "}
             <span className="font-mono font-bold text-red-400">

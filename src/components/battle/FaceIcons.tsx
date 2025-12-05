@@ -18,7 +18,7 @@ const FaceIcons: FC<FaceEffect> = ({
   defenseMultiplier = 0,
   absDmg = 0,
   extraSelectNextRound = 0,
-  cost = 1,
+  cost = 0,
 }) => {
   const elements: React.ReactNode[] = [];
 

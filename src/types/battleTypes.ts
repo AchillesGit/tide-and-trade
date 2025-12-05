@@ -67,14 +67,22 @@ export interface RollsState {
   enemy: RollResult[];
 }
 
-/** Configuration object describing an enemy in battle. */
-export interface EnemyConfig {
-  /** The list of dice assigned to this enemy. */
+/**
+ * Enemy type definition used in combat.
+ */
+export interface EnemyType {
+  /** Internal id of the enemy. */
+  id: string;
+
+  /** Display name. */
+  name: string;
+
+  /** Difficulty tier of the enemy. */
+  level: number;
+
+  /** Dice used by this enemy in battle. */
   enemyDice: Dice[];
 
-  /**
-   * The initial amount of health the enemy starts with
-   * at the beginning of the battle.
-   */
+  /** Starting life at the beginning of the battle. */
   startingEnemyLife: number;
 }
