@@ -66,3 +66,20 @@ export interface RollsState {
   /** Enemy's roll results. */
   enemy: RollResult[];
 }
+
+/**
+ * Enemy type definition used in combat.
+ */
+export interface EnemyType {
+  /** Internal id of the enemy. */
+  id: string;
+  /** Display name. */
+  name: string;
+  /** Difficulty tier of the enemy. */
+  level: number;
+  /** Dice used by this enemy in battle. */
+  dices: Dice[];
+  /** Starting life at the beginning of the battle. */
+  startingHp: number;
+  currentHp: number;
+}

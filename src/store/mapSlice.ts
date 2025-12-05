@@ -14,10 +14,15 @@ export interface MapState {
    * @param id - The ID of the node to set as current.
    */
   setCurrentNodeId: (id: string) => void;
+  /**
+   * Returns the level of the currently selected node.
+   * @returns The numeric level of the current node, or 0 if no node is selected.
+   */
+  getCurrentLevel: () => number;
 }
 
 /** Creates the Zustand map slice containing map data and navigation state. */
-export const createMapSlice: StateCreator<MapState> = (set) => ({
+export const createMapSlice: StateCreator<MapState> = (set, get) => ({
   mapData: generateMap(),
   currentNodeId: null,
 
@@ -28,4 +33,15 @@ export const createMapSlice: StateCreator<MapState> = (set) => ({
           currentNodeId: id,
         }) satisfies Partial<MapState>,
     ),
+
+  getCurrentLevel: () => {
+    const { mapData, currentNodeId } = get();
+    if (!currentNodeId) return 0;
+
+    const node = mapData.levels
+      .flatMap((level) => level)
+      .find((n) => n.id === currentNodeId);
+
+    return node ? node.level : 0;
+  },
 });

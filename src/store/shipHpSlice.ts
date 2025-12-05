@@ -19,10 +19,12 @@ export interface ShipHpState {
 
 /** Creates the resource slice for managing the HP of the ship. */
 export const createShipHpSlice: StateCreator<ShipHpState> = (set) => ({
-  currentHp: 1000,
-  maxHp: 1000,
+  currentHp: 30,
+  maxHp: 30,
   addCurrentHP: (amount) =>
     set((state) => ({ currentHp: state.currentHp + amount })),
   removeCurrentHP: (amount) =>
-    set((state) => ({ currentHp: state.currentHp - amount })),
+    set((state) => ({
+      currentHp: Math.max(state.currentHp - amount, 0),
+    })),
 });
