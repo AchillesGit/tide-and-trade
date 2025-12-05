@@ -159,14 +159,17 @@ const useBattle = (): UseBattleReturn => {
 
     let enemyAttack = 0;
     let enemyDefense = 0;
+    let enemyAbsDamage = 0;
     rolls.enemy.forEach((r) => {
       enemyAttack += r.face.attack ?? 0;
       enemyDefense += r.face.defense ?? 0;
+      enemyAbsDamage += r.face.absDmg ?? 0;
     });
 
     const damageToEnemy =
       Math.max(totalPlayerAttack - enemyDefense, 0) + playerAbsDamage;
-    const damageToPlayer = Math.max(enemyAttack - totalPlayerDefense, 0);
+    const damageToPlayer =
+      Math.max(enemyAttack - totalPlayerDefense, 0) + enemyAbsDamage;
 
     removeCurrentHP(damageToPlayer);
     setEnemy((prev) => ({
