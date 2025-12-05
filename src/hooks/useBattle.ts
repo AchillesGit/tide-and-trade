@@ -5,7 +5,7 @@ import { useGameStore } from "../store/gameStore";
 import { createDie, rollAll, sortRollResults } from "../util/battleHelper";
 import { resolveItem } from "../util/itemHelper";
 
-import type { DiceState, RollsState } from "../types/battleTypes";
+import type { DiceState, EnemyType, RollsState } from "../types/battleTypes";
 
 /**
  * Shape of the object returned by {@link useBattle}.
@@ -19,10 +19,8 @@ interface UseBattleReturn {
   selectedIds: string[];
   /** Maximum total action cost the player can spend this round. */
   maxActions: number;
-  /** Enemy's remaining life points. */
-  enemyLife: number;
-  /** Enemy's name. */
-  enemyName: string;
+  /** Enemy's object with hp, dices and more. */
+  enemy: EnemyType;
   /** Resolves the current roll selection and applies damage/defense. */
   handleResolve: () => void;
   /** Toggles selection of a die by id, respecting action cost limits. */
@@ -46,15 +44,10 @@ const useBattle = (): UseBattleReturn => {
     useGameStore();
 
   /** Get random enemy based on current level */
-  const {
-    enemyDice,
-    startingEnemyLife,
-    name: enemyName,
-  } = ENEMIES.filter((e) => e.level === getCurrentLevel()).sort(
-    () => Math.random() - 0.5,
-  )[0];
-
-  const [enemyLife, setEnemyLife] = useState(startingEnemyLife);
+  const [enemy, setEnemy] = useState<EnemyType>(() => {
+    const candidates = ENEMIES.filter((e) => e.level === getCurrentLevel());
+    return candidates[Math.floor(Math.random() * candidates.length)];
+  });
 
   const [rolls, setRolls] = useState<RollsState>({ player: [], enemy: [] });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -67,11 +60,22 @@ const useBattle = (): UseBattleReturn => {
    * generated based on the level parameter above.
    */
   const dices: DiceState = {
-    player: inventoryItems.map((i) => {
-      const resolved = resolveItem(i);
-      return createDie(resolved.dice);
-    }),
-    enemy: enemyDice,
+    player: [
+      ...inventoryItems.map((i) => {
+        const resolved = resolveItem(i);
+        return createDie(resolved.dice);
+      }),
+      createDie([
+        { attack: 1, cost: 1 },
+        { attack: 3, cost: 2 },
+      ]),
+      createDie([
+        { defense: 1, cost: 1 },
+        { defense: 3, cost: 2 },
+      ]),
+      createDie([{ attack: 1, defense: 1, cost: 1 }, {}]),
+    ],
+    enemy: enemy.dices,
   };
 
   /**
@@ -79,7 +83,7 @@ const useBattle = (): UseBattleReturn => {
    * Resets selection for the new turn.
    */
   const handleRoll = () => {
-    if (currentHp <= 0 || enemyLife <= 0) return;
+    if (currentHp <= 0 || enemy.currentHp <= 0) return;
 
     const playerRolls = sortRollResults(rollAll(dices.player));
     const enemyRolls = sortRollResults(rollAll(dices.enemy));
@@ -165,7 +169,10 @@ const useBattle = (): UseBattleReturn => {
     const damageToPlayer = Math.max(enemyAttack - totalPlayerDefense, 0);
 
     removeCurrentHP(damageToPlayer);
-    setEnemyLife(Math.max(enemyLife - damageToEnemy, 0));
+    setEnemy((prev) => ({
+      ...prev,
+      currentHp: Math.max(prev.currentHp - damageToEnemy, 0),
+    }));
 
     setMaxActions(DEFAULT_MAX_ACTIONS + extraSelectSum);
     setRolled(false);
@@ -174,9 +181,8 @@ const useBattle = (): UseBattleReturn => {
   return {
     rolled,
     rolls,
-    enemyName,
     selectedIds,
-    enemyLife,
+    enemy,
     maxActions,
     handleResolve,
     toggleSelect,

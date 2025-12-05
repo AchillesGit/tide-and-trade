@@ -8,8 +8,9 @@ const ENEMIES: EnemyType[] = [
     id: "lvl1-rusty-sloop",
     name: "Rusty Sloop",
     level: 0,
-    startingEnemyLife: 20,
-    enemyDice: [
+    startingHp: 20,
+    currentHp: 20,
+    dices: [
       {
         id: "rusty-sloop-cannon-1",
         faces: [
@@ -39,8 +40,9 @@ const ENEMIES: EnemyType[] = [
     id: "lvl1-rum-raiders",
     name: "Rum Raiders",
     level: 0,
-    startingEnemyLife: 22,
-    enemyDice: [
+    startingHp: 22,
+    currentHp: 22,
+    dices: [
       {
         id: "rum-raider-cannon-1",
         faces: [
@@ -73,8 +75,9 @@ const ENEMIES: EnemyType[] = [
     id: "lvl2-quick-brig",
     name: "Swift Brigantine",
     level: 1,
-    startingEnemyLife: 32,
-    enemyDice: [
+    startingHp: 32,
+    currentHp: 32,
+    dices: [
       {
         id: "quick-brig-cannon-1",
         faces: [
@@ -118,8 +121,9 @@ const ENEMIES: EnemyType[] = [
     id: "lvl3-ghost-frigate",
     name: "Ghost Frigate",
     level: 2,
-    startingEnemyLife: 48,
-    enemyDice: [
+    startingHp: 48,
+    currentHp: 48,
+    dices: [
       {
         id: "ghost-frigate-phantom-cannon-1",
         faces: [

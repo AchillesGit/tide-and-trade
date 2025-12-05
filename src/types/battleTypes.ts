@@ -73,16 +73,13 @@ export interface RollsState {
 export interface EnemyType {
   /** Internal id of the enemy. */
   id: string;
-
   /** Display name. */
   name: string;
-
   /** Difficulty tier of the enemy. */
   level: number;
-
   /** Dice used by this enemy in battle. */
-  enemyDice: Dice[];
-
+  dices: Dice[];
   /** Starting life at the beginning of the battle. */
-  startingEnemyLife: number;
+  startingHp: number;
+  currentHp: number;
 }

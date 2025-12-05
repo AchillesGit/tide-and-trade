@@ -13,8 +13,7 @@ const Battle: React.FC = () => {
     handleResolve,
     handleRoll,
     toggleSelect,
-    enemyLife,
-    enemyName,
+    enemy,
     rolled,
     selectedIds,
     maxActions,
@@ -45,17 +44,17 @@ const Battle: React.FC = () => {
         </div>
         <div className="flex-1 rounded-lg bg-slate-800 px-3 py-2 text-right">
           <p className="font-semibold">Gegner</p>
-          <p className="text-sm font-bold text-red-300">{enemyName}</p>
+          <p className="text-sm font-bold text-red-300">{enemy.name}</p>
           <p className="mt-1 text-xs">
             Lebenspunkte:{" "}
             <span className="font-mono font-bold text-red-400">
-              {enemyLife}
+              {enemy.currentHp}
             </span>
           </p>
         </div>
       </div>
 
-      {currentHp <= 0 || enemyLife <= 0 ? (
+      {currentHp <= 0 || enemy.currentHp <= 0 ? (
         <div className="mt-4 space-y-3 text-center">
           <h3 className="text-xl font-bold">
             {currentHp <= 0 ? "Du hast verloren" : "Du hast gewonnen!"}
