@@ -7,6 +7,8 @@ import FaceIcons from "./FaceIcons";
 import useBattle from "../../hooks/useBattle";
 import { useGameStore } from "../../store/gameStore";
 import { formatGold } from "../../util/formatHelper";
+import { resolveItem } from "../../util/itemHelper";
+import DiceOverview from "../DiceOverview";
 import HpBar from "../ShipHpBar";
 
 const Battle: React.FC = () => {
@@ -22,7 +24,7 @@ const Battle: React.FC = () => {
     rolls,
   } = useBattle();
 
-  const { currentHp, maxHp, addGold } = useGameStore();
+  const { currentHp, maxHp, addGold, inventoryItems } = useGameStore();
 
   const usedActions = selectedIds.reduce((sum, sid) => {
     const roll = rolls.player.find((r) => r.id === sid);
@@ -175,6 +177,16 @@ const Battle: React.FC = () => {
           ) : null}
         </div>
       )}
+      <div className="flex">
+        <DiceOverview
+          title="Battle Reiner"
+          dices={inventoryItems.map((item) => ({
+            id: crypto.randomUUID(),
+            faces: resolveItem(item).dice,
+          }))}
+        />
+        <DiceOverview dices={enemy.dices} title={enemy.name} />
+      </div>
     </div>
   );
 };

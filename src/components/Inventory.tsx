@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
+import DiceOverview from "./DiceOverview";
 import ItemInfo from "./ItemInfo";
-import StatsSumInfo from "./StatsSumInfo";
 import useInventory from "../hooks/useInventory";
 import { useGameStore } from "../store/gameStore";
 import { getItemAtCell } from "../util/gridHelper";
@@ -166,7 +166,13 @@ const Inventory: FC = () => {
       ) : null}
 
       <div className="flex gap-2 mt-10">
-        <StatsSumInfo />
+        <DiceOverview
+          title="Battle Reiner"
+          dices={inventoryItems.map((item) => ({
+            id: crypto.randomUUID(),
+            faces: resolveItem(item).dice,
+          }))}
+        />
         {hoveredItem ? <ItemInfo /> : null}
       </div>
     </div>
