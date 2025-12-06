@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import FaceIcons from "./FaceIcons";
 import useBattle from "../../hooks/useBattle";
 import { useGameStore } from "../../store/gameStore";
+import { formatGold } from "../../util/formatHelper";
 
 const Battle: React.FC = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const Battle: React.FC = () => {
     rolls,
   } = useBattle();
 
-  const { currentHp } = useGameStore();
+  const { currentHp, addGold } = useGameStore();
 
   const usedActions = selectedIds.reduce((sum, sid) => {
     const roll = rolls.player.find((r) => r.id === sid);
@@ -57,12 +58,16 @@ const Battle: React.FC = () => {
       {currentHp <= 0 || enemy.currentHp <= 0 ? (
         <div className="mt-4 space-y-3 text-center">
           <h3 className="text-xl font-bold">
-            {currentHp <= 0 ? "Du hast verloren" : "Du hast gewonnen!"}
+            {currentHp <= 0 ? "Niderlage!" : "Sieg!"}
           </h3>
+          <p className="flex items-center justify-center gap-2 text-sm text-yellow-300">
+            <span>Du hast {formatGold(enemy.killingReward)} Gold erbeutet</span>
+          </p>
           <button
             className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
             type="button"
             onClick={() => {
+              addGold(enemy.killingReward);
               navigate("/");
             }}
           >

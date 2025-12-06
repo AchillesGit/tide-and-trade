@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import ENEMIES from "../blueprints/enemies";
+import ENEMIES from "../blueprints/enemyBlueprints";
 import { useGameStore } from "../store/gameStore";
 import { createDie, rollAll, sortRollResults } from "../util/battleHelper";
 import { resolveItem } from "../util/itemHelper";
@@ -160,16 +160,23 @@ const useBattle = (): UseBattleReturn => {
     let enemyAttack = 0;
     let enemyDefense = 0;
     let enemyAbsDamage = 0;
+    let enemyAttackMultiplier = 1;
+    let enemyDefenseMultiplier = 1;
     rolls.enemy.forEach((r) => {
       enemyAttack += r.face.attack ?? 0;
       enemyDefense += r.face.defense ?? 0;
       enemyAbsDamage += r.face.absDmg ?? 0;
+      enemyAttackMultiplier *= r.face.attackMultiplier ?? 1;
+      enemyDefenseMultiplier *= r.face.defenseMultiplier ?? 1;
     });
 
+    const totalEnemyAttack = enemyAttack * enemyAttackMultiplier;
+    const totalEnemyDefense = enemyDefense * enemyDefenseMultiplier;
+
     const damageToEnemy =
-      Math.max(totalPlayerAttack - enemyDefense, 0) + playerAbsDamage;
+      Math.max(totalPlayerAttack - totalEnemyDefense, 0) + playerAbsDamage;
     const damageToPlayer =
-      Math.max(enemyAttack - totalPlayerDefense, 0) + enemyAbsDamage;
+      Math.max(totalEnemyAttack - totalPlayerDefense, 0) + enemyAbsDamage;
 
     removeCurrentHP(damageToPlayer);
     setEnemy((prev) => ({

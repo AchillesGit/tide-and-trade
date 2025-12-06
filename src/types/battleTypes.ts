@@ -81,5 +81,8 @@ export interface EnemyType {
   dices: Dice[];
   /** Starting life at the beginning of the battle. */
   startingHp: number;
+  /** The enemy's current life points during the battle. */
   currentHp: number;
+  /** Amount of gold awarded to the player when this enemy is killed. */
+  killingReward: number;
 }

@@ -10,6 +10,7 @@ const ENEMIES: EnemyType[] = [
     level: 0,
     startingHp: 20,
     currentHp: 20,
+    killingReward: 20,
     dices: [
       {
         id: "rusty-sloop-cannon-1",
@@ -30,7 +31,7 @@ const ENEMIES: EnemyType[] = [
           { defense: 1 },
           { attack: 1, defense: 1 },
           { absDmg: 1 },
-          { attackMultiplier: 1.2 },
+          { attackMultiplier: 2 },
         ],
       },
     ],
@@ -42,6 +43,7 @@ const ENEMIES: EnemyType[] = [
     level: 0,
     startingHp: 22,
     currentHp: 22,
+    killingReward: 22,
     dices: [
       {
         id: "rum-raider-cannon-1",
@@ -51,18 +53,18 @@ const ENEMIES: EnemyType[] = [
           { attack: 1, defense: 1 },
           { absDmg: 1 },
           { defense: 1 },
-          { attackMultiplier: 1.2 },
+          { attackMultiplier: 2 },
         ],
       },
       {
         id: "rum-raider-chaos-1",
         faces: [
           { attack: 2 },
-          { attackMultiplier: 1.3 },
+          { attackMultiplier: 2 },
           { defense: 1 },
           { attack: 1 },
           { absDmg: 1 },
-          { defenseMultiplier: 1.2 },
+          { defenseMultiplier: 2 },
         ],
       },
     ],
@@ -77,6 +79,7 @@ const ENEMIES: EnemyType[] = [
     level: 1,
     startingHp: 32,
     currentHp: 32,
+    killingReward: 32,
     dices: [
       {
         id: "quick-brig-cannon-1",
@@ -86,7 +89,7 @@ const ENEMIES: EnemyType[] = [
           { attack: 3 },
           { attack: 2, defense: 1 },
           { defense: 1 },
-          { attackMultiplier: 1.5 },
+          { attackMultiplier: 2 },
         ],
       },
       {
@@ -97,18 +100,18 @@ const ENEMIES: EnemyType[] = [
           { defense: 1 },
           { attack: 1, defense: 1 },
           { absDmg: 2 },
-          { defenseMultiplier: 1.3 },
+          { defenseMultiplier: 2 },
         ],
       },
       {
         id: "quick-brig-rigging-1",
         faces: [
           { defense: 1 },
-          { defenseMultiplier: 1.4 },
+          { defenseMultiplier: 2 },
           { defense: 2 },
           { attack: 1 },
           { absDmg: 1 },
-          { attackMultiplier: 1.2 },
+          { attackMultiplier: 2 },
         ],
       },
     ],
@@ -123,6 +126,7 @@ const ENEMIES: EnemyType[] = [
     level: 2,
     startingHp: 48,
     currentHp: 48,
+    killingReward: 48,
     dices: [
       {
         id: "ghost-frigate-phantom-cannon-1",
@@ -132,7 +136,7 @@ const ENEMIES: EnemyType[] = [
           { attackMultiplier: 2 },
           { absDmg: 3 },
           { defense: 2 },
-          { defenseMultiplier: 1.5 },
+          { defenseMultiplier: 2 },
         ],
       },
       {
@@ -141,9 +145,9 @@ const ENEMIES: EnemyType[] = [
           { attack: 3 },
           { attack: 2, defense: 1 },
           { absDmg: 2 },
-          { attackMultiplier: 1.5 },
+          { attackMultiplier: 2 },
           { defense: 1 },
-          { defenseMultiplier: 1.3 },
+          { defenseMultiplier: 2 },
         ],
       },
       {
