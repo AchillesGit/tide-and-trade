@@ -1,13 +1,15 @@
-import { useGameStore } from "../store/gameStore";
-
 import type { FC } from "react";
 
-const ShipHpBar: FC = () => {
-  const { currentHp, maxHp } = useGameStore();
+interface HpBarProps {
+  shipName: string;
+  maxHp: number;
+  currentHp: number;
+}
 
+const HpBar: FC<HpBarProps> = ({ shipName, maxHp, currentHp }) => {
   const percent = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
 
-  // Color transitions: red → yellow → green
+  /** Color transitions: red → yellow → green */
   const getColor = () => {
     if (percent < 30) return "bg-red-600";
     if (percent < 60) return "bg-yellow-500";
@@ -17,7 +19,7 @@ const ShipHpBar: FC = () => {
   return (
     <div>
       <div className="mb-1 flex justify-between text-sm">
-        <span>Ship</span>
+        <span>{shipName}</span>
         <span>
           {currentHp} / {maxHp} HP
         </span>
@@ -33,4 +35,4 @@ const ShipHpBar: FC = () => {
   );
 };
 
-export default ShipHpBar;
+export default HpBar;

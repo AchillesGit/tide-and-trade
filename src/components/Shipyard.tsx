@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import ShipHpBar from "./ShipHpBar";
+import HpBar from "./ShipHpBar";
 import { useGameStore } from "../store/gameStore";
 
 import type { FC } from "react";
@@ -40,7 +40,7 @@ const Shipyard: FC = () => {
 
         {/* HP Bar */}
         <div className="mb-10">
-          <ShipHpBar />
+          <HpBar currentHp={currentHp} maxHp={maxHp} shipName="Battle Reiner" />
         </div>
 
         {/* Partial Repair */}

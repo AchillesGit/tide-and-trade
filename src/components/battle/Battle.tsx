@@ -7,6 +7,7 @@ import FaceIcons from "./FaceIcons";
 import useBattle from "../../hooks/useBattle";
 import { useGameStore } from "../../store/gameStore";
 import { formatGold } from "../../util/formatHelper";
+import HpBar from "../ShipHpBar";
 
 const Battle: React.FC = () => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ const Battle: React.FC = () => {
     rolls,
   } = useBattle();
 
-  const { currentHp, addGold } = useGameStore();
+  const { currentHp, maxHp, addGold } = useGameStore();
 
   const usedActions = selectedIds.reduce((sum, sid) => {
     const roll = rolls.player.find((r) => r.id === sid);
@@ -29,29 +30,19 @@ const Battle: React.FC = () => {
   }, 0);
 
   return (
-    <div className="p-4 max-w-xl mx-auto space-y-4 bg-slate-900 text-slate-100 rounded-xl shadow-lg">
+    <div className="p-4 mx-auto space-y-4 bg-slate-900 text-slate-100 rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold text-center">Kampf</h2>
 
       <div className="flex items-center justify-between gap-4 text-sm">
-        <div className="flex-1 rounded-lg bg-slate-800 px-3 py-2">
-          <p className="font-semibold">Du</p>
-          <p className="text-sm font-bold text-green-300">Battle Reiner</p>
-          <p className="mt-1 text-xs">
-            Lebenspunkte:{" "}
-            <span className="font-mono font-bold text-green-400">
-              {currentHp}
-            </span>
-          </p>
+        <div className="flex-1 rounded-lg bg-slate-800 px-3 py-2 w-60">
+          <HpBar currentHp={currentHp} maxHp={maxHp} shipName="Battle Reiner" />
         </div>
-        <div className="flex-1 rounded-lg bg-slate-800 px-3 py-2 text-right">
-          <p className="font-semibold">Gegner</p>
-          <p className="text-sm font-bold text-red-300">{enemy.name}</p>
-          <p className="mt-1 text-xs">
-            Lebenspunkte:{" "}
-            <span className="font-mono font-bold text-red-400">
-              {enemy.currentHp}
-            </span>
-          </p>
+        <div className="flex-1 rounded-lg bg-slate-800 px-3 py-2 text-right w-60">
+          <HpBar
+            currentHp={enemy.currentHp}
+            maxHp={enemy.startingHp}
+            shipName={enemy.name}
+          />
         </div>
       </div>
 

@@ -1,10 +1,10 @@
-import ShipHpBar from "./ShipHpBar";
+import HpBar from "./ShipHpBar";
 import { useGameStore } from "../store/gameStore";
 
 import type { FC } from "react";
 
 const ResourcesBar: FC = () => {
-  const { gold } = useGameStore();
+  const { gold, maxHp, currentHp } = useGameStore();
 
   return (
     <div className="flex items-center gap-5 bg-cyan-950 px-4 py-3 shadow-lg backdrop-blur text-amber-100">
@@ -16,7 +16,7 @@ const ResourcesBar: FC = () => {
 
       {/* HP bar pushed to the right */}
       <div className="ml-auto w-40">
-        <ShipHpBar />
+        <HpBar currentHp={currentHp} maxHp={maxHp} shipName="Battle Reiner" />
       </div>
     </div>
   );
