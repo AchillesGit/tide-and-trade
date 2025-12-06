@@ -22,6 +22,7 @@ const DiceOverview: FC<DiceOverviewProps> = ({ title, dices }) => {
 
       <div className="flex flex-col gap-4">
         {dices.map((item, idx) => (
+          // eslint-disable-next-line react/no-array-index-key
           <div key={idx} className="flex flex-col gap-1">
             <div className="text-[11px] text-slate-300">
               {`Würfel ${idx + 1}`}
