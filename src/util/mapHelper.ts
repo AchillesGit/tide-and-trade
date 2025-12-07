@@ -89,15 +89,15 @@ function generateMap(): MapData {
 
     if (lvl === 0) {
       // First level: always create 3 starting nodes.
-      createNode(nodes, lvl, 0, maxNodesPerLevel, "battle");
+      createNode(nodes, lvl, 0, maxNodesPerLevel, "enemy");
       createNode(
         nodes,
         lvl,
         Math.floor(maxNodesPerLevel / 2),
         maxNodesPerLevel,
-        "battle",
+        "enemy",
       );
-      createNode(nodes, lvl, maxNodesPerLevel - 1, maxNodesPerLevel, "battle");
+      createNode(nodes, lvl, maxNodesPerLevel - 1, maxNodesPerLevel, "enemy");
     } else if (lvl === levels - 1) {
       // Final level: create a single central node.
       createNode(

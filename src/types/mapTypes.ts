@@ -17,7 +17,8 @@ export interface Node {
 /** Type of encounter on the map. */
 export type NodeType =
   | "shop"
-  | "battle"
+  | "enemy"
+  | "miniBoss"
   | "treasure"
   | "shipyard"
   | "island"
@@ -30,7 +31,8 @@ export type NodeType =
 /** List of all possible node encounter types that can appear on the map (boss is excluded). */
 export const nodeTypes: NodeType[] = [
   "shop",
-  "battle",
+  "enemy",
+  "miniBoss",
   "treasure",
   "shipyard",
   "island",

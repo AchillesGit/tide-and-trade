@@ -2,7 +2,7 @@ import generateMap from "../util/mapHelper";
 
 import type { StateCreator } from "zustand";
 
-import type { MapData } from "../types/mapTypes";
+import type { MapData, Node } from "../types/mapTypes";
 
 export interface MapState {
   /** Generated map layout including levels, nodes, and edges. */
@@ -15,10 +15,10 @@ export interface MapState {
    */
   setCurrentNodeId: (id: string) => void;
   /**
-   * Returns the level of the currently selected node.
-   * @returns The numeric level of the current node, or 0 if no node is selected.
+   * Returns the currently selected node.
+   * @returns The current node object, or null if no node is selected.
    */
-  getCurrentLevel: () => number;
+  getCurrentNode: () => Node | null;
 }
 
 /** Creates the Zustand map slice containing map data and navigation state. */
@@ -34,14 +34,14 @@ export const createMapSlice: StateCreator<MapState> = (set, get) => ({
         }) satisfies Partial<MapState>,
     ),
 
-  getCurrentLevel: () => {
+  getCurrentNode: () => {
     const { mapData, currentNodeId } = get();
-    if (!currentNodeId) return 0;
+    if (!currentNodeId) return null;
 
     const node = mapData.levels
       .flatMap((level) => level)
       .find((n) => n.id === currentNodeId);
 
-    return node ? node.level : 0;
+    return node ?? null;
   },
 });

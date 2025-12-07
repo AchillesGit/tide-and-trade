@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import ENEMIES from "../blueprints/enemyBlueprints";
+import { BOSSES, ENEMIES, MINIBOSSES } from "../blueprints/enemyBlueprints";
 import { useGameStore } from "../store/gameStore";
 import { createDie, rollAll, sortRollResults } from "../util/battleHelper";
 import { resolveItem } from "../util/itemHelper";
@@ -41,12 +41,29 @@ const DEFAULT_MAX_ACTIONS = 3;
  * @returns Battle state and handlers to control rolling and resolving actions.
  */
 const useBattle = (): UseBattleReturn => {
-  const { inventoryItems, currentHp, getCurrentLevel, removeCurrentHP } =
+  const { inventoryItems, currentHp, getCurrentNode, removeCurrentHP } =
     useGameStore();
 
   /** Get random enemy based on current level */
   const [enemy, setEnemy] = useState<EnemyType>(() => {
-    const candidates = ENEMIES.filter((e) => e.level === getCurrentLevel());
+    const currentNode = getCurrentNode();
+
+    const candidates = (() => {
+      switch (currentNode?.nodeType) {
+        case "enemy":
+          return ENEMIES.filter((e) => e.level === currentNode.level);
+
+        case "boss":
+          return BOSSES;
+
+        case "miniBoss":
+          return MINIBOSSES.filter((e) => e.level === currentNode.level);
+
+        default:
+          return [];
+      }
+    })();
+
     return candidates[Math.floor(Math.random() * candidates.length)];
   });
 

@@ -3,6 +3,7 @@ import {
   GiIsland,
   GiJellyfish,
   GiJeweledChalice,
+  GiKrakenTentacle,
   GiMermaid,
   GiPirateFlag,
   GiRollingDices,
@@ -107,7 +108,7 @@ const Map: FC = () => {
                         : ""
                     }`}
                   >
-                    {node.nodeType === "battle" && (
+                    {node.nodeType === "enemy" && (
                       <GiPirateFlag color="#45556c" size={36} />
                     )}
                     {node.nodeType === "boss" && (
@@ -136,6 +137,9 @@ const Map: FC = () => {
                     )}
                     {node.nodeType === "jellyfish" && (
                       <GiJellyfish color="#45556c" size={36} />
+                    )}
+                    {node.nodeType === "miniBoss" && (
+                      <GiKrakenTentacle color="#45556c" size={36} />
                     )}
                   </button>
                 )}

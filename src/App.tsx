@@ -42,7 +42,9 @@ const App: FC = () => {
             </div>
           }
         />
-        <Route element={<Battle />} path="/battle" />
+        <Route element={<Battle />} path="/enemy" />
+        <Route element={<Battle />} path="/boss" />
+        <Route element={<Battle />} path="/miniBoss" />
         <Route element={<Placeholder />} path="*" />
       </Routes>
     </div>
