@@ -21,6 +21,7 @@ interface UseBattleReturn {
   maxActions: number;
   /** Enemy's object with hp, dices and more. */
   enemy: EnemyType;
+  dices: DiceState;
   /** Resolves the current roll selection and applies damage/defense. */
   handleResolve: () => void;
   /** Toggles selection of a die by id, respecting action cost limits. */
@@ -193,6 +194,7 @@ const useBattle = (): UseBattleReturn => {
     rolls,
     selectedIds,
     enemy,
+    dices,
     maxActions,
     handleResolve,
     toggleSelect,
