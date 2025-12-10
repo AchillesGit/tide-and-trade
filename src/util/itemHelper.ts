@@ -7,6 +7,7 @@ import type {
   ItemBlueprint,
   ItemInstance,
   ItemOrigin,
+  ItemRarity,
 } from "../types/inventoryTypes";
 
 /**
@@ -52,4 +53,30 @@ export function resolveItem(instance: ItemInstance): Item {
     ...blueprint,
     ...instance,
   };
+}
+
+/**
+ * Generates a single gambling item of the specified rarity.
+ *
+ * The function filters all available item blueprints to those matching
+ * the requested rarity, randomly selects one, creates an item instance
+ * for gambling purposes, and resolves it for use in the game.
+ *
+ * @param rarity - The desired rarity of the item (0-5 or your ItemRarity enum)
+ * @returns A resolved Item instance of the given rarity ready for gambling
+ * @throws Error if no blueprints exist for the specified rarity
+ */
+export function generateGamblingItem(rarity: ItemRarity): Item {
+  const blueprints = Object.values(ItemBlueprints).filter(
+    (blueprint) => blueprint.rarity === rarity,
+  );
+
+  if (blueprints.length === 0) {
+    throw new Error(`No blueprints found for rarity ${rarity}`);
+  }
+
+  const randomBlueprint =
+    blueprints[Math.floor(Math.random() * blueprints.length)];
+
+  return resolveItem(createItemInstance(randomBlueprint, "gambling"));
 }

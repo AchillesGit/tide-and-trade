@@ -1,5 +1,5 @@
-import { useGameStore } from "../store/gameStore";
-import FaceIcons from "./battle/FaceIcons";
+import { useGameStore } from "../../store/gameStore";
+import FaceIcons from "../battle/FaceIcons";
 
 import type { FC } from "react";
 

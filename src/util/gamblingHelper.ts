@@ -5,23 +5,31 @@ export const shuffle = <T>(array: T[]): T[] =>
 
 export const weightedRandomSelection = (
   pool: CardReward[],
-  luck: number, // Luck in Prozent, z.B. 5
+  luck: number,
   count: number,
 ): CardReward[] => {
-  // Basisgewichte
-  const RARITY_WEIGHT: Record<string, number> = {
-    common: 50,
-    rare: 30,
-    epic: 15,
-    legendary: 5,
+  const RARITY_WEIGHT: Record<number, number> = {
+    0: 50, // common
+    1: 40, // uncommon
+    2: 30, // rare
+    3: 15, // epic
+    4: 5, // legendary
+    5: 1, // mythic
   };
 
-  // Gewichte an Luck anpassen
+  const LUCK_MODIFIERS = {
+    0: 500, // common
+    1: 300, // uncommon
+    2: 200, // rare
+    3: 80, // epic
+    4: 40, // legendary
+    5: 20, // mythic
+  } as const;
+
   const weightedPool = pool.map((card) => {
-    let weight = RARITY_WEIGHT[card.rarity];
-    if (card.rarity === "rare") weight *= 1 + luck / 200;
-    if (card.rarity === "epic") weight *= 1 + luck / 50;
-    if (card.rarity === "legendary") weight *= 1 + luck / 25;
+    let weight = RARITY_WEIGHT[card.rarity] ?? 1; // default 1, falls undefined
+    const modifier = LUCK_MODIFIERS[card.rarity] ?? 1000;
+    weight *= 1 + luck / modifier;
     return { card, weight };
   });
 
@@ -37,7 +45,7 @@ export const weightedRandomSelection = (
       roll -= weight;
       if (roll <= 0) {
         selected.push(card);
-        poolCopy.splice(i, 1); // Keine Duplikate
+        poolCopy.splice(i, 1);
         break;
       }
     }

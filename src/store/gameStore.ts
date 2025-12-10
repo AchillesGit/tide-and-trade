@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { createGamblingInventorySlice } from "./gamblingInventorySlice";
 import { createGrabbedItemSlice } from "./grabbedItemSlice";
 import { createHoveredItemSlice } from "./hoveredItemSlice";
 import { createInventorySlice } from "./inventorySlice";
@@ -9,6 +10,7 @@ import { createResourceSlice } from "./resourcesSlice";
 import { createShipHpSlice } from "./shipHpSlice";
 import { createShopSlice } from "./shopSlice";
 
+import type { GamblingInventoryState } from "./gamblingInventorySlice";
 import type { GrabbedItemState } from "./grabbedItemSlice";
 import type { HoveredItemState } from "./hoveredItemSlice";
 import type { InventoryState } from "./inventorySlice";
@@ -27,6 +29,7 @@ export type GameState = ShopState &
   ResourceState &
   ShipHpState &
   GrabbedItemState &
+  GamblingInventoryState &
   HoveredItemState &
   LuckSlice &
   MapState & {
@@ -41,6 +44,7 @@ export const useGameStore = create<GameState>((...args) => ({
   ...createResourceSlice(...args),
   ...createShipHpSlice(...args),
   ...createGrabbedItemSlice(...args),
+  ...createGamblingInventorySlice(...args),
   ...createHoveredItemSlice(...args),
   ...createLuckSlice(...args),
   ...createMapSlice(...args),
