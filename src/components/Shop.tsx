@@ -1,7 +1,7 @@
 import useShop from "../hooks/useShop";
 import { useGameStore } from "../store/gameStore";
-import { formatGold } from "../util/formatHelper";
 import ItemButton from "./item/ItemButton";
+import GoldAmount from "./resources/GoldAmount";
 
 import type { FC } from "react";
 
@@ -15,7 +15,7 @@ const Shop: FC = () => {
       {/* header */}
       <div className="flex justify-between items-baseline mb-2">
         <h1 className="text-lg font-bold">Shop</h1>
-        <span className="text-base text-yellow-400">{formatGold(gold)}</span>
+        <GoldAmount size={25} value={gold} />
       </div>
 
       <p className="text-xs text-gray-300 mb-4">
@@ -41,7 +41,7 @@ const Shop: FC = () => {
         type="button"
       >
         <span className="font-semibold text-sm">Refresh</span>
-        <span className="text-sm text-yellow-400">{formatGold(3)}</span>
+        <GoldAmount value={3} />
       </button>
     </div>
   );

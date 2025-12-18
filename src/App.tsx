@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import Battle from "./components/battle/Battle";
-import CardPickGame from "./components/gambling/CardPickGame";
+import CardPlay from "./components/gambling/CardPickGame";
 import Inventory from "./components/Inventory";
 import Map from "./components/Map";
 import Placeholder from "./components/Placeholder";
@@ -34,7 +34,7 @@ const App: FC = () => {
       <Routes>
         <Route element={<Map />} path="/" />
         <Route element={<Shipyard />} path="/shipyard" />
-        <Route element={<CardPickGame />} path="/cardplay" />
+        <Route element={<CardPlay />} path="/cardplay" />
         <Route
           path="/shop"
           element={

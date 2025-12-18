@@ -1,6 +1,7 @@
 import ShipHpBar from "./ShipHpBar";
 import { useGameStore } from "../store/gameStore";
-import { formatPercent } from "../util/formatHelper";
+import GoldAmount from "./resources/GoldAmount";
+import LuckAmount from "./resources/LuckAmount";
 
 import type { FC } from "react";
 
@@ -10,15 +11,9 @@ const ResourcesBar: FC = () => {
   return (
     <div className="flex items-center gap-5 bg-cyan-950 px-4 py-3 shadow-lg backdrop-blur text-amber-100">
       {/* Gold */}
-      <div className="flex items-center gap-2 font-semibold text-yellow-300">
-        <span className="text-xl">🪙</span>
-        <span>{gold}</span>
-      </div>
+      <GoldAmount value={gold} />
       {/* Luck */}
-      <div className="flex items-center gap-2 font-semibold text-yellow-300">
-        <span className="text-xl">🍀</span>
-        <span>{formatPercent(luck)}</span>
-      </div>
+      <LuckAmount value={luck} />
 
       {/* HP bar pushed to the right */}
       <div className="ml-auto w-40">
