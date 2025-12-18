@@ -1,4 +1,5 @@
 import {
+  GiCardRandom,
   GiCash,
   GiIsland,
   GiJellyfish,
@@ -136,6 +137,9 @@ const Map: FC = () => {
                     )}
                     {node.nodeType === "jellyfish" && (
                       <GiJellyfish color="#45556c" size={36} />
+                    )}
+                    {node.nodeType === "cardplay" && (
+                      <GiCardRandom color="#45556c" size={36} />
                     )}
                   </button>
                 )}

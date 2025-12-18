@@ -34,7 +34,7 @@ const App: FC = () => {
       <Routes>
         <Route element={<Map />} path="/" />
         <Route element={<Shipyard />} path="/shipyard" />
-        <Route element={<CardPickGame />} path="/cardPickGame" />
+        <Route element={<CardPickGame />} path="/cardplay" />
         <Route
           path="/shop"
           element={
