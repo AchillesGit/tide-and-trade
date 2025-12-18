@@ -8,7 +8,9 @@ import { weightedRandomSelection } from "../../util/gamblingHelper";
 import { generateGamblingItem } from "../../util/itemHelper";
 import Inventory from "../Inventory";
 import ItemButton from "../item/ItemButton";
+import GiftIconAndLabel from "../resources/GiftIconAndLabel";
 import GoldAmount from "../resources/GoldAmount";
+import LuckAmount from "../resources/LuckAmount";
 
 import type { FC } from "react";
 
@@ -69,7 +71,7 @@ const CardPlay: FC = () => {
   return (
     <div className="flex flex-col items-center gap-8 p-8 text-amber-100">
       {/* Title */}
-      <h2 className="text-3xl font-bold tracking-wide text-amber-200">
+      <h2 className="text-3xl font-bold tracking-wide text-black">
         Choose a Card
       </h2>
 
@@ -78,13 +80,28 @@ const CardPlay: FC = () => {
         {cards.map((card, index) => {
           const revealed = pickedIndex === index;
           const dimmed = pickedIndex !== null && !revealed;
+          // Dynamisch Content erzeugen
+          let content;
+          switch (card.reward.type) {
+            case "gold":
+              content = <GoldAmount size={20} value={card.reward.amount} />;
+              break;
+            case "luck":
+              content = <LuckAmount size={20} value={card.reward.amount} />;
+              break;
+            case "item":
+              content = <GiftIconAndLabel size={20} text={card.label} />;
+              break;
+            default:
+              content = null;
+          }
 
           return (
             <Card
               key={card.id}
+              content={content}
               dimmed={dimmed}
               disabled={pickedIndex !== null}
-              label={card.label}
               onClick={() => pickCard(index)}
               revealed={revealed}
             />
@@ -94,27 +111,22 @@ const CardPlay: FC = () => {
 
       <div className="min-h-[140px] flex items-center justify-center w-full">
         {pickedIndex !== null && (
-          <div className="flex flex-col items-center gap-4 bg-cyan-900/60 px-6 py-4 rounded-xl shadow-lg">
-            <div className="text-amber-300 font-semibold text-lg">
-              Prize:{" "}
-              <span className="text-amber-200">{cards[pickedIndex].label}</span>
-            </div>
-
-            <div className="flex items-center gap-6">
-              <button
-                className="rounded-lg bg-emerald-500 px-6 py-2 text-black font-semibold shadow-md hover:bg-emerald-600 disabled:opacity-50 transition-colors"
-                disabled={gold < cost}
-                onClick={resetGame}
-                type="button"
-              >
-                Play Again
-              </button>
-
-              <span className="text-amber-200 font-medium">
-                Cost: <GoldAmount value={cost} />
-              </span>
-            </div>
-          </div>
+          <button
+            disabled={gold < cost}
+            onClick={resetGame}
+            type="button"
+            className="
+    flex items-center gap-2 justify-center
+    rounded-xl bg-emerald-500 px-6 py-3
+    text-black font-bold
+    shadow-lg hover:bg-emerald-600 active:bg-emerald-700
+    disabled:opacity-50 disabled:cursor-not-allowed
+    transition-all duration-200
+  "
+          >
+            <span>Play Again for</span>
+            <GoldAmount size={24} value={cost} />
+          </button>
         )}
       </div>
 

@@ -93,7 +93,7 @@ const ItemBlueprints: Record<string, ItemBlueprint> = {
     ],
     image: "items/green5.png",
     baseValue: 2,
-    rarity: 2,
+    rarity: 3,
     categories: ["green"],
     dice: DEFENSE_DIE_FACES,
   },
