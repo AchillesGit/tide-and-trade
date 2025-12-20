@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 
-import ItemInfo from "./ItemInfo";
 import StatsSumInfo from "./StatsSumInfo";
 import useInventory from "../hooks/useInventory";
 import { useGameStore } from "../store/gameStore";
 import { getItemAtCell } from "../util/gridHelper";
 import { resolveItem } from "../util/itemHelper";
+import ItemInfo from "./item/ItemInfo";
 
 import type { FC } from "react";
 

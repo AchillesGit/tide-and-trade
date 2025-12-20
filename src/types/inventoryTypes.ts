@@ -25,7 +25,7 @@ export type ItemMatrix = number[][];
 export type Direction = "left" | "right";
 
 /** Origin source of an item */
-export type ItemOrigin = "shop" | "inventory";
+export type ItemOrigin = "shop" | "inventory" | "gambling";
 
 /**
  * A blueprint defines the static properties of an item.

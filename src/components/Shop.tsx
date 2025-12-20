@@ -1,11 +1,12 @@
 import useShop from "../hooks/useShop";
 import { useGameStore } from "../store/gameStore";
-import { formatGold } from "../util/formatHelper";
+import ItemButton from "./item/ItemButton";
+import GoldAmount from "./resources/GoldAmount";
 
 import type { FC } from "react";
 
 const Shop: FC = () => {
-  const { setHoveredItem, gold } = useGameStore();
+  const { gold } = useGameStore();
 
   const { buyShopItem, refreshShopItems, resolvedShopItems } = useShop();
 
@@ -14,7 +15,7 @@ const Shop: FC = () => {
       {/* header */}
       <div className="flex justify-between items-baseline mb-2">
         <h1 className="text-lg font-bold">Shop</h1>
-        <span className="text-base text-yellow-400">{formatGold(gold)}</span>
+        <GoldAmount size={25} value={gold} />
       </div>
 
       <p className="text-xs text-gray-300 mb-4">
@@ -25,22 +26,11 @@ const Shop: FC = () => {
       {/* shop items list */}
       <div className="flex flex-col gap-2 mb-3 flex-1 min-h-0 overflow-y-auto">
         {resolvedShopItems.map((item) => (
-          <button
+          <ItemButton
             key={item.instanceId}
-            className="w-full cursor-pointer bg-gray-700 hover:bg-gray-600 transition-colors border border-gray-600 rounded-md p-2 flex justify-between items-center shadow-sm"
+            item={item}
             onClick={() => buyShopItem(item)}
-            onMouseEnter={() => setHoveredItem(item)}
-            onMouseLeave={() => setHoveredItem(null)}
-            type="button"
-          >
-            <div className="flex flex-col text-left">
-              <span className="font-semibold text-sm">{item.name}</span>
-              <span className="text-sm text-yellow-400">
-                {formatGold(item.baseValue)}
-              </span>
-            </div>
-            <img alt={item.blueprintId} src={item.image} />
-          </button>
+          />
         ))}
       </div>
 
@@ -51,7 +41,7 @@ const Shop: FC = () => {
         type="button"
       >
         <span className="font-semibold text-sm">Refresh</span>
-        <span className="text-sm text-yellow-400">{formatGold(3)}</span>
+        <GoldAmount value={3} />
       </button>
     </div>
   );

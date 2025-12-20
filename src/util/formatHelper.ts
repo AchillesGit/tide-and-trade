@@ -29,23 +29,6 @@ export const formatNumber = (value: number, decimals = 0): string =>
   });
 
 /**
- * Formats a gold value with an optional coin symbol.
- *
- * @param value       Numeric value to format.
- * @param decimals    Number of decimal places.
- * @param coinSymbol  Symbol to append (default: 🪙).
- * @returns A formatted gold string.
- */
-export const formatGold = (
-  value: number,
-  decimals = 0,
-  coinSymbol = "🪙",
-): string => {
-  const num = formatNumber(value, decimals);
-  return `${num} ${coinSymbol}`;
-};
-
-/**
  * Returns a 5-star string representation for the given item level.
  *
  * @param level The current item level.

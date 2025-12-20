@@ -24,6 +24,7 @@ export type NodeType =
   | "mermaid"
   | "jellyfish"
   | "rollingDices"
+  | "cardplay"
   | "diamond"
   | "boss";
 
@@ -37,6 +38,7 @@ export const nodeTypes: NodeType[] = [
   "mermaid",
   "jellyfish",
   "rollingDices",
+  "cardplay",
   "diamond",
 ];
 

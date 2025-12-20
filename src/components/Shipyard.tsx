@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 import ShipHpBar from "./ShipHpBar";
 import { useGameStore } from "../store/gameStore";
+import GoldAmount from "./resources/GoldAmount";
 
 import type { FC } from "react";
 
@@ -55,7 +56,7 @@ const Shipyard: FC = () => {
                 : "bg-emerald-600 hover:bg-emerald-700"
             }`}
         >
-          🔧 Repair +{repairAmount} HP ({singleRepairCost}🪙)
+          🔧 Repair +{repairAmount} HP <GoldAmount value={singleRepairCost} />
         </button>
 
         {/* Full Repair */}
@@ -70,7 +71,7 @@ const Shipyard: FC = () => {
                 : "bg-teal-600 hover:bg-teal-700"
             }`}
         >
-          🛠️ Fully Repair ({fullRepairCost}🪙)
+          🛠️ Fully Repair <GoldAmount value={fullRepairCost} />
         </button>
 
         {/* Feedback */}
