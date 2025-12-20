@@ -4,8 +4,12 @@ import Card from "./Card";
 import useGamblingInventory from "../../hooks/useGamblingInventory";
 import { useGameStore } from "../../store/gameStore";
 import { ALL_REWARDS } from "../../types/gamblingTypes";
-import { weightedRandomSelection } from "../../util/gamblingHelper";
+import {
+  getItemnameByRarity,
+  weightedRandomSelection,
+} from "../../util/gamblingHelper";
 import { generateGamblingItem } from "../../util/itemHelper";
+import ContinueButton from "../ContinueButton";
 import Inventory from "../Inventory";
 import ItemButton from "../item/ItemButton";
 import GiftIconAndLabel from "../resources/GiftIconAndLabel";
@@ -70,10 +74,18 @@ const CardPlay: FC = () => {
 
   return (
     <div className="flex flex-col items-center gap-8 p-8 text-amber-100">
-      {/* Title */}
-      <h2 className="text-3xl font-bold tracking-wide text-black">
-        Choose a Card
-      </h2>
+      {/* Header */}
+      <div className="grid w-full grid-cols-3 items-center">
+        <div />
+
+        <h2 className="text-3xl font-bold tracking-wide text-black text-center">
+          Choose a Card
+        </h2>
+
+        <div className="flex justify-end">
+          <ContinueButton />
+        </div>
+      </div>
 
       {/* Cards */}
       <div className="flex gap-6 justify-center flex-wrap">
@@ -90,7 +102,12 @@ const CardPlay: FC = () => {
               content = <LuckAmount size={20} value={card.reward.amount} />;
               break;
             case "item":
-              content = <GiftIconAndLabel size={20} text={card.label} />;
+              content = (
+                <GiftIconAndLabel
+                  size={20}
+                  text={getItemnameByRarity(card.rarity)}
+                />
+              );
               break;
             default:
               content = null;
@@ -109,7 +126,7 @@ const CardPlay: FC = () => {
         })}
       </div>
 
-      <div className="min-h-[140px] flex items-center justify-center w-full">
+      <div className="min-h-[50px] flex items-center justify-center w-full">
         {pickedIndex !== null && (
           <button
             disabled={gold < cost}
@@ -146,6 +163,9 @@ const CardPlay: FC = () => {
       shadow-inner
     "
         >
+          <h1 className="text-center text-xl font-bold text-amber-200">
+            Your gambled items
+          </h1>
           {gamblingItems.map((item) => (
             <ItemButton
               key={item.instanceId}

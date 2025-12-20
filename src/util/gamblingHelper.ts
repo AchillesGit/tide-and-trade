@@ -3,6 +3,25 @@ import type { CardReward } from "../types/gamblingTypes";
 export const shuffle = <T>(array: T[]): T[] =>
   [...array].sort(() => Math.random() - 0.5);
 
+export const getItemnameByRarity = (rarity: number): string => {
+  switch (rarity) {
+    case 0:
+      return "Common Item";
+    case 1:
+      return "Uncommon Item";
+    case 2:
+      return "Rare Item";
+    case 3:
+      return "Epic Item";
+    case 4:
+      return "Legendary Item";
+    case 5:
+      return "Mythic Item";
+    default:
+      return "Unknown Item";
+  }
+};
+
 export const weightedRandomSelection = (
   pool: CardReward[],
   luck: number,
@@ -27,7 +46,7 @@ export const weightedRandomSelection = (
   } as const;
 
   const weightedPool = pool.map((card) => {
-    let weight = RARITY_WEIGHT[card.rarity] ?? 1; // default 1, falls undefined
+    let weight = RARITY_WEIGHT[card.rarity] ?? 1;
     const modifier = LUCK_MODIFIERS[card.rarity] ?? 1000;
     weight *= 1 + luck / modifier;
     return { card, weight };

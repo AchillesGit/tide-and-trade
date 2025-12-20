@@ -9,9 +9,9 @@ interface ItemIconAndLabelProps {
 }
 
 const GiftIconAndLabel: FC<ItemIconAndLabelProps> = ({ text, size = 30 }) => (
-  <span className="flex items-center gap-2 font-semibold text-yellow-300">
+  <span className="flex flex-col items-center gap-1 font-semibold text-yellow-300 text-center">
     <FaGift color="#b93eb3ff" size={size} />
-    {text}
+    <span className="text-xs leading-tight">{text}</span>
   </span>
 );
 
